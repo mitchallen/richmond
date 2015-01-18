@@ -18,6 +18,7 @@ core.model = function( name ) {
 }
 
 core.addModel = function( modelName, model ) {
+	if( ! _dbConn ) throw new Error("Must connect to database first.");
 	return _model.addModel( 
 			modelName, 
 			model, 
