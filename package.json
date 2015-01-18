@@ -1,5 +1,5 @@
 {
-  "name": "richmond",
+  "name": "@minja/richmond",
   "version": "0.0.1",
   "description": "richmond.js core module",
   "main": "richmond.js",
@@ -20,10 +20,10 @@
   "author": "Mitch Allen <npm@mitchallen.com> (http://mitchallen.com)",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "^3.8.21"
+    "mongoose": "3.8.21"
   },
   "devDependencies": {
-    "should": "^4.6.0",
-    "supertest": "^0.15.0"
+    "should": "4.6.0",
+    "supertest": "0.15.0"
   }
 }
