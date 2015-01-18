@@ -18,6 +18,7 @@ core.version = require("./package").version;
 
 core.logFile = function( file ) {
 	core.log = log = new Log('debug', fs.createWriteStream( file ));
+	return this;
 }
 
 core.model = function( name ) {

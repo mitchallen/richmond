@@ -5,6 +5,10 @@ richmond.js
 A node.js module for managing small databases
 -----------------------------------------------
 
+#### Version 0.0.6 release notes
+
+* logFile returns this to support chaining
+
 #### Version 0.0.5 release notes
 
 * Added logging
