@@ -54,7 +54,7 @@ describe('Model Tests', function () {
 		should.exist(collection);
 		
 		var body = {
-			email: "test" + getRandomInt(10,10000) + "@foo.com",
+			email: "test-save" + getRandomInt(10,10000) + "@foo.com",
 			status: "This is a test"
 		};
 				
@@ -66,8 +66,6 @@ describe('Model Tests', function () {
 			} 
 			done();
 		});
-		
-		
 		
 		done();
 	});
