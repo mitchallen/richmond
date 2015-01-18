@@ -18,11 +18,10 @@ var request = require('supertest'),
 
 describe('DB Tests', function () {
 	before(function () {
-		// ...
+		micro.logFile("db-test.log");
 	 });
 	
 	it( 'DB valid connection', function( done ) {
-		
 		var options = {
 				user: dbUser,
 				pass: dbPass
@@ -36,7 +35,6 @@ describe('DB Tests', function () {
 	});
 	
 	it( 'DB connection is undefined', function( done ) {
-		
 		var options = {
 				user: dbUser,
 				pass: dbPass
@@ -56,7 +54,6 @@ describe('DB Tests', function () {
 	});
 	
 	it( 'DB connection is null', function( done ) {
-		
 		var options = {
 				user: dbUser,
 				pass: dbPass
@@ -76,7 +73,6 @@ describe('DB Tests', function () {
 	});
 	
 	it( 'DB password is undefined', function( done ) {
-		
 		var options = {
 				user: dbUser,
 				pass: undefined
@@ -95,7 +91,6 @@ describe('DB Tests', function () {
 	});
 	
 	it( 'DB password is null', function( done ) {
-		
 		var options = {
 				user: dbUser,
 				pass: null

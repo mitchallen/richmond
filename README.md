@@ -5,6 +5,10 @@ richmond.js
 A node.js module for managing small databases
 -----------------------------------------------
 
+#### Version 0.0.5 release notes
+
+* Added logging
+
 #### Version 0.0.4 release notes
 
 * Added test folder to .npmignore
