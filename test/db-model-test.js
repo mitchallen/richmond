@@ -18,32 +18,62 @@ var request = require('supertest'),
 
 describe('Model Tests', function () {
 	before(function () {
-		
 		var options = {
 				user: dbUser,
 				pass: dbPass
 		};
-		
 		micro.connect( connection, options );
-		
-		var MochaTestDoc = micro.addModel( modelName, {
+		micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },
 			password: { type: String, select: false }, 
 		});
-		
 		var dbConn = micro.connection();
-		
 		should.exist( dbConn );
-		
 	 });
 	
+	it( 'Normalize model name to lowercase', function( done ) {
+		var name = micro.normalizeModelName("FooTest");
+		should.exist(name);
+		name.should.match(/footest/);
+		done();
+	});
+	
+	it( 'Validate model name can not be null', function( done ) {
+		
+		var exceptionCaught = false;
+		var eMsg = "";
+		
+		try {
+			var name = micro.normalizeModelName( null );
+		} catch( ex ) {
+			exceptionCaught = true;
+			eMsg = ex.message;
+		}
+		exceptionCaught.should.eql(true);
+		eMsg.should.containEql("can't be null");
+		done();
+	});
+	
+	it( 'Validate model name can not contain whitepace', function( done ) {
+		
+		var exceptionCaught = false;
+		var eMsg = "";
+		
+		try {
+			var name = micro.normalizeModelName( "space name");
+		} catch( ex ) {
+			exceptionCaught = true;
+			eMsg = ex.message;
+		}
+		exceptionCaught.should.eql(true);
+		eMsg.should.containEql("whitespace");
+		done();
+	});
+	
 	it( 'Lookup model', function( done ) {
-		
 		var collection = micro.model( modelName );
-		
 		should.exist(collection);
-		
 		done();
 	});
 	
@@ -61,13 +91,9 @@ describe('Model Tests', function () {
 		var record = new collection( body );
 		
 		record.save( function( err, doc ) {
-			if( err ) { 
-				throw err;
-			} 
+			if( err ) { throw err; } 
 			done();
 		});
-		
-		done();
 	});
 	
 

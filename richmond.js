@@ -17,6 +17,8 @@ core.model = function( name ) {
 	return _model.model( name.toLowerCase() );
 }
 
+core.normalizeModelName = _model.normalizeModelName;
+
 core.addModel = function( modelName, model ) {
 	if( ! _dbConn ) throw new Error("Must connect to database first.");
 	return _model.addModel( 
