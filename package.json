@@ -4,22 +4,26 @@
   "description": "richmond.js core module",
   "main": "richmond.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --timeout 20000",
+    "//": "To use: npm run test-nodemon (assumes global location of mocha)",
+    "test-nodemon": "nodemon /usr/local/bin/mocha --timeout 20000",
+    "test-debug": "nodemon /usr/local/bin/mocha -g '@DEBUG' --timeout 20000",
+    "test-jenkins": "mocha --timeout 20000 -R xunit test/ > test-reports.xml"
   },
   "publishConfig": {
-	    "registry": "http://registry.mitchallen.com/"
+    "registry": "http://registry.mitchallen.com/"
   },
   "repository": {
     "type": "git",
     "url": "git@bitbucket.org:mitchallen/richmond.git"
   },
-  "scripts": {
-	"test": "mocha --timeout 20000",
-	"//": "To use: npm run test-nodemon (assumes global location of mocha)",
-	"test-nodemon": "nodemon /usr/local/bin/mocha --timeout 20000",
-	"test-debug": "nodemon /usr/local/bin/mocha -g '@DEBUG' --timeout 20000",
-	 "test-jenkins": "mocha --timeout 20000 -R xunit test/ > test-reports.xml"
-  },
   "author": "Mitch Allen <npm@mitchallen.com> (http://mitchallen.com)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^3.8.21"
+  },
+  "devDependencies": {
+    "should": "^4.6.0",
+    "supertest": "^0.15.0"
+  }
 }
