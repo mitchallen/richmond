@@ -4,7 +4,6 @@
 
 var request = require('supertest'),
 	should = require('should'),
-	// async = require('async'),
 	micro = require('../richmond'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
