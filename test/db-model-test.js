@@ -16,7 +16,7 @@ var request = require('supertest'),
 	dbPass = service.dbPass,
 	modelName = "RichmondDbTest";	// Will translate to lowercase
 
-describe('Model Tests', function () {
+describe('richmond model library', function () {
 	before(function () {
 		var options = {
 				user: dbUser,
@@ -24,80 +24,73 @@ describe('Model Tests', function () {
 		};
 		micro.logFile("./log/db-model-test.log");
 		micro.connect( connection, options );
-		micro.addModel( modelName, {
+		var testModel = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },
 			password: { type: String, select: false }, 
 		});
+		should.exist(testModel);
 		var dbConn = micro.connection();
 		should.exist( dbConn );
+		// Purge all previous test records 
+		testModel.remove( {"email": /@/ }, function( err )  {
+			if( err ) { 
+				console.error( err );
+			}
+		});
 	 });
 	
-	it( 'Normalize model name to lowercase', function( done ) {
+	it( 'should normalize model name to lowercase', function( done ) {
 		var name = micro.normalizeModelName("FooTest");
 		should.exist(name);
 		name.should.match(/footest/);
 		done();
 	});
 	
-	it( 'Validate model name can not be null', function( done ) {
-		
+	it( 'should not allow adding a name that is null', function( done ) {
 		var exceptionCaught = false;
-		var eMsg = "";
-		
 		try {
 			var name = micro.normalizeModelName( null );
 		} catch( ex ) {
 			exceptionCaught = true;
-			eMsg = ex.message;
+			ex.message.should.containEql("can't be null");
 		}
 		exceptionCaught.should.eql(true);
-		eMsg.should.containEql("can't be null");
 		done();
 	});
 	
-	it( 'Validate model name can not contain whitepace', function( done ) {
-		
+	it( 'should not allow adding a name that contains whitespace', function( done ) {
 		var exceptionCaught = false;
-		var eMsg = "";
-		
 		try {
 			var name = micro.normalizeModelName( "space name");
 		} catch( ex ) {
 			exceptionCaught = true;
-			eMsg = ex.message;
+			ex.message.should.containEql("whitespace");
 		}
 		exceptionCaught.should.eql(true);
-		eMsg.should.containEql("whitespace");
 		done();
 	});
 	
-	it( 'Lookup model', function( done ) {
+	it( 'should be able to find a model by name', function( done ) {
 		var collection = micro.model( modelName );
 		should.exist(collection);
 		done();
 	});
 	
-	it( 'Save model', function( done ) {
-		
+	it( 'should be able to save using a model', function( done ) {
 		var collection = micro.model( modelName );
-		
 		should.exist(collection);
-		
 		var body = {
 			email: "test-save" + getRandomInt(10,10000) + "@foo.com",
 			status: "This is a test"
-		};
-				
+		};	
 		var record = new collection( body );
-		
 		record.save( function( err, doc ) {
 			if( err ) { throw err; } 
 			done();
 		});
 	});
 	
-
 	after(function () {
 		micro.closeConnection()
 		micro.close();

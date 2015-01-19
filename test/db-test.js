@@ -16,17 +16,16 @@ var request = require('supertest'),
 	dbPass = service.dbPass,
 	modelName = "RichmondDbTest";	// Will translate to lowercase
 
-describe('DB Tests', function () {
+describe('richmond', function () {
 	before(function () {
 		micro.logFile("./log/db-test.log");
 	 });
 	
-	it( 'DB valid connection', function( done ) {
+	it( 'should accept a valid connection', function( done ) {
 		var options = {
 				user: dbUser,
 				pass: dbPass
 		};
-		
 		micro.connect( connection, options );
 		var dbConn = micro.connection();
 		should.exist( dbConn );
@@ -34,75 +33,71 @@ describe('DB Tests', function () {
 		done();
 	});
 	
-	it( 'DB connection is undefined', function( done ) {
+	it( 'should not allow an undefined connection', function( done ) {
 		var options = {
 				user: dbUser,
 				pass: dbPass
 		};
-		
-		var tempConn = undefined;
+		var exceptionCaught = false;
 		try {
-			micro.connect( tempConn, options );
-			throw new Error( "connect() should have thrown an exception");
+			micro.connect( null, options );
 		} catch( ex ) {
-			// Expected
+			exceptionCaught = true;
+			ex.message.should.containEql("connection string not defined")
 		}
-		
+		exceptionCaught.should.eql(true);
 		var dbConn = micro.connection();
 		should.not.exist( dbConn );
 		done();
 	});
 	
-	it( 'DB connection is null', function( done ) {
+	it( 'should not allow a null connection', function( done ) {
 		var options = {
 				user: dbUser,
 				pass: dbPass
 		};
-		
-		var tempConn = null;
+		var exceptionCaught = false;
 		try {
-			micro.connect( tempConn, options );
-			throw new Error( "connect() should have thrown an exception");
+			micro.connect( null, options );
 		} catch( ex ) {
-			// Expected
+			exceptionCaught = true;
+			ex.message.should.containEql("connection string not defined")
 		}
-		
+		exceptionCaught.should.eql(true);
 		var dbConn = micro.connection();
 		should.not.exist( dbConn );
 		done();
 	});
 	
-	it( 'DB password is undefined', function( done ) {
+	it( 'should not allow a user to connect with an undefined password', function( done ) {
 		var options = {
 				user: dbUser,
 				pass: undefined
 		};
-		
 		try {
 			micro.connect( connection, options );
-			throw new Error( "connect() should have thrown an exception");
 		} catch( ex ) {
-			// Expected
+			exceptionCaught = true;
+			ex.message.should.containEql("database password not defined")
 		}
-		
+		exceptionCaught.should.eql(true);
 		var dbConn = micro.connection();
 		should.not.exist( dbConn );
 		done();
 	});
 	
-	it( 'DB password is null', function( done ) {
+	it( 'should not allow a user to connect with a null password', function( done ) {
 		var options = {
 				user: dbUser,
 				pass: null
 		};
-		
 		try {
 			micro.connect( connection, options );
-			throw new Error( "connect() should have thrown an exception");
 		} catch( ex ) {
-			// Expected
+			exceptionCaught = true;
+			ex.message.should.containEql("database password not defined")
 		}
-		
+		exceptionCaught.should.eql(true);
 		var dbConn = micro.connection();
 		should.not.exist( dbConn );
 		done();
