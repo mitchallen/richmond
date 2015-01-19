@@ -17,6 +17,10 @@ core.name    = require("./package").name;
 core.version = require("./package").version;
 
 core.logFile = function( file ) {
+	var dir = './log';
+	if (!fs.existsSync(dir)){
+	    fs.mkdirSync(dir);
+	}
 	core.log = log = new Log('debug', fs.createWriteStream( file ));
 	return this;
 }

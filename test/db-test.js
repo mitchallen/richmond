@@ -18,7 +18,7 @@ var request = require('supertest'),
 
 describe('DB Tests', function () {
 	before(function () {
-		micro.logFile("db-test.log");
+		micro.logFile("./log/db-test.log");
 	 });
 	
 	it( 'DB valid connection', function( done ) {

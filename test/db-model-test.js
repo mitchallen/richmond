@@ -22,7 +22,7 @@ describe('Model Tests', function () {
 				user: dbUser,
 				pass: dbPass
 		};
-		micro.logFile("db-model-test.log");
+		micro.logFile("./log/db-model-test.log");
 		micro.connect( connection, options );
 		micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
