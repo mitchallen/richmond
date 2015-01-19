@@ -21,7 +21,7 @@ describe('mulitple models', function () {
 				user: dbUser,
 				pass: dbPass
 		};
-		micro.logFile("./log/db-model-test.log");
+		micro.logFile("./log/multiple-model-test.log");
 		micro.connect( connection, options );
 		var alphaModel = micro.addModel( modelName[0], {
 			email: 	{ type: String, required: true },

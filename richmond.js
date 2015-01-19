@@ -12,7 +12,7 @@ core.mongoose = require( 'mongoose' ),
 	_model = require('./lib/model'),
 	_dbConn = null;
 
-core.log = log = new Log('info');
+core.log = log = null;
 core.name    = require("./package").name;
 core.version = require("./package").version;
 
@@ -26,14 +26,12 @@ core.logFile = function( file ) {
 }
 
 core.model = function( name ) {
-	log.info("core.model(%s)",name);
 	return _model.model( name.toLowerCase() );
 }
 
 core.normalizeModelName = _model.normalizeModelName;
 
 core.addModel = function( modelName, model ) {
-	log.info("core.addModel('%s',...)",modelName);
 	if( ! _dbConn ) throw new Error("Must connect to database first.");
 	return _model.addModel( 
 			modelName, 
@@ -43,38 +41,33 @@ core.addModel = function( modelName, model ) {
 };
 
 core.closeConnection = function() {
-	log.info("core.closeConnection()");
 	if( _dbConn ) {
 		core.mongoose.disconnect( 
-			function() {
-				if( log ) log.debug( "closeConnection: mongoose.disconnect()" );
-			} 
+			function() {} 
 		);
 		_dbConn = null;
 	}
 }
 
 core.close = function() {
-	log.info("core.close()");
 	core.closeConnection();
+	core.log = log = null;
 }
 
 core.connection = function() {
-	log.info("code.connection()");
 	return _dbConn;
 }
 
 core.connect = function( connection, options ) {
-	if( log ) log.info("core.connect('%s',...)",connection );
 	core.closeConnection();
 	if( ! connection ) {
 		var eMsg = "connection string not defined.";
-		log.error( eMsg );
+		if( log ) log.error( eMsg );
 		throw new Error( eMsg );
 	}
 	var cb = function( err ) {
 		if( err ) {
-			log.error( err );
+			if( log ) log.error( err );
 			throw err;
 		}
 		// NOTE: must use callback or may get errors reconnecting.
