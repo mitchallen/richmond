@@ -21,7 +21,7 @@ var request = require('supertest'),
 describe('SSL Move Tests', function () {
 	before(function () {
 		micro
-			.logFile("./log/ssl-move-test.log")
+			.logFile("ssl-move-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC", ssl: 302 }],

@@ -17,7 +17,7 @@ var request = require('supertest'),
 
 describe('richmond', function () {
 	before(function () {
-		micro.logFile("./log/db-test.log");
+		micro.logFile("db-test.log");
 	 });
 	
 	it( 'should accept a valid connection', function( done ) {

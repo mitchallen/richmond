@@ -21,7 +21,7 @@ var request = require('supertest'),
 describe('SSL Not Found Tests', function () {
 	before(function () {
 		micro
-			.logFile("./log/ssl-404-test.log")
+			.logFile("ssl-404-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC", ssl: 404 }],

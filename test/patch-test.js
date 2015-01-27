@@ -23,7 +23,7 @@ var request = require('supertest'),
 describe('PATCH Tests', function () {
 	  before(function () {
 		micro
-			.logFile("./log/patch-test.log")
+			.logFile("patch-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			post: 		[{ model: modelName, rights: "PUBLIC" }],

@@ -108,7 +108,7 @@ describe('GET BEFORE / AFTER Tests', function () {
 		};
 		
 		micro
-			.logFile("./log/get-wrapper-test.log")
+			.logFile("get-wrapper-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			getOne:  	[{ model: modelName, rights: "PUBLIC", 	before: beforeOne, after: afterOne  }], 

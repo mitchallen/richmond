@@ -60,7 +60,7 @@ describe('POST After Response Suite', function () {
 		};
 		
 		micro
-			.logFile("./log/post-after-res-test.log")
+			.logFile("post-after-res-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC" }],

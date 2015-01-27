@@ -58,7 +58,7 @@ describe('Delete After Error Tests', function () {
 				};
 		  
 		  micro
-		  	.logFile("./log/del-after-err-test.log")
+		  	.logFile("del-after-err-test.log")
 		  	.controller( 
 		  		controller.setup({ 
 		  			del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }], 

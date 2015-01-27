@@ -21,7 +21,7 @@ describe('richmond model library', function () {
 				user: dbUser,
 				pass: dbPass
 		};
-		micro.logFile("./log/db-model-test.log");
+		micro.logFile("db-model-test.log");
 		micro.connect( connection, options );
 		var testModel = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },

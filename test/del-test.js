@@ -51,7 +51,7 @@ describe('Delete Tests', function () {
 		};
 		  
 		micro
-		  	.logFile("./log/del-test.log")
+		  	.logFile("del-test.log")
 		  	.controller( 
 		  		controller.setup({ 
 		  			del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }],

@@ -22,7 +22,7 @@ var request = require('supertest'),
 describe('@RIGHTS-USER Rights User', function () {
 	before(function () {
 		micro
-			.logFile("./log/rights-user-test.log")
+			.logFile("rights-user-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC" }],

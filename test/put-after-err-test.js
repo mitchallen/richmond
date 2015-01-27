@@ -50,7 +50,7 @@ describe('PUT After Error Test Suite', function () {
 				};
 		
 		micro
-			.logFile("./log/put-after-err-test.log")
+			.logFile("put-after-err-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC" }],

@@ -116,7 +116,7 @@ describe('Get After Response Tests', function () {
 			};
 		
 		micro
-			.logFile("./log/get-after-res-test.log")
+			.logFile("get-after-res-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			getOne:  	[{ model: modelName, rights: "PUBLIC", 	before: beforeOne, after: afterOne }], 

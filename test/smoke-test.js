@@ -20,7 +20,7 @@ var request = require('supertest'),
 describe('@SMOKE Smoke Test the Service', function () {
 	before(function () {
 		micro
-			.logFile("./log/smoke-test.log")
+			.logFile("smoke-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC" }],

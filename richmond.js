@@ -4,20 +4,20 @@
 
 var pkg = module.exports = {}; // For export
 
-pkg.mongoose = require( 'mongoose' ), 
-	Schema = pkg.mongoose.Schema, 
-	ObjectId = Schema.ObjectId,
-	fs = require('fs'),
-	Log = require('log'),
-	_model = require('./lib/model'),
-	_dbConn = null,
-	app = require('express')(),
-	bodyParser = require('body-parser'),
-	multer = require('multer'),
-	router = require('express').Router(),
-	secret = 'secret',
-	server = null,
-	ctrl = null;
+pkg.mongoose = require('mongoose'),
+    Schema = pkg.mongoose.Schema,
+    ObjectId = Schema.ObjectId,
+    fs = require('fs'),
+    Log = require('log'),
+    _model = require('./lib/model'),
+    _dbConn = null,
+    app = require('express')(),
+    bodyParser = require('body-parser'),
+    multer = require('multer'),
+    router = require('express').Router(),
+    secret = 'secret',
+    server = null,
+    ctrl = null;
 
 pkg.name    = require("./package").name;
 pkg.version = require("./package").version;
@@ -27,12 +27,13 @@ pkg.log = log = null;
 pkg.name    = require("./package").name;
 pkg.version = require("./package").version;
 
+var dir = './logs';
+
 pkg.logFile = function( file ) {
-	var dir = './log';
 	if (!fs.existsSync(dir)){
 	    fs.mkdirSync(dir);
 	}
-	pkg.log = log = new Log('debug', fs.createWriteStream( file ));
+	pkg.log = log = new Log('debug', fs.createWriteStream( dir + '/' + file ));
 	return this;
 }
 

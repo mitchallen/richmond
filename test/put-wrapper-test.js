@@ -57,7 +57,7 @@ describe('PUT Wrapper Test Suite', function () {
 				};
 
 		micro
-			.logFile("./log/put-wrapper-test.log")
+			.logFile("put-wrapper-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC" }],

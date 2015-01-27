@@ -20,7 +20,7 @@ var request = require('supertest'),
 describe('Multiple Model Tests', function () {
 	before(function () {
 		 micro
-		 	.logFile("./log/multi-test.log")
+		 	.logFile("multi-test.log")
 		    .controller( 
 		    	controller.setup({ 
 		  			del:  		[ { model: modelName[0], rights: "PUBLIC" },

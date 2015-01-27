@@ -71,7 +71,7 @@ describe('POST Test Suite', function () {
 			};
 		
 		micro
-			.logFile("./log/post-test.log")
+			.logFile("post-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC" }],

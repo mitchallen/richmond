@@ -22,7 +22,7 @@ var request = require('supertest'),
 describe('GET Tests', function () {
 	before(function () {
 		micro
-			.logFile("./log/get-test.log")
+			.logFile("get-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[ { model: modelName, rights: "PUBLIC" } ],
