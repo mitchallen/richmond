@@ -18,8 +18,9 @@ var request = require('supertest'),
 	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
 	modelName = "GetTest";	// Will translate to lowercase
 
+var MochaTestDoc = null;
 
-describe('GET Tests', function () {
+describe('get', function () {
 	before(function () {
 		micro
 			.logFile("get-test.log")
@@ -37,25 +38,18 @@ describe('GET Tests', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },
 			password: { type: String, select: false }, 
 		} );
-		
+				
 		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
+					
 	  });
 	  	  
-	  it( '#PROBLEM @GET01 GET filter responds with proper JSON', function( done ) {
+	  it( 'using a filter should responds with proper document', function( done ) {
+		  
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
 			var testObject = { 
@@ -84,12 +78,22 @@ describe('GET Tests', function () {
 						  	should.exist( res.body[0].email );
 						  	should.exist( res.body[0].status );
 						  	res.body[0].email.should.eql( testEmail )
-						  	done();
+						  	
+						  	
+							// PURGE all records 
+							
+							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+								if( err ) { 
+									console.error( err );
+								}
+								
+								done();
+							});
 					  })
 			  });
 	  });
 	  	  	  
-	  it( 'GET filter and FIELDS MULTI responds with proper JSON', function( done ) {
+	  it( 'using a field list should respond with the proper fields', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
 			var testObject = { 
@@ -122,7 +126,7 @@ describe('GET Tests', function () {
 			  });
 	  });
 	  
-	  it( 'GET filter and FIELDS FEWER responds with proper JSON', function( done ) {
+	  it( 'using a single field list should respond with the proper field', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
 			var testObject = { 
@@ -443,7 +447,9 @@ describe('GET Tests', function () {
 	  });
 	  	  	  
 	  after(function () {
-	    micro.closeService();
+		 		
+		micro.closeService();
+		  
 	  });
 });
 

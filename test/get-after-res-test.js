@@ -23,7 +23,9 @@ var request = require('supertest'),
     afterTestEmail = "test" + getRandomInt( 1000, 1000000 ) + "@after.com",
 	testAfterDocStatus = "UPDATED by afterGet";
 
-describe('Get After Response Tests', function () {
+var MochaTestDoc = null;
+
+describe('get after error injection', function () {
 	before(function () {
 		
 		var testExtraMessage = 'Testing 123';
@@ -47,13 +49,7 @@ describe('Get After Response Tests', function () {
 						return;
 					}
 				}
-				if( fields ) {
-					// console.log( "FIELDS: " + fields );
-				}
-				if( options ) {
-					// console.log( "OPTIONS: " + options );
-				}
-				
+
 				var extras = { message: testExtraMessage };
 				
 				next( filter, fields, extras, options );
@@ -68,18 +64,9 @@ describe('Get After Response Tests', function () {
 					var res = prop.res;
 					var docs = prop.docs;
 					var extras = prop.extras;
-					// console.log( "EXTRAS: " + extras.message );
 					if( extras.message != testExtraMessage ) {
 						throw new Error( "Test extra message not what expected.");
 					}
-					// console.log( "Number of docs: " + docs.length );
-					// console.log( JSON.stringify( docs ) );
-					/*
-					docs.push( { 
-							// email: "after@test.com", 
-						    email:  afterTestEmail, 
-							status: testAfterDocStatus } );
-					*/
 					// Testing Response
 					res.status(402).json( { error: "Payment required." } );
 					// next( docs );	// Don't call next when intercepting response
@@ -133,25 +120,17 @@ describe('Get After Response Tests', function () {
 		
 		micro.connect( connection, options );
 		
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },
 			password: { type: String, select: false }, 
 		} );
 							
 		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
+	
 	  });
 	
-	  it( 'GET DOCUMENT After Response Test', function( done ) {
+	  it( 'should return the injected error instead of a document', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -173,12 +152,18 @@ describe('Get After Response Tests', function () {
 						.expect( 402 )
 						.end(function(err, res) {
 						  	should.not.exist(err);
-						  	done();
+							// PURGE all records 
+							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+								if( err ) { 
+									console.error( err );
+								}
+								done();
+							});	
 						})
 			  });
 	  });
 
-	  it( 'GET COLLECTION After Response', function( done ) {
+	  it( 'should return the injected error instead of a collection', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			// var testEmail = ownerEmail;
 			var testEmail = afterTestEmail;

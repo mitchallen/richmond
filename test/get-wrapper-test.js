@@ -23,6 +23,8 @@ var request = require('supertest'),
     afterTestEmail = "test" + getRandomInt( 1000, 1000000 ) + "@after.com",
 	testAfterDocStatus = "UPDATED by afterGet";
 
+var MochaTestDoc = null;
+
 describe('GET BEFORE / AFTER Tests', function () {
 	before(function () {
 		
@@ -123,22 +125,14 @@ describe('GET BEFORE / AFTER Tests', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },
 			password: { type: String, select: false }, 
 		} );
 		
 		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
+			
 	  });
 	  	  
 	  it( 'GET filter responds with proper JSON', function( done ) {
@@ -176,7 +170,17 @@ describe('GET BEFORE / AFTER Tests', function () {
 						  	should.exist( res.body[0].email );
 						  	should.exist( res.body[0].status );
 						  	res.body[0].email.should.eql( testEmail )
-						  	done();
+						  	
+						  	// PURGE all records 
+		
+						  	MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+						  		if( err ) { 
+						  			console.error( err );
+						  		}
+						  		
+						  		done();
+						  	});
+						  	
 					  })
 			  });
 	  });

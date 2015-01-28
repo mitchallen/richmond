@@ -21,7 +21,9 @@ var request = require('supertest'),
 	testSecret = 'supersecret',
 	ownerEmail = "test@zap.com";
 
-describe('Delete After Error Tests', function () {
+var MochaTestDoc = null;
+
+describe('delete after error', function () {
 	
 	  before(function () {
 			
@@ -71,24 +73,16 @@ describe('Delete After Error Tests', function () {
 					pass: dbPass
 			};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 				
 		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		}); 
-		
+				
 	  });
 	  
-	  it( 'DELETE After Error Response', function( done ) {
+	  it( 'should return the injected error', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@zap.com", 
@@ -113,7 +107,14 @@ describe('Delete After Error Tests', function () {
 						.expect( 402 )
 						.end( function(err, res) {
 						  	should.not.exist(err);
-						  	done();
+							// PURGE all test records 
+							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+								if( err ) { 
+									console.error( err );
+								}
+								done();
+							}); 
+						  	
 					  })
 			  });
 	  });

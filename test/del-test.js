@@ -21,7 +21,9 @@ var request = require('supertest'),
 	testSecret = 'supersecret',
 	ownerEmail = "test@zap.com";
 
-describe('Delete Tests', function () {
+var MochaTestDoc = null;
+
+describe('delete', function () {
 	  before(function () {
 		  
 		var testExtraMessage = 'Testing 123';
@@ -64,24 +66,16 @@ describe('Delete Tests', function () {
 					pass: dbPass
 			};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 		
 		micro.listen( port );
 		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		}); 
-		
 	  });
 	  
-	  it( 'DELETE test', function( done ) {
+	  it( 'by the owner should succeed', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@zap.com", 
@@ -108,7 +102,16 @@ describe('Delete Tests', function () {
 						  	should.not.exist(err);
 						  	should.exist( res.body.status );
 						  	res.body.status.should.eql("OK");
-						  	done();
+						  	
+							// PURGE all records 
+							
+							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+								if( err ) { 
+									console.error( err );
+								}
+								done();
+							}); 
+						  	
 					  })
 			  });
 	  });

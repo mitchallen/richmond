@@ -19,6 +19,8 @@ var request = require('supertest'),
 	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
 	modelName = "PostTest";	// Will translate to lowercase
 
+MochaTestDoc = null;
+
 describe('POST Test Suite', function () {
 	before(function () {
 		
@@ -86,21 +88,13 @@ describe('POST Test Suite', function () {
 			pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			password: { type: String, required: true, select: false },
 			status: { type: String, required: true },   
 		} );
 						
 		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
 		
 	  });
 	  
@@ -147,7 +141,15 @@ describe('POST Test Suite', function () {
 						  	).should.eql(true);
 						  	res.body.password.should.not.equal( testObject.foo );
 						  	res.body.status.should.eql( testObject.status );
-						  	done();
+						  	
+							// PURGE all records 
+
+							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+								if( err ) { 
+									console.error( err );
+								}
+								done();
+							});	
 						})
 			  	});
 	  })

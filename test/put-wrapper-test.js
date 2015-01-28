@@ -20,6 +20,8 @@ var request = require('supertest'),
 	testSecret = 'supersecret',
 	ownerEmail = "test@zap.com"
 
+var MochaTestDoc = null;
+		
 describe('PUT Wrapper Test Suite', function () {
 	before(function () {
 	
@@ -73,20 +75,12 @@ describe('PUT Wrapper Test Suite', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 			
-		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});		
+		micro.listen( port );	
 	  });
 	
 	 it( 'PUT wrapper test', function( done ) {
@@ -113,7 +107,13 @@ describe('PUT Wrapper Test Suite', function () {
 						.end( function(err, res ) {
 							// console.log( err );
 						  	should.not.exist(err);
-						  	done();
+							// PURGE all records 
+							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+								if( err ) { 
+									console.error( err );
+								}
+								done();
+							});	
 					  })
 			  });
 	  });
