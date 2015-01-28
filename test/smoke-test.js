@@ -5,7 +5,8 @@
 var request = require('supertest'),
 	should = require('should'),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = new Richmond(),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
@@ -15,7 +16,8 @@ var request = require('supertest'),
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
 	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
-	modelName = "SmokeTest";	// Will translate to lowercase
+	modelName = "SmokeTest",	// Will translate to lowercase
+	MochaTestDoc = null;
 
 describe('@SMOKE Smoke Test the Service', function () {
 	before(function () {
@@ -35,21 +37,12 @@ describe('@SMOKE Smoke Test the Service', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 		
-		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
+		micro.listen( port );		
 	  });
 	  
 	  it( '@SMOKE POST test', function( done ) {
@@ -66,7 +59,13 @@ describe('@SMOKE Smoke Test the Service', function () {
 			  		should.not.exist(err);
 				  	res.body.email.should.eql( testObject.email );
 				  	res.body.status.should.eql( testObject.status );
-				  	done();
+					// PURGE all records 
+					MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+						if( err ) { 
+							console.error( err );
+						}
+						done();
+					});	
 			  	});
 	  });
 	  	  	  

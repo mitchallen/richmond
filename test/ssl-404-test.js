@@ -5,18 +5,20 @@
 var request = require('supertest'),
 	should = require('should'),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = new Richmond(),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST ||"http://pageblizzard.ngrok.com",		
-	sslHost  = process.env.MOCHA_TEST_SSL || "https://pageblizzard.ngrok.com",	
-	modelName = "SslNotFoundTest";	// Will translate to lowercase
+	testHost = service.host,		
+	sslHost  = service.hostSsl,	
+	modelName = "SslNotFoundTest",	// Will translate to lowercase
+	MochaTestDoc = null;
 
 describe('SSL Not Found Tests', function () {
 	before(function () {
@@ -37,20 +39,12 @@ describe('SSL Not Found Tests', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 				
-		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
+		micro.listen( port );	
 	  });
 	
 	  it( '@JENKINS POST NON-SSL NOT FOUND', function( done ) {
@@ -65,7 +59,13 @@ describe('SSL Not Found Tests', function () {
 			  	.expect( 404 )	// Not found
 			  	.end(function(err, res){
 			  		should.not.exist(err);
-				  	done();
+					// PURGE all records 
+					MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+						if( err ) { 
+							console.error( err );
+						}
+						done();
+					});
 			  	});
 	  });
 	  

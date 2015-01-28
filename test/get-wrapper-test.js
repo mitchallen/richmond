@@ -6,7 +6,8 @@ var request = require('supertest'),
 	should = require('should'),
 	jwt = require('jwt-simple'),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = new Richmond(),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
@@ -25,7 +26,7 @@ var request = require('supertest'),
 
 var MochaTestDoc = null;
 
-describe('GET BEFORE / AFTER Tests', function () {
+describe('get before and after', function () {
 	before(function () {
 		
 		var testExtraMessage = 'Testing 123';
@@ -49,12 +50,6 @@ describe('GET BEFORE / AFTER Tests', function () {
 					err( new Error("filter.email != auth.email"));
 					return;
 				}
-			}
-			if( fields ) {
-				// console.log( "FIELDS: " + fields );
-			}
-			if( options ) {
-				// console.log( "OPTIONS: " + options );
 			}
 			
 			var extras = { message: testExtraMessage };
@@ -135,7 +130,7 @@ describe('GET BEFORE / AFTER Tests', function () {
 			
 	  });
 	  	  
-	  it( 'GET filter responds with proper JSON', function( done ) {
+	  it( 'get filter should respond with proper document', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			// var testEmail = ownerEmail;
 			var testEmail = afterTestEmail;
@@ -185,7 +180,7 @@ describe('GET BEFORE / AFTER Tests', function () {
 			  });
 	  });
 	  
-	  it( 'GET DOCUMENT responds with proper JSON', function( done ) {
+	  it( 'get document by id should responds with proper document', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 

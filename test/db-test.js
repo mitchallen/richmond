@@ -4,7 +4,8 @@
 
 var request = require('supertest'),
 	should = require('should'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = new Richmond(),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,

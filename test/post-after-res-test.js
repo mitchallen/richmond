@@ -6,7 +6,8 @@ var request = require('supertest'),
 	should = require('should'),
 	bcrypt = require("bcrypt"),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = new Richmond(),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
@@ -17,6 +18,8 @@ var request = require('supertest'),
 	dbPass = service.dbPass,
 	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
 	modelName = "PostTest";	// Will translate to lowercase
+
+var MochaTestDoc = null;
 
 describe('POST After Response Suite', function () {
 	before(function () {
@@ -75,26 +78,17 @@ describe('POST After Response Suite', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			password: { type: String, required: true, select: false },
 			status: { type: String, required: true },   
 		} );
 					
 		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
 	});
 
 
-	 it( 'POST After Response Test', function( done ) {
+	it( 'POST After Response Test', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@afterpost.com", 
@@ -107,7 +101,15 @@ describe('POST After Response Suite', function () {
 			  	.expect( 402 )
 			  	.end(function(err, res) {
 			  		should.not.exist(err);
-			  		done();
+			  		
+					// PURGE all records 
+					
+					MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+						if( err ) { 
+							console.error( err );
+						}
+						done();
+					});	
 			  	});
 	  })
 

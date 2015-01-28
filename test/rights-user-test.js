@@ -6,23 +6,27 @@ var request = require('supertest'),
 	should = require('should'),
 	jwt = require('jwt-simple'),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = new Richmond(),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
 	modelName = "RightsUserTest",
-	testSecret = 'supersecret';
+	testSecret = service.secret,
+	// testSecret = 'supersecret',
+	MochaTestDoc = null;
 
-describe('@RIGHTS-USER Rights User', function () {
+describe('Rights User', function () {
 	before(function () {
 		micro
 			.logFile("rights-user-test.log")
+			.secret( testSecret )
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC" }],
@@ -31,31 +35,21 @@ describe('@RIGHTS-USER Rights User', function () {
 		  			post: 		[{ model: modelName, rights: "USER"   }],
 		  			put: 		[{ model: modelName, rights: "PUBLIC" }]
 		  		}))
-			.secret( testSecret )
 			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
 		var options = {
 				user: dbUser,
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 		
-		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
+		micro.listen( port );		
 	  });
 	
-	  it( '@RIGHTS-USER USER POST test', function( done ) {
+	  it( 'USER POST test', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -70,7 +64,13 @@ describe('@RIGHTS-USER Rights User', function () {
 			  		should.not.exist(err);
 				  	res.body.email.should.eql( testObject.email );
 				  	res.body.status.should.eql( testObject.status );
-				  	done();
+					// PURGE all records 
+					MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+						if( err ) { 
+							console.error( err );
+						}
+						done();
+					});	
 			  	});
 	  });
 	  

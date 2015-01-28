@@ -5,21 +5,26 @@
 var request = require('supertest'),
 	should = require('should'),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = null,
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST ||"http://pageblizzard.ngrok.com",		
-	sslHost  = process.env.MOCHA_TEST_SSL || "https://pageblizzard.ngrok.com",
-	modelName = "SslMoveTest";	// Will translate to lowercase
+	testHost = service.host,		
+	sslHost  = service.hostSsl,
+	modelName = "SslMoveTest",	// Will translate to lowercase
+	testSecret = service.secret,
+	MochaTestDoc = null;
 
 describe('SSL Move Tests', function () {
 	before(function () {
+		micro = new Richmond();
+		controller.clear();
 		micro
 			.logFile("ssl-move-test.log")
 			.controller( 
@@ -37,20 +42,12 @@ describe('SSL Move Tests', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 				
 		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
 	  });
 	
 	  it( '@SSLMOVE POST NON-SSL MOVE SSL', function( done ) {
@@ -68,7 +65,13 @@ describe('SSL Move Tests', function () {
 			  		// console.log( "New location: " + res.header['location'] );
 			  		res.header['location'].should.eql( 
 			  			sslHost + prefix.toLowerCase() + "/" + modelName.toLowerCase() );
-				  	done();
+					// PURGE all records 
+					MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+						if( err ) { 
+							console.error( err );
+						}
+						done();
+					});	
 			  	});
 	  });
 	  
@@ -236,7 +239,7 @@ describe('SSL Move Tests', function () {
 					  })
 			  });
 	  });
-	
+
 	  after(function () {
 		  micro.closeService();
 	  });

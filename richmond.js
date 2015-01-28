@@ -2,159 +2,168 @@
  * richmond.js
  */
 
-var pkg = module.exports = {}; // For export
+var Log = require('log'),
+	bodyParser = require('body-parser'),
+	multer = require('multer'),
+    fs = require('fs');
 
-pkg.mongoose = require('mongoose'),
-    Schema = pkg.mongoose.Schema,
-    ObjectId = Schema.ObjectId,
-    fs = require('fs'),
-    Log = require('log'),
-    _model = require('./lib/model'),
-    _dbConn = null,
-    app = require('express')(),
-    bodyParser = require('body-parser'),
-    multer = require('multer'),
-    router = require('express').Router(),
-    secret = 'secret',
-    server = null,
-    ctrl = null;
+function Richmond() {
+  this._secret = 'secret';
+  this.app = require('express')(),
+  this.mongoose = require('mongoose'),
+  this.Schema = this.mongoose.Schema,
+  this.ObjectId = this.Schema.ObjectId,
 
-pkg.name    = require("./package").name;
-pkg.version = require("./package").version;
-pkg.prefix  = require('./lib/prefix');
+  this.router = require('express').Router(),
+  
+  this._model = require('./lib/model'),
+  this._dbConn = null,
 
-pkg.log = log = null;
-pkg.name    = require("./package").name;
-pkg.version = require("./package").version;
+  this.server = null,
+  this.ctrl = null;
+  this.name    = require("./package").name;
+  this.version = require("./package").version;
+  this.prefix  = require('./lib/prefix');
+  this.dir = './logs';
+  this.log = log = null;
+  this.name    = require("./package").name;
+  this.version = require("./package").version;
+}
 
-var dir = './logs';
+module.exports = Richmond; // For export
 
-pkg.logFile = function( file ) {
-	if (!fs.existsSync(dir)){
-	    fs.mkdirSync(dir);
+Richmond.prototype.logFile = function( file ) {
+	if (!fs.existsSync(this.dir)){
+	    fs.mkdirSync(this.dir);
 	}
-	pkg.log = log = new Log('debug', fs.createWriteStream( dir + '/' + file ));
+	this.log = new Log('debug', fs.createWriteStream( this.dir + '/' + file ));
 	return this;
 }
 
-pkg.model = function( name ) {
-	return _model.model( name.toLowerCase() );
+Richmond.prototype.model = function( name ) {
+	return this._model.model( name.toLowerCase() );
 }
 
-pkg.normalizeModelName = _model.normalizeModelName;
+Richmond.prototype.normalizeModelName = function( name ) {
+	return this._model.normalizeModelName( name );
+}
 
-pkg.addModel = function( modelName, model ) {
-	if( ! _dbConn ) throw new Error("Must connect to database first.");
-	return _model.addModel( 
+Richmond.prototype.addModel = function( modelName, model ) {
+	if( ! this._dbConn ) throw new Error("Must connect to database first.");
+	return this._model.addModel( 
 			modelName, 
 			model, 
-			_dbConn  
+			this._dbConn  
 	);
 };
 
-pkg.closeConnection = function() {
-	if( _dbConn ) {
-		pkg.mongoose.disconnect( 
+Richmond.prototype.closeConnection = function() {
+	if( this._dbConn ) {
+		this.mongoose.disconnect( 
 			function() {} 
 		);
-		_dbConn = null;
+		this._dbConn = null;
 	}
 }
 
-pkg.close = function() {
-	pkg.closeConnection();
-	pkg.log = log = null;
+Richmond.prototype.close = function() {
+	this.closeConnection();
+	this.log = null;
 }
 
-pkg.connection = function() {
-	return _dbConn;
+Richmond.prototype.connection = function() {
+	return this._dbConn;
 }
 
-pkg.connect = function( connection, options ) {
-	pkg.closeConnection();
+Richmond.prototype.connect = function( connection, options ) {
+	this.closeConnection();
 	if( ! connection ) {
 		var eMsg = "connection string not defined.";
-		if( log ) log.error( eMsg );
+		if( this.log ) this.log.error( eMsg );
 		throw new Error( eMsg );
 	}
 	var cb = function( err ) {
 		if( err ) {
-			if( log ) log.error( err );
+			if( this.log ) this.log.error( err );
 			throw err;
 		}
 		// NOTE: must use callback or may get errors reconnecting.
 	};
 	if( ! options.user ) {
-		_dbConn = pkg.mongoose.createConnection( connection, cb );
+		this._dbConn = this.mongoose.createConnection( connection, cb );
 	} else {
 		if( ! options.pass ) {
 			var eMsg = "database password not defined.";
-			if( log ) log.error( eMsg );
+			if( this.log ) this.log.error( eMsg );
 			throw new Error( eMsg );
 		}
-		_dbConn = pkg.mongoose.createConnection( connection, options, cb );
+		this._dbConn = this.mongoose.createConnection( connection, options, cb );
 	}   
     return this;
 };
 
-pkg.secret = function (s) {
-    secret = s;
+Richmond.prototype.secret = function (s) {
+    this._secret = s;
     return this;
 };
 
-pkg.controller = function (mod) {
-    ctrl = mod;
+Richmond.prototype.controller = function (mod) {
+    this.ctrl = mod;
     return this;
 };
 
-pkg.listen = function (port) {
-    app.use(bodyParser.json()); // for parsing application/json
-    app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-    app.use(multer()); // for parsing multipart/form-data
-    app.use(require('./lib/token')(secret, log));
-    router.stack = [];
-    if( ctrl ) {
-        ctrl
-            .parent( pkg )
-            .router( router )
-            .prefix( pkg.prefix() )
-            .install( app );
+Richmond.prototype.listen = function (port) {
+    this.app.use(bodyParser.json()); // for parsing application/json
+    this.app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+    this.app.use(multer()); // for parsing multipart/form-data
+    this.app.use(require('./lib/token')(this._secret, this.log));
+    this.router.stack = [];
+    if( this.ctrl ) {
+        this.ctrl
+            .parent( this )
+            .router( this.router )
+            .prefix( this.prefix() )
+            .install( this.app );
     }
     // ERROR handler - put last.
-    app.use(function(err, req, res, next) {
+   this.app.use(function(err, req, res, next) {
         var errObject = {
             message: err.message,
             error: err };
-        if( log ) {
-        	log.error("ERROR HANDLER: " + JSON.stringify( errObject ) );
+        if( this.log ) {
+        	this.log.error("ERROR HANDLER: " + JSON.stringify( errObject ) );
         }
         try {
             res.status(err.status || 500); // Uses return to stop propagation.
             res.send( errObject );	// TODO - investigate "Can't set header after they are sent." (bad test?)
         } catch( ex ) {
-            if( log ) {
-            	log.error("### DEBUG - resend error" );
-            	log.error( ex );
+            if( this.log ) {
+            	this.log.error("### DEBUG - resend error" );
+            	this.log.error( ex );
             }
         }
 		return;
     });
-    log.info("Listening on port:", port );
-    server = app.listen(port); 
+    if( this.log ) {
+    	this.log.info("Listening on port:", port );
+    }
+    this.server = this.app.listen(port); 
     return this;
 };
 
-pkg.closeService = function() {
-	pkg.close();	
-	if( ctrl ) {
-		ctrl.clear();
+Richmond.prototype.closeService = function() {
+	this.close();	
+	if( this.ctrl ) {
+		this.ctrl.clear();
+		this.ctrl = null;
 	}
-	ctrl = null;
-	_logErrors = false;
-	if( server ) {
-		server.close();
-		server = null;
+	this.ctrl = null;
+	this._logErrors = false;
+	if( this.server ) {
+		this.server.close();
+		this.server = null;
 	}
+	return this;
 };
 
 

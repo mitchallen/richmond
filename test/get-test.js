@@ -6,7 +6,8 @@ var request = require('supertest'),
 	should = require('should'),
 	sleep = require('sleep'),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = new Richmond(),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
@@ -78,15 +79,11 @@ describe('get', function () {
 						  	should.exist( res.body[0].email );
 						  	should.exist( res.body[0].status );
 						  	res.body[0].email.should.eql( testEmail )
-						  	
-						  	
 							// PURGE all records 
-							
 							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
 								if( err ) { 
 									console.error( err );
 								}
-								
 								done();
 							});
 					  })
@@ -146,7 +143,6 @@ describe('get', function () {
 						// MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
 						.query('filter={"email": "' + testEmail + '"}')
 						.query('fields=email')
-						// TODO options (findOne, etc)
 						.expect( 'Content-Type', /json/ )
 						.expect( 200 )
 						.end(function(err, res){
@@ -159,7 +155,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'GET DOCUMENT and NON-SELECTED default not selected', function( done ) {
+	  it( 'should not return non-selected field', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 

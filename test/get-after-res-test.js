@@ -6,7 +6,8 @@ var request = require('supertest'),
 	should = require('should'),
 	jwt = require('jwt-simple'),
 	controller = require('@minja/richmond-web-controller'),
-	micro = require('../richmond'),
+	Richmond = require('../richmond'),
+	micro = null,
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
@@ -15,7 +16,8 @@ var request = require('supertest'),
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testSecret = 'supersecret',
+	// testSecret = 'supersecret',
+	testSecret = service.secret,
 	testHost = process.env.MOCHA_TEST_HOST || "http://pageblizzard.ngrok.com",		
 	sslHost  = process.env.MOCHA_TEST_SSL || "https://pageblizzard.ngrok.com",
 	modelName = "GetBeforeAfterTest",	// Will translate to lowercase
@@ -27,6 +29,8 @@ var MochaTestDoc = null;
 
 describe('get after error injection', function () {
 	before(function () {
+		
+		micro = new Richmond();
 		
 		var testExtraMessage = 'Testing 123';
 		
@@ -102,6 +106,8 @@ describe('get after error injection', function () {
 				// next( doc );	// Don't call when intercepting response
 			};
 		
+		controller.clear();
+			
 		micro
 			.logFile("get-after-res-test.log")
 			.controller( 
