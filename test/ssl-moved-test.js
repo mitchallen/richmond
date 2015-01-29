@@ -21,12 +21,12 @@ var request = require('supertest'),
 	testSecret = service.secret,
 	MochaTestDoc = null;
 
-describe('SSL Move Tests', function () {
+describe('ssl moved', function () {
 	before(function () {
 		micro = new Richmond();
 		controller.clear();
 		micro
-			.logFile("ssl-move-test.log")
+			.logFile("ssl-moved-test.log")
 			.controller( 
 		  		controller.setup({ 
 		  			del:  		[{ model: modelName, rights: "PUBLIC", ssl: 302 }],
@@ -50,7 +50,7 @@ describe('SSL Move Tests', function () {
 		micro.listen( port );
 	  });
 	
-	  it( '@SSLMOVE POST NON-SSL MOVE SSL', function( done ) {
+	  it( 'should return moved when posting to non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@post.com", 
@@ -75,7 +75,7 @@ describe('SSL Move Tests', function () {
 			  	});
 	  });
 	  
-	  it( 'GET COLLECTION NON-SSL MOVE SSL', function( done ) {
+	  it( 'should return moved when getting a collection via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -94,9 +94,7 @@ describe('SSL Move Tests', function () {
 					 })
 	  });
 	  
-	  // TODO - write test where ID not valid
-	  
-	  it( 'GET DOCUMENT NON-SSL MOVE SSL', function( done ) {
+	  it( 'should return moved when getting a document via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -129,7 +127,7 @@ describe('SSL Move Tests', function () {
 			  });
 	  });
 	  
-	  it( 'DELETE NON-SSL MOVE SSL', function( done ) {
+	  it( 'should return moved when deleting via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@zap.com", 
@@ -166,7 +164,7 @@ describe('SSL Move Tests', function () {
 			  });
 	  });
 	  
-	  it( 'PUT NON-SSL MOVE SSL', function( done ) {
+	  it( 'should return moved when putting via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@put.com", 
@@ -186,11 +184,9 @@ describe('SSL Move Tests', function () {
 					request( testHost )
 						.put( putUrl )
 						.send( { status: "UPDATED" } )
-						// .set( 'Content-Type', 'application/json' )
 						.expect( 302 )	
 						.end( function(err, res ) {
 						  	should.not.exist(err);
-					  		// console.log( "New location: " + res.header['location'] );
 					  		res.header['location'].should.eql( 
 					  			sslHost 
 					  			+ prefix.toLowerCase() 
@@ -201,7 +197,7 @@ describe('SSL Move Tests', function () {
 			  });
 	  });
 	  
-	  it( 'PATCH NON-SSL MOVE SSL', function( done ) {
+	  it( 'should return moved when patching via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@patch.com", 

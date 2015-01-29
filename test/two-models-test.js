@@ -1,5 +1,5 @@
 /**
- * multi-test.js
+ * two-models-test.js
  */
 
 var request = require('supertest'),
@@ -10,18 +10,20 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service = config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
+	AlphaTestDoc = null,
+	BetaTestDoc = null,
 	modelName = ["AlphaTest","BetaTest"];
 
-describe('Multiple Model Tests', function () {
+describe('two models', function () {
 	before(function () {
 		 micro
-		 	.logFile("multi-test.log")
+		 	.logFile("two-models-test.log")
 		    .controller( 
 		    	controller.setup({ 
 		  			del:  		[ { model: modelName[0], rights: "PUBLIC" },
@@ -45,37 +47,22 @@ describe('Multiple Model Tests', function () {
 		
 		// Model[0]
 		
-		var AlphaTestDoc = micro.addModel( modelName[0], {
+		AlphaTestDoc = micro.addModel( modelName[0], {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
 			
 		// Model[1]
 		
-		var BetaTestDoc = micro.addModel( modelName[1], {
+		BetaTestDoc = micro.addModel( modelName[1], {
 			user: { type: String, required: true },
 			level: { type: String, required: true },   
 		} );
 				
-		micro.listen( port );
-		
-		// PURGE all records 
-		
-		AlphaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
-		BetaTestDoc.remove( {"user": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});
- 
+		micro.listen( port ); 
 	});
 		
-	it( 'POST ALPHA', function( done ) {
+	it( 'should be able to post to the first model', function( done ) {
 		var testUrl = prefix.toLowerCase() + "/" + modelName[0].toLowerCase();
 		var testObject = { 
 			email: "test" + getRandomInt( 1000, 1000000 ) + "@alpha.com", 
@@ -91,11 +78,22 @@ describe('Multiple Model Tests', function () {
 				should.exist( res.body.status );
 				res.body.email.should.eql( testObject.email );
 				res.body.status.should.eql( testObject.status );
-				done();
+				// PURGE all records 
+				AlphaTestDoc.remove( {"email": /@/ }, function( err )  {
+					if( err ) { 
+						console.error( err );
+					}
+					BetaTestDoc.remove( {"user": /@/ }, function( err )  {
+						if( err ) { 
+							console.error( err );
+						}
+						done();
+					});
+				});	
 			 });
 	});
 	
-	it( 'POST BETA', function( done ) {
+	it( 'should be able to post to the second model', function( done ) {
 		var testUrl = prefix.toLowerCase() + "/" + modelName[1].toLowerCase();
 		var testObject = { 
 			user: "test" + getRandomInt( 1000, 1000000 ) + "@beta.com", 
@@ -116,7 +114,7 @@ describe('Multiple Model Tests', function () {
 	});
 	
 	
-	it( 'GET COLLECTION ALPHA JSON', function( done ) {
+	it( 'should be able to get a collection for the first model', function( done ) {
 		var testUrl = prefix.toLowerCase() + "/" + modelName[0].toLowerCase();	
 		var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@alpha.com", 
@@ -143,7 +141,7 @@ describe('Multiple Model Tests', function () {
 			  });
 	 });
 	
-	it( 'GET COLLECTION BETA JSON', function( done ) {
+	it( 'should be able to get a collection for the second model', function( done ) {
 		var testUrl = prefix.toLowerCase() + "/" + modelName[1].toLowerCase();	
 		var testObject = { 
 			user: "test" + getRandomInt( 1000, 1000000 ) + "@beta.com", 
@@ -170,7 +168,7 @@ describe('Multiple Model Tests', function () {
 			  });
 	 });
 	
-	 it( 'GET DOCUMENT ALPHA', function( done ) {
+	 it( 'should be able to get a document for the first model', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName[0].toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@alpha.com", 
@@ -203,7 +201,7 @@ describe('Multiple Model Tests', function () {
 	});
 	
 	 
-	it( 'GET DOCUMENT BETA', function( done ) {
+	it( 'should be able to get a document for the second model', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName[1].toLowerCase();	
 			var testObject = { 
 				user: "test" + getRandomInt( 1000, 1000000 ) + "@beta.com", 
@@ -235,7 +233,7 @@ describe('Multiple Model Tests', function () {
 			  });
 	});
 	
-	it( 'DELETE ALPHA', function( done ) {
+	it( 'should be able to delete a document for the first model', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName[0].toLowerCase();	
 			var testObject = { 
 					email: "test" + getRandomInt( 1000, 1000000 ) + "@alpha.com", 
@@ -262,7 +260,7 @@ describe('Multiple Model Tests', function () {
 			 });
 	});
 	
-	it( 'DELETE BETA', function( done ) {
+	it( 'should be able to delete a document for the second model', function( done ) {
 		var testUrl = prefix.toLowerCase() + "/" + modelName[1].toLowerCase();	
 		var testObject = { 
 				user: "test" + getRandomInt( 1000, 1000000 ) + "@beta.com", 
@@ -278,7 +276,6 @@ describe('Multiple Model Tests', function () {
 			  	should.not.exist(err);
 			  	// DELETE
 				var zapUrl = testUrl + "/" + res.body._id;
-				// console.log( zapUrl );
 				request( testHost )
 					.del( zapUrl )
 					.expect( 200 )
@@ -289,7 +286,7 @@ describe('Multiple Model Tests', function () {
 		 });
 	});
 	
-	it( 'PUT ALPHA', function( done ) {
+	it( 'should be able to put a document for the first model', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName[0].toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@alpha.com", 
@@ -317,7 +314,7 @@ describe('Multiple Model Tests', function () {
 			  });
 	});
 	
-	it( 'PUT BETA', function( done ) {
+	it( 'should be able to put a document for the second model', function( done ) {
 		var testUrl = prefix.toLowerCase() + "/" + modelName[1].toLowerCase();	
 		var testObject = { 
 			user: "test" + getRandomInt( 1000, 1000000 ) + "@beta.com", 

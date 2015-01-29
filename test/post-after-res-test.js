@@ -11,28 +11,27 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
 	modelName = "PostTest";	// Will translate to lowercase
 
 var MochaTestDoc = null;
 
-describe('POST After Response Suite', function () {
+describe('post after error', function () {
 	before(function () {
 	
 		var testExtraMessage = 'Testing 123';
 		
 		var beforePost = function( err, prop, next ) {
-			// console.log( "BEFORE POST")
 			if( ! prop.req ) 
 				return err( new Error("(before) prop.req not found") );
 			if( ! prop.req.body ) 
 				return err( new Error("(before) prop.req.body not found") );
-			// Will cause fail in missing field test (which deliberatey removes password)
+			// Will cause fail in missing field test (which deliberately removes password)
 			// if( ! prop.req.body.password ) 
 				// return err( new Error("(before) prop.req.body.password not found") );
 			var extras = { message: testExtraMessage };
@@ -41,7 +40,6 @@ describe('POST After Response Suite', function () {
 				bcrypt.hash( body.password, 10, function( err, hash ) {
 					if( err ) console.err( err );
 					body.password = hash;
-					// console.log( "PASSWORD HASH: " + hash )
 					next( body, extras );
 				} );
 			} else {
@@ -88,7 +86,7 @@ describe('POST After Response Suite', function () {
 	});
 
 
-	it( 'POST After Response Test', function( done ) {
+	it( 'should return the injected error', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@afterpost.com", 
@@ -101,9 +99,7 @@ describe('POST After Response Suite', function () {
 			  	.expect( 402 )
 			  	.end(function(err, res) {
 			  		should.not.exist(err);
-			  		
 					// PURGE all records 
-					
 					MochaTestDoc.remove( {"email": /@/ }, function( err )  {
 						if( err ) { 
 							console.error( err );

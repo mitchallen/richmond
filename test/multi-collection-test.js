@@ -1,5 +1,5 @@
 /**
- * File: multi-model-test.js
+ * File: multi-collection-test.js
  */
 
 var request = require('supertest'),
@@ -9,45 +9,36 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
+	alphaModel = null,
+	betaModel = null,
 	modelName = ["AlphaRichmondTest","BetaRichmondTest"];
 
-describe('mulitple models', function () {
+describe('mulitple collections', function () {
 	before(function () {
 		var options = {
 				user: dbUser,
 				pass: dbPass
 		};
-		micro.logFile("multiple-model-test.log");
+		micro.logFile("multiple-collections-test.log");
 		micro.connect( connection, options );
-		var alphaModel = micro.addModel( modelName[0], {
+		alphaModel = micro.addModel( modelName[0], {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },
 			password: { type: String, select: false }, 
 		});
 		should.exist(alphaModel);
-		var betaModel = micro.addModel( modelName[1], {
+		betaModel = micro.addModel( modelName[1], {
 			email: 	{ type: String, required: true },
 			level: { type: String, required: true }, 
 		});
 		should.exist(alphaModel);
 		var dbConn = micro.connection();
 		should.exist( dbConn );
-		// Purge all previous test records 
-		alphaModel.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});
-		betaModel.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});
 	 });
 		
 	it( 'should be able to find any model by name', function( done ) {
@@ -55,7 +46,19 @@ describe('mulitple models', function () {
 		should.exist(alphaCollection);
 		var betaCollection = micro.model( modelName[1] );
 		should.exist(betaCollection);
-		done();
+		// Purge all previous test records 
+		alphaModel.remove( {"email": /@/ }, function( err )  {
+			if( err ) { 
+				console.error( err );
+			}
+			betaModel.remove( {"email": /@/ }, function( err )  {
+				if( err ) { 
+					console.error( err );
+				}
+				done();
+			});
+		});
+;
 	});
 	
 	it( 'should be able to save using any model', function( done ) {

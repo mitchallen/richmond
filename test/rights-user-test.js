@@ -19,10 +19,9 @@ var request = require('supertest'),
 	testHost = service.host,
 	modelName = "RightsUserTest",
 	testSecret = service.secret,
-	// testSecret = 'supersecret',
 	MochaTestDoc = null;
 
-describe('Rights User', function () {
+describe('user rights', function () {
 	before(function () {
 		micro
 			.logFile("rights-user-test.log")
@@ -44,12 +43,11 @@ describe('Rights User', function () {
 		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
-		} );
-		
+		});
 		micro.listen( port );		
 	  });
 	
-	  it( 'USER POST test', function( done ) {
+	  it( 'should be able to post as a user', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -74,7 +72,7 @@ describe('Rights User', function () {
 			  	});
 	  });
 	  
-	  it( 'USER NO TOKEN test', function( done ) {
+	  it( 'should return an error if token is missing', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -88,12 +86,11 @@ describe('Rights User', function () {
 			  		should.not.exist(err);
 			  		should.exist( res.body.error );
 			  		// Should return: Request Error: Missing token
-			  		// console.error( "NO TOKEN: " + res.body.error );
 				  	done();
 			  	});
 	  });
 	  
-	  it( 'USER BAD TOKEN SEGMENTS test', function( done ) {
+	  it( 'should return an error for bad token segments', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -113,7 +110,7 @@ describe('Rights User', function () {
 			  	});
 	  });
 	
-	  it( 'USER INVALID TOKEN test', function( done ) {
+	  it( 'should return an error for an invalid token', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -134,7 +131,7 @@ describe('Rights User', function () {
 			  	});
 	  });
 	  
-	  it( 'UNAUTHORIZED USER POST test', function( done ) {
+	  it( 'should return an error for an unauthorized post attempt', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -153,7 +150,7 @@ describe('Rights User', function () {
 			  	});
 	  });
 	  
-	  it( 'USER POST ROLE MISSING', function( done ) {
+	  it( 'should return an error for a missing role', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -171,7 +168,7 @@ describe('Rights User', function () {
 			  	});
 	  });
 	  
-	  it( 'USER POST BAD SECRET KEY', function( done ) {
+	  it( 'should return an error for an invalid secret key', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -191,7 +188,7 @@ describe('Rights User', function () {
 			  	});
 	  });
 	  
-	  it( 'USER ACCESS ADMIN VERB - GET COLLECTION', function( done ) {
+	  it( 'should be able to get a collection when a public role is required', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@user.com", 
@@ -219,7 +216,7 @@ describe('Rights User', function () {
 			  });
 	  });
 	  
-	  it( 'USER ACCESS PUBLIC VERB - GET DOCUMENT', function( done ) {
+	  it( 'should be able to get a document when a public role is required', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 

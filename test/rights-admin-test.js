@@ -11,16 +11,17 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
 	modelName = "RightsAdminTest",
-	testSecret = 'supersecret';
+	testSecret = 'supersecret',
+	MochaTestDoc = null;
 
-describe('Rights Admin', function () {
+describe('admin rights', function () {
 	before(function () {
 		micro
 			.logFile("rights-admin-test.log")
@@ -39,24 +40,14 @@ describe('Rights Admin', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
-
-		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});	
-		
+		micro.listen( port );		
 	  });
 	
-	  it( 'ADMIN POST test', function( done ) {
+	  it( 'should be able to post as admin', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@admin.com", 
@@ -71,11 +62,17 @@ describe('Rights Admin', function () {
 			  		should.not.exist(err);
 				  	res.body.email.should.eql( testObject.email );
 				  	res.body.status.should.eql( testObject.status );
-				  	done();
+					// PURGE all records 
+					MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+						if( err ) { 
+							console.error( err );
+						}
+						done();
+					});
 			  	});
 	  });
 	  
-	  it( 'ADMIN NO TOKEN test', function( done ) {
+	  it( 'should return an error for a missing token', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@admin.com", 
@@ -89,12 +86,11 @@ describe('Rights Admin', function () {
 			  		should.not.exist(err);
 			  		should.exist( res.body.error );
 			  		// Should return: Request Error: Missing token
-			  		// console.error( "NO TOKEN: " + res.body.error );
 				  	done();
 			  	});
 	  });
 	  
-	  it( 'ADMIN BAD TOKEN SEGMENTS test', function( done ) {
+	  it( 'should return an error for bad token segments', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@admin.com", 
@@ -109,12 +105,11 @@ describe('Rights Admin', function () {
 			  		should.not.exist(err);
 			  		should.exist( res.body.error );
 			  		// Should return: Error: Not enough or too many segments
-			  		// console.error( "BAD TOKEN SEGMENTS: " + res.body.error );
 				  	done();
 			  	});
 	  });
 	
-	  it( 'ADMIN INVALID TOKEN test', function( done ) {
+	  it( 'should return an error for an invalid token', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@admin.com", 
@@ -130,12 +125,11 @@ describe('Rights Admin', function () {
 			  		should.not.exist(err);
 			  		should.exist( res.body.error );
 			  		// SyntaxError: Unexpected token
-			  		// console.error( "INVALID TOKEN: " + res.body.error );
 				  	done();
 			  	});
 	  });
 	  
-	  it( 'UNAUTHORIZED ADMIN POST test', function( done ) {
+	  it( 'should return an error for an unauthorized post attempt', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@admin.com", 
@@ -153,7 +147,7 @@ describe('Rights Admin', function () {
 			  	});
 	  });
 	  
-	  it( 'ADMIN POST ROLE MISSING', function( done ) {
+	  it( 'should return an error for a missing role', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@admin.com", 
@@ -171,7 +165,7 @@ describe('Rights Admin', function () {
 			  	});
 	  });
 	  
-	  it( 'ADMIN POST BAD SECRET KEY', function( done ) {
+	  it( 'should return an error for an invalid secret key', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@admin.com", 
@@ -191,7 +185,7 @@ describe('Rights Admin', function () {
 			  	});
 	  });
 	  
-	  it( 'ADMIN ACCESS USER VERB - GET COLLECTION', function( done ) {
+	  it( 'should be able to get a collection when a user role is required', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -220,7 +214,7 @@ describe('Rights Admin', function () {
 			  });
 	  });
 	  
-	  it( 'ADMIN ACCESS PUBLIC VERB - GET DOCUMENT', function( done ) {
+	  it( 'should be able to get a document when a public role is required', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 

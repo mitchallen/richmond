@@ -11,15 +11,16 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
+	MochaTestDoc = null,
 	modelName = "GetTest";	// Will translate to lowercase
 
-var MochaTestDoc = null;
+
 
 describe('get', function () {
 	before(function () {
@@ -49,7 +50,7 @@ describe('get', function () {
 					
 	  });
 	  	  
-	  it( 'using a filter should responds with proper document', function( done ) {
+	  it( 'should get a filtered document', function( done ) {
 		  
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
@@ -74,7 +75,6 @@ describe('get', function () {
 						.end(function(err, res){
 						  	should.not.exist(err);
 							should.exist( res.body );
-							// TODO: This fails now and then on cloud server.
 							should.exist( res.body[0] );
 						  	should.exist( res.body[0].email );
 						  	should.exist( res.body[0].status );
@@ -90,7 +90,7 @@ describe('get', function () {
 			  });
 	  });
 	  	  	  
-	  it( 'using a field list should respond with the proper fields', function( done ) {
+	  it( 'should get fields from a list', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
 			var testObject = { 
@@ -110,7 +110,6 @@ describe('get', function () {
 						// MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
 						.query('filter={"email":"' + testEmail + '"}')
 						.query('fields=email status')
-						// TODO options (findOne, etc)
 						.expect( 'Content-Type', /json/ )
 						.expect( 200 )
 						.end(function(err, res){
@@ -123,7 +122,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'using a single field list should respond with the proper field', function( done ) {
+	  it( 'should get a single field', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
 			var testObject = { 
@@ -155,7 +154,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'should not return non-selected field', function( done ) {
+	  it( 'should not get field where select equals false', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -189,7 +188,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'GET DOCUMENT and NON-SELECTED but FIELD SELECTED', function( done ) {
+	  it( 'should get field even though selected equals false', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -225,7 +224,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'GET DOCUMENT and FIELDS MULTI responds with proper JSON', function( done ) {
+	  it( 'should get multiple selected fields', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -259,7 +258,7 @@ describe('get', function () {
 	  });
 	  
 	  
-	  it( 'GET DOCUMENT and FIELDS FEWER responds with proper JSON', function( done ) {
+	  it( 'should only get a single field and an id', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -292,7 +291,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'GET BAD filter FORMAT responds with proper JSON ERROR', function( done ) {
+	  it( 'should get an error for a bad filter format', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
 			var testObject = { 
@@ -311,18 +310,16 @@ describe('get', function () {
 						.get( testUrl )
 						// USE SINGLE QUOTES LEADS TO ERROR
 						.query("filter={'email':'" + testEmail + "'}")
-						// .expect( 'Content-Type', /json/ )
 						.expect( 403 )
 						.end(function(err, res){
 						  	should.not.exist(err);
 						  	should.exist( res.body.error );
-						  	// console.log( res.body.error );
 						  	done();
 					  })
 			  });
 	  });
 	  
-	  it( 'GET OPTIONS LIMIT responds with proper JSON', function( done ) {
+	  it( 'should get a limited number of documents', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@limit.com"
 			var testObject = { 
@@ -354,7 +351,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'GET OPTIONS SKIP responds with proper JSON', function( done ) {
+	  it( 'should get a skipped document', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@limit.com"
 			var testObject = { 
@@ -392,7 +389,6 @@ describe('get', function () {
 								  	should.exist( res.body[0].email );
 								  	should.exist( res.body[0].status );
 								  	should.not.exist( res.body[1] );
-								  	// console.log( "COMPARE: " + firstRecord.email + " vs. " + secondRecord.email );
 								  	firstRecord.email.should.not.eql( secondRecord.email );
 								  	done();
 							  })
@@ -400,7 +396,7 @@ describe('get', function () {
 			  });
 	  });
 	  
-	  it( 'GET OPTIONS SORT responds with proper JSON', function( done ) {
+	  it( 'should get a sorted list of documents', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@sort.com"
 			var testObject = { 
@@ -429,7 +425,6 @@ describe('get', function () {
 							}
 						  	var prev = null;
 						  	for (var i in res.body) {
-						  	  // console.log("EMAIL: " + res.body[i].email);
 						  	  if( prev ) {
 						  		  var compare = ( prev < res.body[i].email );
 						  		  compare.should.be.Boolean;

@@ -20,7 +20,7 @@ var request = require('supertest'),
 	modelName = "SslNotFoundTest",	// Will translate to lowercase
 	MochaTestDoc = null;
 
-describe('SSL Not Found Tests', function () {
+describe('ssl not found', function () {
 	before(function () {
 		micro
 			.logFile("ssl-404-test.log")
@@ -47,7 +47,7 @@ describe('SSL Not Found Tests', function () {
 		micro.listen( port );	
 	  });
 	
-	  it( '@JENKINS POST NON-SSL NOT FOUND', function( done ) {
+	  it( 'should return not found when posting to non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@post.com", 
@@ -69,7 +69,7 @@ describe('SSL Not Found Tests', function () {
 			  	});
 	  });
 	  
-	  it( 'GET COLLECTION NON-SSL NOT FOUND', function( done ) {
+	  it( 'should return not found when getting a collection via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -84,10 +84,8 @@ describe('SSL Not Found Tests', function () {
 						done();
 					 })
 	  });
-	  
-	  // TODO - write test where ID not valid
-	  
-	  it( 'GET DOCUMENT NON-SSL NOT FOUND', function( done ) {
+	  	  
+	  it( 'should return not found when getting a document via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -114,7 +112,7 @@ describe('SSL Not Found Tests', function () {
 			  });
 	  });
 	  
-	  it( 'DELETE NON-SSL NOT FOUND', function( done ) {
+	  it( 'should return not found when deleting via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@zap.com", 
@@ -144,7 +142,7 @@ describe('SSL Not Found Tests', function () {
 			  });
 	  });
 	  
-	  it( 'PUT NON-SSL NOT FOUND', function( done ) {
+	  it( 'should return not found when putting via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@put.com", 
@@ -173,7 +171,7 @@ describe('SSL Not Found Tests', function () {
 			  });
 	  });
 	  
-	  it( 'PATCH NON-SSL NOT FOUND', function( done ) {
+	  it( 'should return not found when patching via non-ssl', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@patch.com", 

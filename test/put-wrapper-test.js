@@ -11,19 +11,18 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
 	modelName = "PutTest",	// Will translate to lowercase
 	testSecret = 'supersecret',
-	ownerEmail = "test@zap.com"
-
-var MochaTestDoc = null;
+	ownerEmail = "test@zap.com",
+	MochaTestDoc = null;
 		
-describe('PUT Wrapper Test Suite', function () {
+describe('put before after', function () {
 	before(function () {
 	
 		var testExtraMessage = 'Testing 123';
@@ -33,9 +32,6 @@ describe('PUT Wrapper Test Suite', function () {
 					if( ! prop.req ) return err( new Error("prop.req not found") );
 					var req = prop.req;
 					if( ! req.token ) return err( new Error("token.req not found") );
-					// console.log( "TOKEN: " + JSON.stringify( req.token ) );
-					// console.log( "BEFORE PUT: ID: " + req.params.id );
-					// console.log( "REQ.BODY: " + JSON.stringify( req.body ) );
 					var options = {};
 					var extras = { message: testExtraMessage };
 					next( req.body, options, extras );
@@ -47,12 +43,9 @@ describe('PUT Wrapper Test Suite', function () {
 					var req = prop.req;
 					if( ! prop.numAffected ) return err( new Error("prop.numAffected not found") );
 					var numAffected = prop.numAffected;
-					// console.log( "AFTER PUT: ID: " + req.params.id );
-					// console.log( "NUMBER AFFECTED: " + numAffected )
 					if( prop.numAffected != 1 ) 
 						return err( new Error("numAffected should be 1, but it was:", numAffected ) );
 					var extras = prop.extras;
-					// console.log( "EXTRAS: " + extras.message );
 					if( extras.message != testExtraMessage ) {
 						throw new Error( "Test extra message not what expected.");
 					}
@@ -80,11 +73,10 @@ describe('PUT Wrapper Test Suite', function () {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
 		} );
-			
 		micro.listen( port );	
 	  });
 	
-	 it( 'PUT wrapper test', function( done ) {
+	 it( 'before should inject a message and after should confirm it', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@put.com", 

@@ -11,17 +11,18 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
 	modelName = "PutTest",	// Will translate to lowercase
 	testSecret = 'supersecret',
-	ownerEmail = "test@zap.com"
+	ownerEmail = "test@zap.com",
+	MochaTestDoc = null;
 
-describe('PUT After Error Test Suite', function () {
+describe('put after error', function () {
 	before(function () {
 		
 		var testExtraMessage = 'Testing 123';
@@ -31,9 +32,6 @@ describe('PUT After Error Test Suite', function () {
 					if( ! prop.req ) return err( new Error("prop.req not found") );
 					var req = prop.req;
 					if( ! req.token ) return err( new Error("token.req not found") );
-					// console.log( "TOKEN: " + JSON.stringify( req.token ) );
-					// console.log( "BEFORE PUT: ID: " + req.params.id );
-					// console.log( "REQ.BODY: " + JSON.stringify( req.body ) );
 					var options = {};
 					var extras = { message: testExtraMessage };
 					next( req.body, options, extras );
@@ -67,23 +65,14 @@ describe('PUT After Error Test Suite', function () {
 				pass: dbPass
 		};
 		micro.connect( connection, options );
-		var MochaTestDoc = micro.addModel( modelName, {
+		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   
-		} );
-				
-		micro.listen( port );
-		
-		// PURGE all records 
-		
-		MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-			if( err ) { 
-				console.error( err );
-			}
-		});		
+		});	
+		micro.listen( port );	
 	  });
 	
-	 it( 'PUT After Error Reponse Test', function( done ) {
+	 it( 'should return the injected error', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@put.com", 
@@ -107,7 +96,13 @@ describe('PUT After Error Test Suite', function () {
 						.end( function(err, res ) {
 							// console.log( err );
 						  	should.not.exist(err);
-						  	done();
+							// PURGE all records 
+							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
+								if( err ) { 
+									console.error( err );
+								}
+								done();
+							});	
 					  })
 			  });
 	  });

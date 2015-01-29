@@ -10,16 +10,16 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
 	modelName = "SmokeTest",	// Will translate to lowercase
 	MochaTestDoc = null;
 
-describe('@SMOKE Smoke Test the Service', function () {
+describe('smoke tests', function () {
 	before(function () {
 		micro
 			.logFile("smoke-test.log")
@@ -45,7 +45,7 @@ describe('@SMOKE Smoke Test the Service', function () {
 		micro.listen( port );		
 	  });
 	  
-	  it( '@SMOKE POST test', function( done ) {
+	  it( 'should confirm that post works', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@post.com", 
@@ -69,7 +69,7 @@ describe('@SMOKE Smoke Test the Service', function () {
 			  	});
 	  });
 	  	  	  
-	  it( 'GET COLLECTION responds with proper JSON', function( done ) {
+	  it( 'should confirm that get collection works', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -96,7 +96,7 @@ describe('@SMOKE Smoke Test the Service', function () {
 			  });
 	  });
 	  	  
-	  it( 'GET DOCUMENT responds with proper JSON', function( done ) {
+	  it( 'should confirm that get document works', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
@@ -128,7 +128,7 @@ describe('@SMOKE Smoke Test the Service', function () {
 			  });
 	  });
 	  	  
-	  it( 'DELETE test', function( done ) {
+	  it( 'should confirm that delete works', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@zap.com", 
@@ -143,10 +143,8 @@ describe('@SMOKE Smoke Test the Service', function () {
 			  	.end( function(err, res) {
 				  	should.not.exist(err);
 				  	testId = res.body._id;
-				  	// console.log( "ID: " + testId );
 				  	// DELETE
 					var zapUrl = testUrl + "/" + testId;
-					// console.log( zapUrl );
 					request( testHost )
 						.del( zapUrl )
 						.expect( 200 )
@@ -157,7 +155,7 @@ describe('@SMOKE Smoke Test the Service', function () {
 			  });
 	  });
 	  
-	  it( 'PUT test', function( done ) {
+	  it( 'should confirm that put works', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@put.com", 

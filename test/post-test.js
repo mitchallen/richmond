@@ -12,17 +12,17 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
 	connection = service.dbConn,
 	dbUser = service.dbUser,
 	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	testHost = service.host,
 	modelName = "PostTest";	// Will translate to lowercase
 
 MochaTestDoc = null;
 
-describe('POST Test Suite', function () {
+describe('post', function () {
 	before(function () {
 		
 		var testExtraMessage = 'Testing 123';
@@ -99,7 +99,7 @@ describe('POST Test Suite', function () {
 		
 	  });
 	  
-	  it( 'POST before and after test', function( done ) {
+	  it( 'before method should encrypt password', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@afterpost.com", 
@@ -155,7 +155,7 @@ describe('POST Test Suite', function () {
 			  	});
 	  })
 	
-	  it( 'POST MISSING REQUIRED FIELD', function( done ) {
+	  it( 'should return an error if a required field is missing', function( done ) {
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
 			var testObject = { 
 				email: "test" + getRandomInt( 1000, 1000000 ) + "@post.com"  };
