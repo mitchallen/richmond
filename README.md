@@ -5,6 +5,10 @@ richmond.js
 A node.js module for managing small databases
 -----------------------------------------------
 
+#### Version 0.0.9 release notes
+
+* A major reworking pulling in a derived class
+
 #### Version 0.0.8 release notes
 
 * Refactored logging
