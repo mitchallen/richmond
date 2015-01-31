@@ -12,9 +12,7 @@ var request = require('supertest'),
 	service   	= config.service,
 	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
+	dbConfig = config.mongoose,
 	testHost = service.host,
 	modelName = "SmokeTest",	// Will translate to lowercase
 	MochaTestDoc = null;
@@ -33,10 +31,10 @@ describe('smoke tests', function () {
 		  		}))
 			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
 		var options = {
-				user: dbUser,
-				pass: dbPass
-		};
-		micro.connect( connection, options );
+				user: dbConfig.user,
+				pass: dbConfig.pass
+			};
+		micro.connect( dbConfig.uri, options );
 		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   

@@ -12,9 +12,7 @@ var request = require('supertest'),
 	service = config.service,
 	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
+	dbConfig = config.mongoose,
 	testHost = service.host,
 	AlphaTestDoc = null,
 	BetaTestDoc = null,
@@ -40,10 +38,11 @@ describe('two models', function () {
 			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
 		 
 		var options = {
-				user: dbUser,
-				pass: dbPass
+			user: dbConfig.user,
+			pass: dbConfig.pass
 		};
-		micro.connect( connection, options );
+		
+		micro.connect( dbConfig.uri, options );
 		
 		// Model[0]
 		

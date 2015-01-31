@@ -11,21 +11,19 @@ var request = require('supertest'),
 	service   	= config.service,
 	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
+	dbConfig = config.mongoose,
 	alphaModel = null,
 	betaModel = null,
 	modelName = ["AlphaRichmondTest","BetaRichmondTest"];
 
 describe('mulitple collections', function () {
 	before(function () {
-		var options = {
-				user: dbUser,
-				pass: dbPass
-		};
 		micro.logFile("multiple-collections-test.log");
-		micro.connect( connection, options );
+		var options = {
+				user: dbConfig.user,
+				pass: dbConfig.pass
+			};
+		micro.connect( dbConfig.uri, options );
 		alphaModel = micro.addModel( modelName[0], {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },

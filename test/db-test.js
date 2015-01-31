@@ -11,12 +11,12 @@ var request = require('supertest'),
 	service   	= config.service,
 	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
+	dbConfig = config.mongoose,
+	dbUser = dbConfig.user,
+	dbPass = dbConfig.pass,
 	modelName = "RichmondDbTest";	// Will translate to lowercase
 
-describe('richmond', function () {
+describe('database', function () {
 	before(function () {
 		micro.logFile("db-test.log");
 	 });
@@ -26,7 +26,7 @@ describe('richmond', function () {
 				user: dbUser,
 				pass: dbPass
 		};
-		micro.connect( connection, options );
+		micro.connect( dbConfig.uri, options );
 		var dbConn = micro.connection();
 		should.exist( dbConn );
 		micro.closeConnection();
@@ -43,7 +43,7 @@ describe('richmond', function () {
 			micro.connect( null, options );
 		} catch( ex ) {
 			exceptionCaught = true;
-			ex.message.should.containEql("connection string not defined")
+			ex.message.should.containEql("connection string (uri) not defined")
 		}
 		exceptionCaught.should.eql(true);
 		var dbConn = micro.connection();
@@ -61,7 +61,7 @@ describe('richmond', function () {
 			micro.connect( null, options );
 		} catch( ex ) {
 			exceptionCaught = true;
-			ex.message.should.containEql("connection string not defined")
+			ex.message.should.containEql("connection string (uri) not defined")
 		}
 		exceptionCaught.should.eql(true);
 		var dbConn = micro.connection();
@@ -74,8 +74,9 @@ describe('richmond', function () {
 				user: dbUser,
 				pass: undefined
 		};
+		var exceptionCaught = false;
 		try {
-			micro.connect( connection, options );
+			micro.connect( dbConfig.uri, options );
 		} catch( ex ) {
 			exceptionCaught = true;
 			ex.message.should.containEql("database password not defined")
@@ -91,8 +92,9 @@ describe('richmond', function () {
 				user: dbUser,
 				pass: null
 		};
+		var exceptionCaught = false;
 		try {
-			micro.connect( connection, options );
+			micro.connect( dbConfig.uri, options );
 		} catch( ex ) {
 			exceptionCaught = true;
 			ex.message.should.containEql("database password not defined")

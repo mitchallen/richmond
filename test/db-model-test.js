@@ -11,19 +11,17 @@ var request = require('supertest'),
 	service   	= config.service,
 	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
+	dbConfig = config.mongoose,
 	modelName = "RichmondDbTest";	// Will translate to lowercase
 
-describe('richmond model library', function () {
+describe('model library', function () {
 	before(function () {
-		var options = {
-				user: dbUser,
-				pass: dbPass
-		};
 		micro.logFile("db-model-test.log");
-		micro.connect( connection, options );
+		var options = {
+				user: dbConfig.user,
+				pass: dbConfig.pass
+			};
+		micro.connect( dbConfig.uri, options );
 		var testModel = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },

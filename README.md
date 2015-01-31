@@ -5,6 +5,11 @@ richmond.js
 A node.js module for managing small databases
 -----------------------------------------------
 
+#### Version 0.1.0 release notes
+
+* Connection string now referenced internally as uri
+* Refactored test cases, cleaned up env references
+
 #### Version 0.0.9 release notes
 
 * A major reworking pulling in a derived class

@@ -11,12 +11,10 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,x
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	dbConfig = config.mongoose,
+	testHost = service.host,
 	modelName = "PatchTest",	// Will translate to lowercase
 	testSecret = 'supersecret',
 	ownerEmail = "test@patch.com";
@@ -33,10 +31,10 @@ describe('PATCH Tests', function () {
 			.useCors() 			// Cross-Origin Resource Sharing
 			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
 		var options = {
-			user: dbUser,
-			pass: dbPass
-		};
-		micro.connect( connection, options );
+				user: dbConfig.user,
+				pass: dbConfig.pass
+			};
+		micro.connect( dbConfig.uri, options );
 		var MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   

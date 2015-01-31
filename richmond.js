@@ -75,10 +75,10 @@ Richmond.prototype.connection = function() {
 	return this._dbConn;
 }
 
-Richmond.prototype.connect = function( connection, options ) {
+Richmond.prototype.connect = function( uri, options ) {
 	this.closeConnection();
-	if( ! connection ) {
-		var eMsg = "connection string not defined.";
+	if( ! uri ) {
+		var eMsg = "connection string (uri) not defined.";
 		if( this.log ) this.log.error( eMsg );
 		throw new Error( eMsg );
 	}
@@ -90,14 +90,14 @@ Richmond.prototype.connect = function( connection, options ) {
 		// NOTE: must use callback or may get errors reconnecting.
 	};
 	if( ! options.user ) {
-		this._dbConn = this.mongoose.createConnection( connection, cb );
+		this._dbConn = this.mongoose.createConnection( uri, cb );
 	} else {
 		if( ! options.pass ) {
 			var eMsg = "database password not defined.";
 			if( this.log ) this.log.error( eMsg );
 			throw new Error( eMsg );
 		}
-		this._dbConn = this.mongoose.createConnection( connection, options, cb );
+		this._dbConn = this.mongoose.createConnection( uri, options, cb );
 	}   
     return this;
 };

@@ -12,12 +12,10 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
-	testHost = process.env.MOCHA_TEST_HOST || "http://localhost:" + port,
+	dbConfig = config.mongoose,
+	testHost = service.host,	
 	modelName = "DelTest",	// Will translate to lowercase
 	testSecret = 'supersecret',
 	ownerEmail = "test@zap.com";
@@ -63,10 +61,10 @@ describe('delete', function () {
 		  	.secret( testSecret )
 			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
 		var options = {
-					user: dbUser,
-					pass: dbPass
+				user: dbConfig.user,
+				pass: dbConfig.pass
 			};
-		micro.connect( connection, options );
+		micro.connect( dbConfig.uri, options );
 		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },   

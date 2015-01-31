@@ -11,14 +11,12 @@ var request = require('supertest'),
 	config = require('./test-config'),
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
-	port 	= process.env.MOCHA_TEST_PORT || 3021,
+	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
+	dbConfig = config.mongoose,
 	testSecret = 'supersecret',
-	testHost = process.env.MOCHA_TEST_HOST || "http://pageblizzard.ngrok.com",		
-	sslHost  = process.env.MOCHA_TEST_SSL || "https://pageblizzard.ngrok.com",
+	testHost = service.host,		
+	sslHost  = service.hostSsl,
 	modelName = "GetBeforeAfterTest",	// Will translate to lowercase
 	ownerEmail = "test@owner.com", 
     afterTestEmail = "test" + getRandomInt( 1000, 1000000 ) + "@after.com",
@@ -116,10 +114,10 @@ describe('get before and after', function () {
 			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
 		
 		var options = {
-				user: dbUser,
-				pass: dbPass
-		};
-		micro.connect( connection, options );
+				user: dbConfig.user,
+				pass: dbConfig.pass
+			};
+		micro.connect( dbConfig.uri, options );
 		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			status: { type: String, required: true },

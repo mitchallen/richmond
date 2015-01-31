@@ -13,9 +13,7 @@ var request = require('supertest'),
 	service   	= config.service,
 	port 	= service.port,
 	prefix 	= service.prefix,
-	connection = service.dbConn,
-	dbUser = service.dbUser,
-	dbPass = service.dbPass,
+	dbConfig = config.mongoose,
 	testHost = service.host,
 	modelName = "PostTest";	// Will translate to lowercase
 
@@ -72,10 +70,10 @@ describe('post after error', function () {
 		  		}))
 			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
 		var options = {
-				user: dbUser,
-				pass: dbPass
-		};
-		micro.connect( connection, options );
+				user: dbConfig.user,
+				pass: dbConfig.pass
+			};
+		micro.connect( dbConfig.uri, options );
 		MochaTestDoc = micro.addModel( modelName, {
 			email: 	{ type: String, required: true },
 			password: { type: String, required: true, select: false },
