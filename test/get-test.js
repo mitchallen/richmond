@@ -41,13 +41,10 @@ describe('get', function () {
 			status: { type: String, required: true },
 			password: { type: String, select: false }, 
 		} );
-				
-		micro.listen( port );
-					
+		micro.listen( port );		
 	  });
 	  	  
 	  it( 'should get a filtered document', function( done ) {
-		  
 			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
 			var testEmail = "test" + getRandomInt( 1000, 1000000 ) + "@filter.com"
 			var testObject = { 

@@ -112,11 +112,18 @@ Richmond.prototype.controller = function (mod) {
     return this;
 };
 
+Richmond.prototype.use = function(fn) {
+	this.app.use( fn );
+	return this;
+} 
+
 Richmond.prototype.listen = function (port) {
-    this.app.use(bodyParser.json()); // for parsing application/json
-    this.app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-    this.app.use(multer()); // for parsing multipart/form-data
-    this.app.use(require('./lib/token')(this._secret, this.log));
+	
+	this.app.use(bodyParser.json()); // for parsing application/json
+	this.app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+	this.app.use(multer()); // for parsing multipart/form-data
+	this.app.use(require('./lib/token')(this._secret, this.log));
+
     this.router.stack = [];
     if( this.ctrl ) {
         this.ctrl

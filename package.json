@@ -1,6 +1,6 @@
 {
   "name": "@minja/richmond",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "richmond.js core module",
   "main": "richmond.js",
   "scripts": {
