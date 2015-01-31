@@ -4,10 +4,10 @@
 
 var request = require('supertest'),
 	should = require('should'),
-	controller = require('@minja/richmond-web-controller'),
 	Richmond = require('../richmond'),
-	micro = null,
+	micro = new Richmond(),
 	config = require('./test-config'),
+	controller = config.controller,
 	getRandomInt = require('./test-lib').getRandomInt,
 	service   	= config.service,
 	port 	= service.port,

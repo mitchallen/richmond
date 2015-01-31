@@ -5,6 +5,10 @@ richmond.js
 A node.js module for managing small databases
 -----------------------------------------------
 
+#### Version 0.1.2 release notes
+
+* Using new constructor-based controller
+
 #### Version 0.1.1 release notes
 
 * Added use method - call just before listen

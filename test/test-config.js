@@ -2,7 +2,11 @@
  * test-config.js
  */
 
+var Controller = require('@minja/richmond-web-controller');
+
 module.exports = {
+		
+	controller: new Controller(),
 		
 	mongoose: {
 		uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/pageblizzard',
