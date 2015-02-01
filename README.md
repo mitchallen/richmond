@@ -118,21 +118,25 @@ Create a new record at the command line using __curl__ (assumes port __3030__):
 
 Now get the record (by default non-selected fields, like __password__, will not be returned):
 
-    $ curl -X GET -H "Accept: applications/json" http://localhost:3030/api/mytest 
+    $ curl -X GET -H "Accept: applications/json" 
+      http://localhost:3030/api/mytest 
 
 In some browsers, like Chrome, you can also see the raw JSON returned by browsing to: http://localhost:3030/api/mytest
 
 The demo controller lets you get an individual document using the record __id__ like this (substitute for a record from your database):
 
-    $ curl -X GET -H "Accept: applications/json" http://localhost:3030/api/mytest/54ce6eca470103ca057b0097
+    $ curl -X GET -H "Accept: applications/json" 
+      http://localhost:3030/api/mytest/54ce6eca470103ca057b0097
 
-You can append a filter to a GET request like this (__%7B__ = __{__ and __%7D__ = __}__):
+You can append a filter to a GET request like this (__%7B__ = '__{__' and __%7D__ = '__}__'):
 
-    $ curl -X GET -H "Accept: applications/json" 'http://localhost:3030/api/mytest?filter=%7B"email":"test@yourdomain.com"%7D'
+    $ curl -X GET -H "Accept: applications/json" 
+      'http://localhost:3030/api/mytest?filter=%7B"email":"test@yourdomain.com"%7D'
 
 You can also select what fields to show (__%20__ is a __space__), even non-selected fields (like password):
 
-    $ curl -X GET -H "Accept: applications/json" 'http://localhost:3030/api/mytest?fields=email%20status%20password'
+    $ curl -X GET -H "Accept: applications/json" 
+      'http://localhost:3030/api/mytest?fields=email%20status%20password'
 
 Note that if a field was never set in the record, you will not see it listed in the returned record.
 
