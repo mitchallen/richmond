@@ -122,11 +122,11 @@ In some browsers, like Chrome, you can also see the raw JSON returned by browsin
 
 ## Middleware
 
-Under the hood this module is using expressjs and wraps the app.use call.  
+Under the hood this module is using expressjs and wraps the app.use call. 
 To inject middleware, like CORS, you can do the following (assumes you installed cors and required it):
 
-   micro.use( cors() );
-   micro.listen( port );
+    micro.use( cors() );
+    micro.listen( port );
 
 ## SSL
 
@@ -149,12 +149,15 @@ Patch in the demo controller works, but consider it experimental and perform you
 
 ## Wrappers
 
-You can add before and after wrappers to the demo controller like this:
+You can add __before__ and __after__ wrappers to the demo controller like this:
 
-    post:  [{ model: modelName, rights: "PUBLIC", before: beforePost, after: afterPost }],
+    post:  [{ model: modelName, rights: "PUBLIC", 
+              before: beforePost, after: afterPost }],
     
-This example use a before method to hash a password before saving it.
-The after method demonstrates how to remove the hashed password before the doc is returned.
+This example use a __before__ method to hash a password before saving it.
+
+The __after__ method demonstrates how to remove the hashed password before the doc is returned.
+
 The example also includes showing how to pass through extra data to the after method.:
 
     var testExtraMessage = 'Testing 123';
@@ -193,6 +196,60 @@ The example also includes showing how to pass through extra data to the after me
             next( doc );
         };  
     
+## Multiple Models
+
+This module supports multiple models.  The setup could look something like this:
+
+    modelName = ["AlphaTest","BetaTest"];
+
+    micro
+        .logFile("two-models-test.log")
+        .controller( 
+             controller.setup({ 
+                 del:     [ { model: modelName[0], rights: "PUBLIC" },
+                            { model: modelName[1], rights: "PUBLIC" } ],
+                 getOne:  [ { model: modelName[0], rights: "PUBLIC" },
+                            { model: modelName[1], rights: "PUBLIC" } ], 
+                 getMany: [ { model: modelName[0], rights: "PUBLIC" },
+                            { model: modelName[1], rights: "PUBLIC" } ],
+                 post:    [ { model: modelName[0], rights: "PUBLIC" },
+                            { model: modelName[1], rights: "PUBLIC" } ],
+                 put:     [ { model: modelName[0], rights: "PUBLIC" },
+                            { model: modelName[1], rights: "PUBLIC" } ]
+             }))
+             .prefix( prefix );
+		 
+        var options = {
+            user: dbConfig.user,
+            pass: dbConfig.pass
+        };
+		
+        micro.connect( dbConfig.uri, options );
+		
+        // Model[0]
+		
+        AlphaTestDoc = micro.addModel( modelName[0], {
+            email: 	{ type: String, required: true },
+            status: { type: String, required: true },   
+        });
+			
+        // Model[1]
+		
+        BetaTestDoc = micro.addModel( modelName[1], {
+            user: { type: String, required: true },
+            level: { type: String, required: true },   
+        });
+				
+        micro.listen( port ); 
+
+## Logging
+
+If you use the logFile method, the application must be able to create a logs/ folder where the app is installed.
+
+You do not need to include the logs/ path when calling logFile.
+
+    micro.logFile("mytest.log")
+
 ## Tests
 
 Tests assume that mocha has been installed globally.  If not execute the following:
