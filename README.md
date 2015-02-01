@@ -20,9 +20,11 @@ and create a free test database, writing down the credentials.
 
 ### Step 2: Edit ~/.bash_profile
 
-Using your favorite plain text editor add the lines below to ~/.bash_profile (if on a Mac or Linux).
-Replace SUBDOMAIN, DBPORT, DATABASE, USER and PASSWORD with your values.
-You can also choose other values for APP_SECRET and TEST_PORT.
+Using your favorite plain text editor add the lines below to __~/.bash_profile__ (if on a Mac or Linux).
+
+Replace __SUBDOMAIN__, __DBPORT__, __DATABASE__, __USER__ and __PASSWORD__ with your values.
+
+You can also choose other values for __APP_SECRET__ and __TEST_PORT__.
 
     # Application
     export APP_SECRET=testsecret
@@ -108,7 +110,7 @@ From your projects root folder, execute the following at the command line:
 
 ### Step 6: Test the app using curl commands
 
-Create a new record at the command line using curl (assumes port 3030):
+Create a new record at the command line using __curl__ (assumes port __3030__):
 
     $ curl -i -X POST -H "Content-Type: application/json" 
       -d '{"email":"test@yourdomain.com","status":"OK"}' 
@@ -122,16 +124,18 @@ In some browsers, like Chrome, you can also see the raw JSON returned by browsin
 
 ## Middleware
 
-Under the hood this module is using expressjs and wraps the app.use call. 
-To inject middleware, like CORS, you can do the following (assumes you installed cors and required it):
+Under the hood this module is using __express.js__ and wraps the __app.use__ call.
+ 
+To inject middleware, like __CORS__, you can do the following (assumes you installed __cors__ and required it):
 
     micro.use( cors() );
     micro.listen( port );
 
 ## SSL
 
-The Web controller in the demo supports SSL.  
-To use SSL with that controller you must add an SSL key with a value of 404 or 302 in the setup.
+The Web controller in the demo supports SSL. 
+ 
+To use SSL with the demo controller you must add an SSL key with a value of 404 or 302 in the setup.
 
 For example, here is how you would did it for getOne:
 
@@ -145,7 +149,6 @@ A value of 302 (Moved) will result in the user being redirected to the SSL equiv
 ## PATCH
 
 Patch in the demo controller works, but consider it experimental and perform your own testing to confirm.
-
 
 ## Wrappers
 
@@ -244,9 +247,9 @@ This module supports multiple models.  The setup could look something like this:
 
 ## Logging
 
-If you use the logFile method, the application must be able to create a logs/ folder where the app is installed.
+If you use the __logFile__ method, the application must be able to create a __logs/__ folder where the app is installed.
 
-You do not need to include the logs/ path when calling logFile.
+You do not need to include the __logs/__ path when calling __logFile__.
 
     micro.logFile("mytest.log")
 
@@ -263,6 +266,8 @@ Run the tests in one of the following two ways:
 Or
 
     $ npm test
+
+Check the results in the apps __logs/__ folder for any errors.
 
 ## Contributing
 
