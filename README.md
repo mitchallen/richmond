@@ -62,26 +62,26 @@ Then when you are done with that, execute the following at the command line:
 
 ### Step 2: Create index.js in your projects root folder:
 
-    var Richmond = require('richmond'),
-	    micro = new Richmond(),
-	    config = require('./config'),
+    var Richmond   = require('richmond'),
+	    micro      = new Richmond(),
+	    config     = require('./config'),
 	    controller = config.controller,
-	    service   	= config.service,
-	    port 	= service.port,
-	    prefix 	= service.prefix,
-	    dbConfig = config.mongoose,
-	    MyTestDoc = null,
-	    modelName = "MyTest";	
+	    service    = config.service,
+	    port 	   = service.port,
+	    prefix 	   = service.prefix,
+	    dbConfig   = config.mongoose,
+	    MyTestDoc  = null,
+	    modelName  = "MyTest";	
 
     micro
 		.logFile("my-test.log")
 		.controller( 
 		  	controller.setup({ 
-		  		del:  		\\\[ { model: modelName, rights: "PUBLIC" } \\\],
-		  		getOne:  	\\\[ { model: modelName, rights: "PUBLIC" } \\\], 
-		  		getMany:  	\\\[ { model: modelName, rights: "PUBLIC" } \\\],
-		  		post: 		\\\[ { model: modelName, rights: "PUBLIC" } \\\],
-		  		put: 		\\\[ { model: modelName, rights: "PUBLIC" } \\\],
+		  		del: 		[{ model: modelName, rights: "PUBLIC" }],
+		  		getOne:  	[{ model: modelName, rights: "PUBLIC" }], 
+		  		getMany:  	[{ model: modelName, rights: "PUBLIC" }],
+		  		post: 		[{ model: modelName, rights: "PUBLIC" }],
+		  		put: 		[{ model: modelName, rights: "PUBLIC" }],
 		  	}))
 		.prefix( prefix );	
     var options = {
@@ -98,7 +98,7 @@ Then when you are done with that, execute the following at the command line:
 
 ## Tests
 
-  npm test
+    npm test
 
 ## Contributing
 
