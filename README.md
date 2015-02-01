@@ -111,6 +111,16 @@ From your projects root folder, execute the following at the command line:
 
 ## Tests
 
+Tests assume that mocha has been installed globally.  If not execute the following:
+
+    $ npm install -g mocha
+
+Run the tests in one of the following to ways
+
+    $ mocha
+    
+Or
+
     $ npm test
 
 ## Contributing
