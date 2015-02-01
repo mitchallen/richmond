@@ -9,7 +9,7 @@ module.exports = {
 	controller: new Controller(),
 		
 	mongoose: {
-		uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/pageblizzard',
+		uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
 		user: process.env.TEST_MONGO_USER || null,
 		pass: process.env.TEST_MONGO_PASS || null	
 	},

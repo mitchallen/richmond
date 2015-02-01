@@ -1,4 +1,4 @@
 test:
-	mocha --reporter spec
+	mocha --timeout 5000 --reporter spec
 
 .PHONY: test

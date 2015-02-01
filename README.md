@@ -2,55 +2,113 @@
 richmond.js
 ================
 
-A node.js module for mapping Web calls to a DB
------------------------------------------------
+A node.js module for mapping Web calls to MongoDB
+-------------------------------------------------
 
-#### Version 0.1.2 release notes
+## Installation
 
-* Using new constructor-based controller
+  npm install richmond --save
+  npm install richmond-web-controller --save
 
-#### Version 0.1.1 release notes
+## Usage
 
-* Added use method - call just before listen
+### Step 1: Visit MongoLab
 
-#### Version 0.1.0 release notes
+Use your own local install of MongoDB or visit https://mongolab.com 
+and create a free test database, writing down the credentials.
 
-* Connection string now referenced internally as uri
-* Refactored test cases, cleaned up env references
+### Step 2: Edit ~/.bash_profile
 
-#### Version 0.0.9 release notes
+Using your favorite plain text editor add the following to ~/.bash_profile:
 
-* A major reworking pulling in a derived class
+    # Application
+    export APP_SECRET=mysecret
 
-#### Version 0.0.8 release notes
+    # MONGO LABS DB
+    export TEST_MONGO_DB=mongodb://[YOUR-SUBDOMAIN].mongolab.com:29811/[YOUR-DATABASE]
+    export TEST_MONGO_USER=[YOUR-USER]
+    export TEST_MONGO_PASS=[YOUR-PASSWORD]
 
-* Refactored logging
+    export TEST_PORT=3030
+    
+Then when you are done with that, execute the following at the command line:
 
-#### Version 0.0.7 release notes
+    source ~/.bash_profile
 
-* Create ./log folder if none exists
+### Step 3: Create a config.js file in your projects root folder:
 
-#### Version 0.0.6 release notes
+    /**
+     * config.js
+     */
 
-* logFile returns this to support chaining
+    var Controller = require('richmond-web-controller');
 
-#### Version 0.0.5 release notes
+    module.exports = {
+		
+	    controller: new Controller(),
+		
+	    mongoose: {
+		    uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
+		    user: process.env.TEST_MONGO_USER || null,
+		    pass: process.env.TEST_MONGO_PASS || null	
+	    },
+		
+	    service: {
+		    secret: process.env.APP_SECRET || null,
+		    prefix: "/API",
+		    port: process.env.TEST_PORT || null
+	    }
+    };
 
-* Added logging
+### Step 2: Create index.js in your projects root folder:
 
-#### Version 0.0.4 release notes
+    var Richmond = require('richmond'),
+	    micro = new Richmond(),
+	    config = require('./config'),
+	    controller = config.controller,
+	    service   	= config.service,
+	    port 	= service.port,
+	    prefix 	= service.prefix,
+	    dbConfig = config.mongoose,
+	    MyTestDoc = null,
+	    modelName = "MyTest";	
 
-* Added test folder to .npmignore
+    micro
+		.logFile("my-test.log")
+		.controller( 
+		  	controller.setup({ 
+		  		del:  		\\\[ { model: modelName, rights: "PUBLIC" } \\\],
+		  		getOne:  	\\\[ { model: modelName, rights: "PUBLIC" } \\\], 
+		  		getMany:  	\\\[ { model: modelName, rights: "PUBLIC" } \\\],
+		  		post: 		\\\[ { model: modelName, rights: "PUBLIC" } \\\],
+		  		put: 		\\\[ { model: modelName, rights: "PUBLIC" } \\\],
+		  	}))
+		.prefix( prefix );	
+    var options = {
+        user: dbConfig.user,
+        pass: dbConfig.pass
+    };
+    micro.connect( dbConfig.uri, options );
+    MyTestDoc = micro.addModel( modelName, {
+        email: 	{ type: String, required: true },
+        status: { type: String, required: true },
+        password: { type: String, select: false }, 
+    });
+    micro.listen( port );
 
-#### Version 0.0.3 release notes
+## Tests
 
-* Added normalizeModelName method
+  npm test
 
-#### Version 0.0.2 release notes
+## Contributing
 
-* addModel now throws error if called before connection
+In lieu of a formal styleguide, take care to maintain the existing coding style.
+Add unit tests for any new or changed functionality. Lint and test your code.
 
-#### Version 0.0.1 release notes
+## Release History
 
-* Implemented initial core functionality
+#### Version 0.1.3 release notes
+
+* Final pre-release
+
 
