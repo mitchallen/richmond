@@ -263,14 +263,6 @@ This module supports multiple models.  The setup could look something like this:
 				
         micro.listen( port ); 
 
-## Logging
-
-If you use the __logFile__ method, the application must be able to create a __logs/__ folder where the app is installed.
-
-You do not need to include the __logs/__ path when calling __logFile__.
-
-    micro.logFile("mytest.log")
-
 ## Tests
 
 Tests assume that mocha has been installed globally.  If not execute the following:

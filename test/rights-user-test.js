@@ -2,6 +2,8 @@
  * rights-user-test.js
  */
 
+"use strict";
+
 var request = require('supertest'),
 	should = require('should'),
 	jwt = require('jwt-simple'),
@@ -228,7 +230,7 @@ describe('user rights', function () {
 			  	.expect( 201 )
 			  	.end(function(err, res){
 				  	should.not.exist(err);
-				  	testId = res.body._id;
+				  	var testId = res.body._id;
 					// GET by ID
 					request( testHost )
 						.get( testUrl + "/" + testId )

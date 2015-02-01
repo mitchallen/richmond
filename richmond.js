@@ -2,67 +2,62 @@
  * richmond.js
  */
 
+"use strict";
+
 var Log = require('log'),
-	bodyParser = require('body-parser'),
-	multer = require('multer'),
+    bodyParser = require('body-parser'),
+    multer = require('multer'),
     fs = require('fs');
 
 function Richmond() {
-  this._secret = 'secret';
-  this.app = require('express')(),
-  this.mongoose = require('mongoose'),
-  this.Schema = this.mongoose.Schema,
-  this.ObjectId = this.Schema.ObjectId,
-
-  this.router = require('express').Router(),
-  
-  this._model = require('./lib/model'),
-  this._dbConn = null,
-
-  this.server = null,
-  this.ctrl = null;
-  this.name    = require("./package").name;
-  this.version = require("./package").version;
-  this.prefix  = require('./lib/prefix');
-  this.dir = './logs';
-  this.log = log = null;
-  this.name    = require("./package").name;
-  this.version = require("./package").version;
+    this.m_secret = 'secret';
+    this.app = require('express')();
+    this.mongoose = require('mongoose');
+    this.Schema = this.mongoose.Schema;
+    this.ObjectId = this.Schema.ObjectId;
+    this.router = require('express').Router();
+    this.m_model = require('./lib/model');
+    this.m_conn = null;
+    this.server = null;
+    this.ctrl = null;
+    this.name    = require("./package").name;
+    this.version = require("./package").version;
+    this.prefix  = require('./lib/prefix');
+    this.log = null;
+    this.name    = require("./package").name;
+    this.version = require("./package").version;
 }
 
 module.exports = Richmond; // For export
 
-Richmond.prototype.logFile = function( file ) {
-	if (!fs.existsSync(this.dir)){
-	    fs.mkdirSync(this.dir);
-	}
-	this.log = new Log('debug', fs.createWriteStream( this.dir + '/' + file ));
-	return this;
+Richmond.prototype.logFile = function (file) {
+    this.log = new Log('debug', fs.createWriteStream( file ));
+    return this;
 }
 
 Richmond.prototype.model = function( name ) {
-	return this._model.model( name.toLowerCase() );
+	return this.m_model.model( name.toLowerCase() );
 }
 
 Richmond.prototype.normalizeModelName = function( name ) {
-	return this._model.normalizeModelName( name );
+	return this.m_model.normalizeModelName( name );
 }
 
 Richmond.prototype.addModel = function( modelName, model ) {
-	if( ! this._dbConn ) throw new Error("Must connect to database first.");
-	return this._model.addModel( 
+	if( ! this.m_conn ) throw new Error("Must connect to database first.");
+	return this.m_model.addModel( 
 			modelName, 
 			model, 
-			this._dbConn  
+			this.m_conn  
 	);
 };
 
 Richmond.prototype.closeConnection = function() {
-	if( this._dbConn ) {
+	if( this.m_conn ) {
 		this.mongoose.disconnect( 
 			function() {} 
 		);
-		this._dbConn = null;
+		this.m_conn = null;
 	}
 }
 
@@ -72,7 +67,7 @@ Richmond.prototype.close = function() {
 }
 
 Richmond.prototype.connection = function() {
-	return this._dbConn;
+	return this.m_conn;
 }
 
 Richmond.prototype.connect = function( uri, options ) {
@@ -90,20 +85,20 @@ Richmond.prototype.connect = function( uri, options ) {
 		// NOTE: must use callback or may get errors reconnecting.
 	};
 	if( ! options.user ) {
-		this._dbConn = this.mongoose.createConnection( uri, cb );
+		this.m_conn = this.mongoose.createConnection( uri, cb );
 	} else {
 		if( ! options.pass ) {
 			var eMsg = "database password not defined.";
 			if( this.log ) this.log.error( eMsg );
 			throw new Error( eMsg );
 		}
-		this._dbConn = this.mongoose.createConnection( uri, options, cb );
+		this.m_conn = this.mongoose.createConnection( uri, options, cb );
 	}   
     return this;
 };
 
 Richmond.prototype.secret = function (s) {
-    this._secret = s;
+    this.m_secret = s;
     return this;
 };
 
@@ -122,7 +117,7 @@ Richmond.prototype.listen = function (port) {
 	this.app.use(bodyParser.json()); // for parsing application/json
 	this.app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 	this.app.use(multer()); // for parsing multipart/form-data
-	this.app.use(require('./lib/token')(this._secret, this.log));
+	this.app.use(require('./lib/token')(this.m_secret, this.log));
 
     this.router.stack = [];
     if( this.ctrl ) {
@@ -133,20 +128,21 @@ Richmond.prototype.listen = function (port) {
             .install( this.app );
     }
     // ERROR handler - put last.
+   var log = this.log;
    this.app.use(function(err, req, res, next) {
         var errObject = {
             message: err.message,
             error: err };
-        if( this.log ) {
-        	this.log.error("ERROR HANDLER: " + JSON.stringify( errObject ) );
+        if( log ) {
+        	log.error("ERROR HANDLER: " + JSON.stringify( errObject ) );
         }
         try {
             res.status(err.status || 500); // Uses return to stop propagation.
             res.send( errObject );	// TODO - investigate "Can't set header after they are sent." (bad test?)
         } catch( ex ) {
-            if( this.log ) {
-            	this.log.error("### DEBUG - resend error" );
-            	this.log.error( ex );
+            if( log ) {
+            	log.error("### DEBUG - resend error" );
+            	log.error( ex );
             }
         }
 		return;
