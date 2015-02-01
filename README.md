@@ -2,7 +2,7 @@
 richmond.js
 ================
 
-A node.js module for managing small databases
+A node.js module for mapping Web calls to a DB
 -----------------------------------------------
 
 #### Version 0.1.2 release notes
