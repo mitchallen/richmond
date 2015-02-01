@@ -7,8 +7,8 @@ A node.js module for mapping Web calls to MongoDB
 
 ## Installation
 
-  npm install richmond --save
-  npm install richmond-web-controller --save
+    $ npm install richmond --save
+    $ npm install richmond-web-controller --save
 
 ## Usage
 
@@ -19,21 +19,23 @@ and create a free test database, writing down the credentials.
 
 ### Step 2: Edit ~/.bash_profile
 
-Using your favorite plain text editor add the following to ~/.bash_profile:
+Using your favorite plain text editor add the lines below to ~/.bash_profile (if on a Mac or Linux).
+Replace SUBDOMAIN, DBPORT, DATABASE, USER and PASSWORD with your values.
+You can also choose other values for APP_SECRET and TEST_PORT.
 
     # Application
-    export APP_SECRET=mysecret
+    export APP_SECRET=testsecret
 
     # MONGO LABS DB
-    export TEST_MONGO_DB=mongodb://[YOUR-SUBDOMAIN].mongolab.com:29811/[YOUR-DATABASE]
-    export TEST_MONGO_USER=[YOUR-USER]
-    export TEST_MONGO_PASS=[YOUR-PASSWORD]
+    export TEST_MONGO_DB=mongodb://SUBDOMAIN.mongolab.com:DBPORT/DATABASE
+    export TEST_MONGO_USER=USER
+    export TEST_MONGO_PASS=PASSWORD
 
-    export TEST_PORT=3030
+    export TEST_PORT=3030 
     
-Then when you are done with that, execute the following at the command line:
+When you are done with that, execute the following at the command line:
 
-    source ~/.bash_profile
+    $ source ~/.bash_profile
 
 ### Step 3: Create a config.js file in your projects root folder:
 
@@ -60,7 +62,7 @@ Then when you are done with that, execute the following at the command line:
 	    }
     };
 
-### Step 2: Create index.js in your projects root folder:
+### Step 4: Create index.js in your projects root folder:
 
     var Richmond   = require('richmond'),
 	    micro      = new Richmond(),
@@ -96,9 +98,20 @@ Then when you are done with that, execute the following at the command line:
     });
     micro.listen( port );
 
+### Step 5: Install and run the app
+
+From your projects root folder, execute the following at the command line:
+
+    $ npm install
+    $ node index.js
+
+### Step 6: Test the app
+
+    TODO: curl commands 
+
 ## Tests
 
-    npm test
+    $ npm test
 
 ## Contributing
 
