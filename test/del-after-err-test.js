@@ -103,7 +103,9 @@ describe('delete after error', function () {
             .expect(201)
             .end(function (err, res) {
                 should.not.exist(err);
+                /*jslint nomen: true*/
                 testId = res.body._id;
+                /*jslint nomen: false*/
                 // DELETE
                 var zapUrl = testUrl + "/" + testId;
                 request(testHost)
