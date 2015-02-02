@@ -134,6 +134,7 @@ Richmond.prototype.listen = function (port) {
     }
     // ERROR handler - put last.
     var log = this.log;
+    /*jslint unparam: true*/
     this.app.use(function (err, req, res, next) {
         var errObject = {
             message: err.message,
@@ -153,6 +154,7 @@ Richmond.prototype.listen = function (port) {
         }
         return; // Stop propagation
     });
+    /*jslint unparam: false*/
     if (this.log) {
         this.log.info("Listening on port:", port);
     }
