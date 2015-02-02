@@ -15,9 +15,9 @@ var request = require('supertest'),
     config = require('./test-config'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
-    service       = config.service,
-    port     = service.port,
-    prefix     = service.prefix,
+    service = config.service,
+    port = service.port,
+    prefix = service.prefix,
     dbConfig = config.mongoose,
     testHost = service.host,
     modelName = "DelTest",    // Will translate to lowercase
@@ -34,33 +34,24 @@ describe('delete after error', function () {
             afterDelete = null;
         beforeDelete =
             function (err, prop, next) {
+                should.exist(err);
                 var req = prop.req,
                     extras = { message: testExtraMessage };
-                if (!prop.req) {
-                    return err(new Error("prop.req not found"));
-                }
-                if (!req.token) {
-                    return err(new Error("token.req not found"));
-                }
+                should.exist(prop.req);
+                should.exist(req.token);
                 next(extras);
             };
         afterDelete =
-            function (err, prop) {
+            function (err, prop, next) {
+                should.exist(err);
+                should.exist(next);
                 var req = prop.req,
                     res = prop.res,
                     extras = prop.extras;
-                if (!prop.req) {
-                    return err(new Error("prop.req not found"));
-                }
-                if (!prop.res) {
-                    return err(new Error("prop.res not found"));
-                }
-                if (!req.token) {
-                    return err(new Error("token.req not found"));
-                }
-                if (extras.message !== testExtraMessage) {
-                    throw new Error("Test extra message not what expected.");
-                }
+                should.exist(prop.req);
+                should.exist(prop.res);
+                should.exist(req.token);
+                extras.message.should.eql(testExtraMessage);
                 // Testing Response
                 res.status(402).json({ error: "Payment required." });
                 // next();    // Don't call next() after intercepting response

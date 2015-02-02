@@ -15,9 +15,9 @@ var request = require('supertest'),
     config = require('./test-config'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
-    service       = config.service,
-    port     = service.port,
-    prefix     = service.prefix,
+    service = config.service,
+    port = service.port,
+    prefix = service.prefix,
     dbConfig = config.mongoose,
     testHost = service.host,
     modelName = "DelTest",
@@ -33,28 +33,20 @@ describe('delete', function () {
             beforeDelete = null,
             afterDelete = null;
         beforeDelete = function (err, prop, next) {
+            should.exist(err);
             var req = prop.req,
                 extras = { message: testExtraMessage };
-            if (!prop.req) {
-                return err(new Error("prop.req not found"));
-            }
-            if (!req.token) {
-                return err(new Error("token.req not found"));
-            }
+            should.exist(prop.req);
+            should.exist(req.token);
             next(extras);
         };
         afterDelete = function (err, prop, next) {
+            should.exist(err);
             var req = prop.req,
                 extras = prop.extras;
-            if (!prop.req) {
-                return err(new Error("prop.req not found"));
-            }
-            if (!req.token) {
-                return err(new Error("token.req not found"));
-            }
-            if (extras.message !== testExtraMessage) {
-                throw new Error("Test extra message not what expected.");
-            }
+            should.exist(prop.req);
+            should.exist(req.token);
+            extras.message.should.eql(testExtraMessage);
             next();
         };
         micro

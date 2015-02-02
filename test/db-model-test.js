@@ -12,9 +12,9 @@ var request = require('supertest'),
     micro = new Richmond(),
     config = require('./test-config'),
     getRandomInt = require('./test-lib').getRandomInt,
-    service       = config.service,
-    port     = service.port,
-    prefix     = service.prefix,
+    service = config.service,
+    port = service.port,
+    prefix = service.prefix,
     dbConfig = config.mongoose,
     modelName = "RichmondDbTest";    // Will translate to lowercase
 
@@ -94,7 +94,7 @@ describe('model library', function () {
         record = new Collection(body);
         record.save(function (err, doc) {
             if (err) { throw err; }
-            if (!doc) { throw new Error("doc should not be null after save"); }
+            should.exist(doc);
             done();
         });
     });
