@@ -2,203 +2,195 @@
  * File: get-after-res-test.js
  */
 
+"use strict";
+
+/*global describe, it, before, after*/
+
 var request = require('supertest'),
-	should = require('should'),
-	jwt = require('jwt-simple'),
-	Richmond = require('../richmond'),
-	micro = null,
-	config = require('./test-config'),
-	controller = config.controller,
-	getRandomInt = require('./test-lib').getRandomInt,
-	service   	= config.service,
-	port 	= service.port,
-	prefix 	= service.prefix,
-	dbConfig = config.mongoose,
-	// testSecret = 'supersecret',
-	testSecret = service.secret,
-	testHost = service.host,		
-	sslHost  = service.hostSsl,
-	modelName = "GetBeforeAfterTest",	// Will translate to lowercase
-	ownerEmail = "test@owner.com", 
-    afterTestEmail = "test" + getRandomInt( 1000, 1000000 ) + "@after.com",
-	testAfterDocStatus = "UPDATED by afterGet";
+    should = require('should'),
+    jwt = require('jwt-simple'),
+    Richmond = require('../richmond'),
+    micro = null,
+    config = require('./test-config'),
+    controller = config.controller,
+    getRandomInt = require('./test-lib').getRandomInt,
+    service       = config.service,
+    port     = service.port,
+    prefix     = service.prefix,
+    dbConfig = config.mongoose,
+    // testSecret = 'supersecret',
+    testSecret = service.secret,
+    testHost = service.host,
+    sslHost  = service.hostSsl,
+    modelName = "GetBeforeAfterTest",
+    ownerEmail = "test@owner.com",
+    afterTestEmail = "test" + getRandomInt(1000, 1000000) + "@after.com",
+    testAfterDocStatus = "UPDATED by afterGet";
 
 var MochaTestDoc = null;
 
 describe('get after error injection', function () {
-	before(function () {
-		
-		micro = new Richmond();
-		
-		var testExtraMessage = 'Testing 123';
-		
-		var beforeMany = 
-			function( err, prop, next ) {
-				// console.log("#### DEBUG - BEFORE COLLECTION")
-				if( ! prop.req ) return err( new Error("prop.req not found") );
-				var req = prop.req;
-				var filter = req.query.filter;
-				var fields = req.query.fields;
-				var options = req.query.options;
-				var token = req.token;
-				// console.log( "TOKEN: " + JSON.stringify( token ) );
-				if( filter ) {
-					// console.log( "FILTER: " + JSON.stringify( filter ) );
-					var f2 = JSON.parse( filter );	// parse object 
-					if( f2.email != token.email ) {
-						// console.log( "[" + f2.email + "] vs. [" + token.email + "]" );
-						err( new Error("filter.email != auth.email"));
-						return;
-					}
-				}
+    before(function () {
+        micro = new Richmond();
+        var testExtraMessage = 'Testing 123',
+            beforeMany = null,
+            afterMany = null,
+            beforeOne = null,
+            afterOne = null,
+            dbOptions = {};
+        beforeMany = function (err, prop, next) {
+            should.exists(prop.req);
+            var req = prop.req,
+                filter = req.query.filter,
+                fields = req.query.fields,
+                options = req.query.options,
+                token = req.token,
+                extras = { message: testExtraMessage },
+                f2 = null;
+            if (filter) {
+                f2 = JSON.parse(filter);    // parse object 
+                if (f2.email !== token.email) {
+                    err(new Error("filter.email != auth.email"));
+                    return;
+                }
+            }
+            next(filter, fields, extras, options);
+        };
+        afterMany = function (err, prop, next) {
+            should.exist(err);
+            should.exist(next);
+            should.exist(prop.req);
+            should.exist(prop.res);
+            should.exist(prop.docs);
+            var res = prop.res,
+                extras = prop.extras;
+            extras.message.should.eql(testExtraMessage);
+            // Testing Response
+            res.status(402).json({ error: "Payment required." });
+            // next(prop.docs);    // Don't call next when intercepting response
+        };
+        beforeOne = function (err, prop, next) {
+            should.exist(err);
+            should.exist(prop);
+            should.exist(prop.req);
+            // Token may not always exist, but for these tests it should.
+            should.exist(prop.req.token);
+            var req = prop.req,
+                fields = req.query.fields,
+                extras = { message: testExtraMessage };
+            next(fields, extras);
+        };
+        afterOne = function (err, prop, next) {
+            should.exist(err);
+            should.exist(next);
+            should.exist(prop.req);
+            should.exist(prop.res);
+            should.exist(prop.doc);
+            var res = prop.res,
+                extras = prop.extras;
+            extras.message.should.eql(testExtraMessage);
+            res.status(402).json({ error: "Payment required." });
+            // next(prop.doc);    // Don't call when intercepting response
+        };
+        controller.clear();
+        micro
+            .logFile("get-after-res-test.log")
+            .controller(
+                controller.setup({
+                    getOne:   [{ model: modelName, rights: "PUBLIC", before: beforeOne, after: afterOne }],
+                    getMany:  [{ model: modelName, rights: "USER", ssl: 302, before: beforeMany, after: afterMany }],
+                    post:     [{ model: modelName, rights: "PUBLIC" }],
+                })
+            )
+            .secret(testSecret)
+            .prefix(prefix);    // API prefix, i.e. http://localhost/v1/testdoc
+        dbOptions = {
+            user: dbConfig.user,
+            pass: dbConfig.pass
+        };
+        micro.connect(dbConfig.uri, dbOptions);
+        MochaTestDoc = micro.addModel(modelName, {
+            email:     { type: String, required: true },
+            status: { type: String, required: true },
+            password: { type: String, select: false },
+        });
+        micro.listen(port);
+    });
 
-				var extras = { message: testExtraMessage };
-				
-				next( filter, fields, extras, options );
-		};
-			
-		var afterMany = 
-				function( err, prop, next ) {
-					if( ! prop.req ) return err( new Error("prop.req not found") );
-					if( ! prop.res ) return err( new Error("prop.res not found") );
-					if( ! prop.docs ) return err( new Error("prop.docs not found") );
-					var req = prop.req;
-					var res = prop.res;
-					var docs = prop.docs;
-					var extras = prop.extras;
-					if( extras.message != testExtraMessage ) {
-						throw new Error( "Test extra message not what expected.");
-					}
-					// Testing Response
-					res.status(402).json( { error: "Payment required." } );
-					// next( docs );	// Don't call next when intercepting response
-		};
-		
-		var beforeOne =
-			function( err, prop, next ) {
-				if( ! prop.req ) return err( new Error("prop.req not found") );
-				var req = prop.req;
-				var fields = req.query.fields;	// Optional
-				// Token may not always exist, but for these tests it should.
-				if( ! req.token ) return err( new Error("req.token not found") );
-				// console.log( "TOKEN: " + JSON.stringify( req.token ) );
-				if( fields ) console.log( "FIELDS: " + fields );
-				var extras = { message: testExtraMessage };
-				next( fields, extras );
-			};
-			
-		var afterOne =
-			function( err, prop, next ) {
-				if( ! prop.req ) return err( new Error("prop.req not found") );
-				if( ! prop.res ) return err( new Error("prop.res not found") );
-				if( ! prop.doc ) return err( new Error("prop.doc not found") );
-				var req = prop.req;
-				var res = prop.res;
-				var doc = prop.doc;
-				var extras = prop.extras;
-				// console.log( "EXTRAS: " + extras.message );
-				if( extras.message != testExtraMessage ) {
-					throw new Error( "Test extra message not what expected.");
-				}
-				res.status(402).json( { error: "Payment required." } );
-				// next( doc );	// Don't call when intercepting response
-			};
-		
-		controller.clear();
-			
-		micro
-			.logFile("get-after-res-test.log")
-			.controller( 
-		  		controller.setup({ 
-		  			getOne:  	[{ model: modelName, rights: "PUBLIC", 	before: beforeOne, after: afterOne }], 
-		  			getMany:  	[{ model: modelName, rights: "USER", 	ssl: 302, before: beforeMany, after: afterMany }],
-		  			post: 		[{ model: modelName, rights: "PUBLIC" }],
-		  		}))
-			.secret( testSecret )
-			.prefix( prefix );	// API prefix, i.e. http://localhost/v1/testdoc
-		
-		var options = {
-				user: dbConfig.user,
-				pass: dbConfig.pass
-			};
-		micro.connect( dbConfig.uri, options );
-		
-		MochaTestDoc = micro.addModel( modelName, {
-			email: 	{ type: String, required: true },
-			status: { type: String, required: true },
-			password: { type: String, select: false }, 
-		} );
-							
-		micro.listen( port );
-	
-	  });
-	
-	  it( 'should return the injected error instead of a document', function( done ) {
-			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
-			var testObject = { 
-				email: "test" + getRandomInt( 1000, 1000000 ) + "@get.com", 
-				status: "TEST GET DOCUMENT" };
-			// SETUP - need to post at least one record
-			request( testHost )
-				.post( testUrl )
-				.send( testObject )
-				.set( 'Content-Type', 'application/json' )
-			  	.expect( 201 )
-			  	.end(function(err, res){
-				  	should.not.exist(err);
-				  	testId = res.body._id;
-					// GET by ID
-					request( testHost )
-						.get( testUrl + "/" + testId )
-						.set( 'x-auth', jwt.encode( { email: ownerEmail, role: "user" }, testSecret ) )
-						.expect( 'Content-Type', /json/ )
-						.expect( 402 )
-						.end(function(err, res) {
-						  	should.not.exist(err);
-							// PURGE all records 
-							MochaTestDoc.remove( {"email": /@/ }, function( err )  {
-								if( err ) { 
-									console.error( err );
-								}
-								done();
-							});	
-						})
-			  });
-	  });
+    it('should return the injected error instead of a document', function (done) {
+        var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
+            testId = null,
+            testObject = {};
+        testObject = {
+            email: "test" + getRandomInt(1000, 1000000) + "@get.com",
+            status: "TEST GET DOCUMENT"
+        };
+        // SETUP - need to post at least one record
+        request(testHost)
+            .post(testUrl)
+            .send(testObject)
+            .set('Content-Type', 'application/json')
+            .expect(201)
+            .end(function (err, res) {
+                should.not.exist(err);
+                /*jslint nomen: true*/
+                testId = res.body._id;
+                /*jslint nomen: false*/
+                // GET by ID
+                request(testHost)
+                    .get(testUrl + "/" + testId)
+                    .set('x-auth', jwt.encode({ email: ownerEmail, role: "user" }, testSecret))
+                    .expect('Content-Type', /json/)
+                    .expect(402)
+                    .end(function (err, res) {
+                        should.not.exist(err);
+                        should.exist(res);
+                        // PURGE all records 
+                        MochaTestDoc.remove({"email": /@/ }, function (err) {
+                            if (err) {
+                                console.error(err);
+                            }
+                            done();
+                        });
+                    });
+            });
+    });
 
-	  it( 'should return the injected error instead of a collection', function( done ) {
-			var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();	
-			// var testEmail = ownerEmail;
-			var testEmail = afterTestEmail;
-			var testObject = { 
-				email: testEmail, 
-				status: "TEST GET filter" };
-			// SETUP - need to post at least one record
-			// sslHost
-			request( /* sslHost */ testHost )
-				.post( testUrl )
-				.send( testObject )
-				//.set( 'Content-Type', 'application/json' ) // If move, returns HTML
-			  	// .expect( 201 ) // Post to NON-SSL
-				// .expect( 302 )	// Post to SSL
-			  	.end(function(err, res){
-				  	should.not.exist(err);
-					// GET
-					request(  sslHost )
-						.get( testUrl )
-						.set( 'x-auth', jwt.encode( { email: testEmail, role: "user" }, testSecret ) )
-						.query('filter={"email":"' + testEmail + '"}')
-						// MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
-						// .expect( 'Content-Type', /json/ )	// Sometimes returns 302 / HTML (nginx)
-						.expect( 402 )
-						.end(function(err, res){
-						  	should.not.exist(err);
-						  	done();
-					  })
-			  });
-	  });
-	
-	  after(function () {
-		    micro.closeService();
-	 });
+    it('should return the injected error instead of a collection', function (done) {
+        var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
+            testEmail = afterTestEmail,
+            testObject = {};
+        testObject = {
+            email: testEmail,
+            status: "TEST GET filter"
+        };
+        // SETUP - need to post at least one record
+        request(testHost)
+            .post(testUrl)
+            .send(testObject)
+            // .set('Content-Type', 'application/json') // If move, returns HTML
+            // .expect(201) // Post to NON-SSL
+            // .expect(302)    // Post to SSL
+            .end(function (err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                // GET
+                request(sslHost)
+                    .get(testUrl)
+                    .set('x-auth', jwt.encode({ email: testEmail, role: "user" }, testSecret))
+                    .query('filter={"email":"' + testEmail + '"}')
+                    // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
+                    // .expect('Content-Type', /json/)    // Sometimes returns 302 / HTML (nginx)
+                    .expect(402)
+                    .end(function (err, res) {
+                        should.not.exist(err);
+                        should.exist(res);
+                        done();
+                    });
+            });
+    });
+
+    after(function () {
+        micro.closeService();
+    });
 });
