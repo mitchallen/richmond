@@ -190,7 +190,7 @@ The example also includes showing how to pass through extra data to the after me
             if( body.password != undefined ) {
 		        bcrypt.hash( body.password, 10, function( err, hash ) {
                     if( err ) {
-                        console.err( err );
+                        throw err;
                     }
                     body.password = hash;
                     next( body, extras );
