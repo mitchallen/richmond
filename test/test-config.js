@@ -6,7 +6,7 @@
 
 var Controller = require('@minja/richmond-web-controller'),
     Richmond = require('../richmond');
-    
+
 function Config() {
     this.controller = new Controller();
     this.richmond = new Richmond();

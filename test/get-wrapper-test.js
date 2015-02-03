@@ -9,7 +9,7 @@
 var request = require('supertest'),
     should = require('should'),
     jwt = require('jwt-simple'),
-    TestConfig = new require('./test-config'),
+    TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
     controller = config.controller,

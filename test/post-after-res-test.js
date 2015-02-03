@@ -9,7 +9,7 @@
 var request = require('supertest'),
     should = require('should'),
     bcrypt = require("bcrypt"),
-    TestConfig = new require('./test-config'),
+    TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
     controller = config.controller,
@@ -40,7 +40,7 @@ describe('post after error', function () {
             body = prop.req.body;
             if (body.password !== undefined) {
                 bcrypt.hash(body.password, 10, function (err, hash) {
-                    if( err ) {
+                    if (err) {
                         throw err;
                     }
                     body.password = hash;

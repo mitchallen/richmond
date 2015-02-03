@@ -9,7 +9,7 @@
 var request = require('supertest'),
     should = require('should'),
     sleep = require('sleep'),
-    TestConfig = new require('./test-config'),
+    TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
     controller = config.controller,

@@ -8,7 +8,7 @@
 
 var request = require('supertest'),
     should = require('should'),
-    TestConfig = new require('./test-config'),
+    TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
     getRandomInt = require('./test-lib').getRandomInt,
