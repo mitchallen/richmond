@@ -4,11 +4,11 @@
   "description": "richmond.js core module",
   "main": "richmond.js",
   "scripts": {
-    "test": "mocha --timeout 5000",
+    "test": "mocha --timeout 20000",
     "//": "To use: npm run test-nodemon (assumes global location of mocha)",
-    "test-nodemon": "nodemon /usr/local/bin/mocha --timeout 5000",
-    "test-debug": "nodemon /usr/local/bin/mocha -g '@DEBUG' --timeout 5000",
-    "test-jenkins": "mocha --timeout 5000 -R xunit test/ > test-reports.xml"
+    "test-nodemon": "nodemon /usr/local/bin/mocha --timeout 20000",
+    "test-debug": "nodemon /usr/local/bin/mocha -g '@DEBUG' --timeout 20000",
+    "test-jenkins": "mocha --timeout 20000 -R xunit test/ > test-reports.xml"
   },
   "publishConfig": {
     "registry": "http://registry.mitchallen.com/"
