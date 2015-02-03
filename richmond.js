@@ -136,12 +136,17 @@ Richmond.prototype.listen = function (port) {
     var log = this.log;
     /*jslint unparam: true*/
     this.app.use(function (err, req, res, next) {
-        var errObject = {
+        var errObject = {},
+            errJson = null;
+        errObject = {
             message: err.message,
             error: err
         };
+        errJson = "ERROR HANDLER: " + JSON.stringify(errObject);
         if (log) {
-            log.error("ERROR HANDLER: " + JSON.stringify(errObject));
+            log.error(errJson);
+        } else {
+            console.error(errJson);
         }
         try {
             res.status(err.status || 500);
