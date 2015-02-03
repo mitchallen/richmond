@@ -184,16 +184,14 @@ The example also includes showing how to pass through extra data to the after me
     var testExtraMessage = 'Testing 123';
 
     var beforePost = 
-	    function( err, prop, next ) {
-            if( ! prop.req ) 
-		        return err( new Error("(before) prop.req not found") );
-            if( ! prop.req.body ) 
-                return err( new Error("(before) prop.req.body not found") );
+	    function( prop, next ) {
             var extras = { message: testExtraMessage };
 		    var body = prop.req.body;
             if( body.password != undefined ) {
 		        bcrypt.hash( body.password, 10, function( err, hash ) {
-                if( err ) console.err( err );
+                    if( err ) {
+                        console.err( err );
+                    }
                     body.password = hash;
                     next( body, extras );
                  });
@@ -203,10 +201,7 @@ The example also includes showing how to pass through extra data to the after me
         };
   
     var afterPost = 
-        function( err, prop, next ) {
-            if( ! prop.req ) return err( new Error("(after) prop.req not found") );
-            if( ! prop.res ) return err( new Error("(after) prop.res not found") );
-            if( ! prop.result ) return err( new Error("(after) prop.result not found") );
+        function( prop, next ) {
             var doc = JSON.parse(JSON.stringify( prop.result ));
             thepatch = [ { "op": "remove", "path": "/password" } ];
             jsonpatch.apply( doc, thepatch );
