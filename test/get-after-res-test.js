@@ -9,9 +9,9 @@
 var request = require('supertest'),
     should = require('should'),
     jwt = require('jwt-simple'),
-    Richmond = require('../richmond'),
-    micro = null,
-    config = require('./test-config'),
+    TestConfig = new require('./test-config'),
+    config = new TestConfig(),
+    micro = config.richmond,
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service       = config.service,
@@ -31,7 +31,6 @@ var MochaTestDoc = null;
 
 describe('get after error injection', function () {
     before(function () {
-        micro = new Richmond();
         var testExtraMessage = 'Testing 123',
             beforeMany = null,
             afterMany = null,

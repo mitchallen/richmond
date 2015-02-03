@@ -8,9 +8,9 @@
 
 var request = require('supertest'),
     should = require('should'),
-    Richmond = require('../richmond'),
-    micro = new Richmond(),
-    config = require('./test-config'),
+    TestConfig = new require('./test-config'),
+    config = new TestConfig(),
+    micro = config.richmond,
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service       = config.service,
@@ -25,7 +25,6 @@ var request = require('supertest'),
 
 describe('ssl moved', function () {
     before(function () {
-        micro = new Richmond();
         controller.clear();
         micro
             .logFile("ssl-moved-test.log")

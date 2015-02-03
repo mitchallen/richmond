@@ -8,9 +8,9 @@
 
 var request = require('supertest'),
     should = require('should'),
-    Richmond = require('../richmond'),
-    micro = new Richmond(),
-    config = require('./test-config'),
+    TestConfig = new require('./test-config'),
+    config = new TestConfig(),
+    micro = config.richmond,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
     port = service.port,
