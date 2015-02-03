@@ -30,16 +30,14 @@ describe('put before after', function () {
             dbOptions = {},
             beforePut,
             afterPut;
-        beforePut = function (err, prop, next) {
-            should.exist(err);
+        beforePut = function (prop, next) {
             should.exist(prop.req);
             should.exist(prop.req.token);
             var options = {},
                 extras = { message: testExtraMessage };
             next(prop.req.body, options, extras);
         };
-        afterPut = function (err, prop, next) {
-            should.exist(err);
+        afterPut = function (prop, next) {
             should.exist(prop.req);
             should.exist(prop.req);
             should.exist(prop.numAffected);

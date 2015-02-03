@@ -29,8 +29,7 @@ describe('post', function () {
             dbOptions = {},
             beforePost = null,
             afterPost = null;
-        beforePost = function (err, prop, next) {
-            should.exist(err);
+        beforePost = function (prop, next) {
             var extras = null,
                 body = null;
             should.exist(prop.req);
@@ -42,7 +41,7 @@ describe('post', function () {
             if (body.password !== undefined) {
                 bcrypt.hash(body.password, 10, function (err, hash) {
                     if (err) {
-                        console.err(err);
+                        throw err;
                     }
                     body.password = hash;
                     next(body, extras);
@@ -51,8 +50,7 @@ describe('post', function () {
                 next(body, extras);
             }
         };
-        afterPost = function (err, prop, next) {
-            should.exist(err);
+        afterPost = function (prop, next) {
             var doc = null,
                 thepatch = null,
                 extras = null;

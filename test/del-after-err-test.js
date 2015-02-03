@@ -33,8 +33,7 @@ describe('delete after error', function () {
             beforeDelete = null,
             afterDelete = null;
         beforeDelete =
-            function (err, prop, next) {
-                should.exist(err);
+            function (prop, next) {
                 var req = prop.req,
                     extras = { message: testExtraMessage };
                 should.exist(prop.req);
@@ -42,8 +41,7 @@ describe('delete after error', function () {
                 next(extras);
             };
         afterDelete =
-            function (err, prop, next) {
-                should.exist(err);
+            function (prop, next) {
                 should.exist(next);
                 var req = prop.req,
                     res = prop.res,

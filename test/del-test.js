@@ -32,16 +32,14 @@ describe('delete', function () {
             options = {},
             beforeDelete = null,
             afterDelete = null;
-        beforeDelete = function (err, prop, next) {
-            should.exist(err);
+        beforeDelete = function (prop, next) {
             var req = prop.req,
                 extras = { message: testExtraMessage };
             should.exist(prop.req);
             should.exist(req.token);
             next(extras);
         };
-        afterDelete = function (err, prop, next) {
-            should.exist(err);
+        afterDelete = function (prop, next) {
             var req = prop.req,
                 extras = prop.extras;
             should.exist(prop.req);

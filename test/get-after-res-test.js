@@ -38,7 +38,7 @@ describe('get after error injection', function () {
             beforeOne = null,
             afterOne = null,
             dbOptions = {};
-        beforeMany = function (err, prop, next) {
+        beforeMany = function (prop, next) {
             should.exists(prop.req);
             var req = prop.req,
                 filter = req.query.filter,
@@ -49,15 +49,11 @@ describe('get after error injection', function () {
                 f2 = null;
             if (filter) {
                 f2 = JSON.parse(filter);    // parse object 
-                if (f2.email !== token.email) {
-                    err(new Error("filter.email != auth.email"));
-                    return;
-                }
+                f2.email.should.eql(token.email);
             }
             next(filter, fields, extras, options);
         };
-        afterMany = function (err, prop, next) {
-            should.exist(err);
+        afterMany = function (prop, next) {
             should.exist(next);
             should.exist(prop.req);
             should.exist(prop.res);
@@ -69,8 +65,7 @@ describe('get after error injection', function () {
             res.status(402).json({ error: "Payment required." });
             // next(prop.docs);    // Don't call next when intercepting response
         };
-        beforeOne = function (err, prop, next) {
-            should.exist(err);
+        beforeOne = function (prop, next) {
             should.exist(prop);
             should.exist(prop.req);
             // Token may not always exist, but for these tests it should.
@@ -80,8 +75,7 @@ describe('get after error injection', function () {
                 extras = { message: testExtraMessage };
             next(fields, extras);
         };
-        afterOne = function (err, prop, next) {
-            should.exist(err);
+        afterOne = function (prop, next) {
             should.exist(next);
             should.exist(prop.req);
             should.exist(prop.res);

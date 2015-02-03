@@ -38,8 +38,7 @@ describe('get before and after', function () {
             f2 = null,
             testExtras = { message: testExtraMessage },
             dbOptions = {};
-        beforeMany = function (err, prop, next) {
-            should.exist(err);
+        beforeMany = function (prop, next) {
             should.exist(prop.req);
             var req = prop.req,
                 filter = req.query.filter,
@@ -52,8 +51,7 @@ describe('get before and after', function () {
             }
             next(filter, fields, testExtras, options);
         };
-        afterMany = function (err, prop, next) {
-            should.exist(err);
+        afterMany = function (prop, next) {
             should.exist(prop.req);
             should.exist(prop.docs);
             var docs = prop.docs,
@@ -65,8 +63,7 @@ describe('get before and after', function () {
             });
             next(docs);
         };
-        beforeOne = function (err, prop, next) {
-            should.exist(err);
+        beforeOne = function (prop, next) {
             should.exist(prop.req);
             var req = prop.req,
                 fields = req.query.fields;    // Optional
@@ -74,8 +71,7 @@ describe('get before and after', function () {
             should.exist(req.token);
             next(fields, testExtras);
         };
-        afterOne = function (err, prop, next) {
-            should.exist(err);
+        afterOne = function (prop, next) {
             should.exist(prop.req);
             should.exist(prop.doc);
             var doc = prop.doc,
