@@ -294,7 +294,7 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 #### Version 0.1.1 release notes
 
-* Updated repo url.
+* Updated repo url and test controller dependency.
 
 #### Version 0.1.0 release notes
 
