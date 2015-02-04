@@ -272,7 +272,7 @@ Or
 
     $ npm test
 
-Check the results in the apps __logs/__ folder for any errors.
+The tests generate log files in the projects root folder.
 
 ## Contributing
 
