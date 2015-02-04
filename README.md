@@ -260,6 +260,17 @@ This module supports multiple models.  The setup could look something like this:
 
 ## Tests
 
+In order to run the tests, you need 
+to add two more variables to your environment: __TEST_HOST__ and __TEST_SSL__
+
+For testing, I use the services of https://ngrok.com - for a small annual fee I secured a subdomain
+that I can tunnel back to a port on my localhost for testing.  It supports both SSL and Non-SSL.
+
+    # Via ngrok
+    export TEST_HOST=http://YOURSUBDOMAIN.ngrok.com
+    export TEST_SSL=https://YOURSUBDOMAIN.ngrok.com
+
+
 Tests assume that mocha has been installed globally.  If not execute the following:
 
     $ npm install -g mocha
