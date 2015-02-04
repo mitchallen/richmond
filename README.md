@@ -290,7 +290,11 @@ The tests generate log files in the projects root folder.
 In lieu of a formal styleguide, take care to maintain the existing coding style.
 Add unit tests for any new or changed functionality. Lint and test your code.
 
-## Release History
+## Version History
+
+#### Version 0.1.2 release notes
+
+* Updated test cases to use demo controller 0.1.2
 
 #### Version 0.1.1 release notes
 
