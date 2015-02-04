@@ -46,6 +46,16 @@ describe('smoke tests', function () {
         });
         micro.listen(port);
     });
+    
+    it( 'should be able to get name', function( done ) {
+        should.exist( controller.name );
+        done();
+    });
+    
+    it( 'should be able to get version', function( done ) {
+        should.exist( controller.version );
+        done();
+    });
 
     it('should confirm that post works', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
