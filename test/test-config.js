@@ -4,7 +4,7 @@
 
 "use strict";
 
-var Controller = require('@minja/richmond-web-controller'),
+var Controller = require('richmond-web-controller'),
     Richmond = require('../richmond');
 
 function Config() {

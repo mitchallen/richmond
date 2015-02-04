@@ -292,8 +292,8 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Release History
 
-#### Version 0.1.3 release notes
+#### Version 0.1.0 release notes
 
-* Final pre-release
+* Initial release
 
 
