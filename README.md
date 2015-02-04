@@ -155,7 +155,7 @@ The Web controller in the demo supports SSL.
  
 To use SSL with the demo controller you must add an SSL key with a value of 404 or 302 in the setup.
 
-For example, here is how you would did it for getOne:
+For example, here is how you would do it for getOne:
 
     getOne: [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
     
@@ -266,7 +266,7 @@ Tests assume that mocha has been installed globally.  If not execute the followi
 
 Run the tests in one of the following two ways:
 
-    $ mocha
+    $ mocha --timeout 20000
     
 Or
 
