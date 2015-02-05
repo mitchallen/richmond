@@ -1,6 +1,6 @@
 {
   "name": "richmond",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "richmond.js core module",
   "main": "richmond.js",
   "scripts": {

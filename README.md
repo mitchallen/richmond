@@ -266,9 +266,15 @@ This module supports multiple models.  The setup could look something like this:
 * If writing to a folder, the folder must already exist.
 * If this is not called all log output will go through the console.
 
+#### Usage
+
+    micro.logFile("my-test.log");
+
 ### .prefix()
 
 Will return the prefix string.
+
+#### Usage
 
     var s = micro.prefix();
 
@@ -299,6 +305,8 @@ Prefix validation rules:
 * The model name will be used in routes, like this:  http://localhost:3030/api/mytest
 * The name will be validated internally with a call to __normalizeModelName__.
 
+#### Usage:
+
     MyTests = micro.addModel("mytest", {
         email:      { type: String, required: true },
         status:     { type: String, required: true },
@@ -318,6 +326,8 @@ Returns the Mongoose model that was stored via __addModel__.
 You can then use that to create a record and use other Mongoose methods, like __.save__.
 This would most likely be used in a POST controller.
 
+#### Usage
+
     function (req, res, next) {
         var Collection = micro.model(name),
             record = new Collection(req.body);
@@ -336,6 +346,8 @@ This would most likely be used in a POST controller.
 Makes sure the name is not null, has no spaces and returns the result in all lowercase.
 Called internally by __addModel__ and __model__ to make sure that internal keys are lowercase and not incompatible.
 
+#### Usage
+
     var modelName = micro.normalizeModelName(name);
 
 ### connect(uri,options)
@@ -343,6 +355,8 @@ Called internally by __addModel__ and __model__ to make sure that internal keys 
 The __uri__ would be in a form like this: mongodb://HOST:PORT/DATABASE
 
 This is a wrapper for Mongoose.createConnection.  See their documentation for more option parameters.
+
+#### Usage
 
     var options = {
         user: dbConfig.user,
@@ -358,6 +372,8 @@ If there is an existing Mongoose connect this will close it.
 
 Used to assign a controller to process requests.
 
+#### Usage
+
     var controller = config.controller;
 
     micro.controller(
@@ -371,17 +387,23 @@ Used to assign a controller to process requests.
 
 Wrapper for internal express.js app.
 
+#### Usage
+
     micro.use( cors() );
 
 ### .listen(port)
 
 When everything is good to go, make this call last to start listening for requests on a particular port.
 
+#### Usage
+
     micro.listen(port);
 
 ### .closeService()
 
 Closes service and any open connections.
+
+#### Usage
 
     micro.closeService();
 
@@ -391,10 +413,14 @@ Used internally and externally combined with __jwt-simple__ to encrypt and decry
 
 __Do NOT hardcode the value__.  Always get it from the environment.  
 
-Internally request are intercepted my middleware and the headers are scanned for '__x-auth__'.
+Internally requests are intercepted my middleware and the headers are scanned for '__x-auth__'.
 If __x-auth__ is found it is decoded using __jwt-simple__'s decode method and the string set by __.secret()__.
-The result is assigned via the middleware to __req.token__.  
+The result is assigned via the middleware to __req.token__ and carried on to the next method in the chain.  
 Controllers then have the option to look for the decoded token and use it as they see fit.
+
+Review the __right*__ tests for more info.
+
+#### Usage
 
     micro.secret(appSecret);
     
