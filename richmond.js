@@ -20,8 +20,6 @@ function Richmond() {
     this.m_conn = null;
     this.server = null;
     this.ctrl = null;
-    this.name    = require("./package").name;
-    this.version = require("./package").version;
     this.prefix  = require('./lib/prefix');
     this.log = null;
     this.name    = require("./package").name;

@@ -258,6 +258,159 @@ This module supports multiple models.  The setup could look something like this:
 				
         micro.listen( port ); 
 
+## API
+
+### .logFile(filename)
+
+* If no path is specified, will just write to the apps current directory.
+* If writing to a folder, the folder must already exist.
+* If this is not called all log output will go through the console.
+
+### .prefix()
+
+Will return the prefix string.
+
+    var s = micro.prefix();
+
+### .prefix(string)
+
+Allows defining a prefix for all routes.
+
+Will validate the string and convert it internally to lowercase.
+
+    micro.prefix("/API")
+    
+Routes will contain "/api" like this: http://localhost:3030/api/mytest 
+    
+    micro.prefix("/v1")
+    
+Routes will contain "/v1" like this: http://localhost:3030/v1/mytest 
+    
+Prefix validation rules:
+
+* prefix can't be null
+* prefix must begin with a slash
+* prefix must not end with a slash
+* prefix must not contain whitepace
+
+### .addModel(name,model)
+
+* Assigns a name to a Mongoose model and saves it.  
+* The model name will be used in routes, like this:  http://localhost:3030/api/mytest
+* The name will be validated internally with a call to __normalizeModelName__.
+
+    MyTests = micro.addModel("mytest", {
+        email:      { type: String, required: true },
+        status:     { type: String, required: true },
+        password:   { type: String, select: false },
+    });
+    
+    // PURGE all records (don't do in production!)
+    MyTests.remove({"email": /@/ }, function (err) {
+        if (err) {
+            console.error(err);
+        }
+    }
+    
+### .model(name)
+
+Returns the Mongoose model that was stored via __addModel__.  
+You can then use that to create a record and use other Mongoose methods, like __.save__.
+This would most likely be used in a POST controller.
+
+    function (req, res, next) {
+        var Collection = micro.model(name),
+            record = new Collection(req.body);
+        record.save(function (err, doc) {
+            if (err) { throw err; }
+            res
+                .location("/" + name + "/" + doc._id)
+                .status(201)    // Created
+                .json(doc);
+            }
+        }
+    }
+
+### .normalizeModelName(name)
+
+Makes sure the name is not null, has no spaces and returns the result in all lowercase.
+Called internally by __addModel__ and __model__ to make sure that internal keys are lowercase and not incompatible.
+
+    var modelName = micro.normalizeModelName(name);
+
+### connect(uri,options)
+
+The __uri__ would be in a form like this: mongodb://HOST:PORT/DATABASE
+
+This is a wrapper for Mongoose.createConnection.  See their documentation for more option parameters.
+
+    var options = {
+        user: dbConfig.user,
+        pass: dbConfig.pass
+    };
+    micro.connect(dbConfig.uri, options);
+
+### .closeConnecton()
+
+If there is an existing Mongoose connect this will close it. 
+
+### .controller(controller)
+
+Used to assign a controller to process requests.
+
+    var controller = config.controller;
+
+    micro.controller(
+        controller.setup({
+            getOne:   [ { model: modelName, rights: "PUBLIC" } ],
+            getMany:  [ { model: modelName, rights: "PUBLIC" } ],
+        })
+    )
+
+### .use(middleware)
+
+Wrapper for internal express.js app.
+
+    micro.use( cors() );
+
+### .listen(port)
+
+When everything is good to go, make this call last to start listening for requests on a particular port.
+
+    micro.listen(port);
+
+### .closeService()
+
+Closes service and any open connections.
+
+    micro.closeService();
+
+### .secret(secret)
+
+Used internally and externally combined with __jwt-simple__ to encrypt and decrypt strings of data.
+
+__Do NOT hardcode the value__.  Always get it from the environment.  
+
+Internally request are intercepted my middleware and the headers are scanned for '__x-auth__'.
+If __x-auth__ is found it is decoded using __jwt-simple__'s decode method and the string set by __.secret()__.
+The result is assigned via the middleware to __req.token__.  
+Controllers then have the option to look for the decoded token and use it as they see fit.
+
+    micro.secret(appSecret);
+    
+    request(testHost)
+        .post(testUrl)
+        .send(testObject)
+        .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, appSecret))
+        .set('Content-Type', 'application/json')
+        .expect(201)
+        .end(function (err, res) {
+            should.not.exist(err);
+                done();
+            });
+        });
+
+
 ## Tests
 
 In order to run the tests, you need 
@@ -291,6 +444,10 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
+
+#### Version 0.1.3 release notes
+
+* Removed redundant code, updated documentation.
 
 #### Version 0.1.2 release notes
 
