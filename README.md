@@ -413,7 +413,7 @@ Used internally and externally combined with __jwt-simple__ to encrypt and decry
 
 __Do NOT hardcode the value__.  Always get it from the environment.  
 
-Internally requests are intercepted my middleware and the headers are scanned for '__x-auth__'.
+Internally requests are intercepted by middleware and the headers are scanned for '__x-auth__'.
 If __x-auth__ is found it is decoded using __jwt-simple__'s decode method and the string set by __.secret()__.
 The result is assigned via the middleware to __req.token__ and carried on to the next method in the chain.  
 Controllers then have the option to look for the decoded token and use it as they see fit.
@@ -439,8 +439,7 @@ Review the __right*__ tests for more info.
 
 ## Tests
 
-In order to run the tests, you need 
-to add two more variables to your environment: __TEST_HOST__ and __TEST_SSL__
+In order to run the tests, you need to add two more variables to your environment: __TEST_HOST__ and __TEST_SSL__
 
 For testing, I use the services of https://ngrok.com - for a small annual fee I secured a subdomain
 that I can tunnel back to a port on my localhost for testing.  It supports both SSL and Non-SSL.
@@ -466,7 +465,7 @@ The tests generate log files in the projects root folder.
 
 ## Contributing
 
-In lieu of a formal styleguide, take care to maintain the existing coding style.
+In lieu of a formal style guide, take care to maintain the existing coding style.
 Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
