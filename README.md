@@ -322,11 +322,11 @@ Prefix validation rules:
     
 ### .model(name)
 
-Returns the Mongoose model that was stored via __addModel__.  
-You can then use that to create a record and use other Mongoose methods, like __.save__.
-This would most likely be used in a POST controller.
+Returns the Mongoose model that was stored via __addModel__. You can then use that to create a record and use other Mongoose methods, like __.save__.
 
 #### Usage
+
+This example would most likely be used in a POST controller.
 
     function (req, res, next) {
         var Collection = micro.model(name),
