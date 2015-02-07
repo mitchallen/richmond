@@ -130,7 +130,8 @@ Create a new record at the command line using __curl__ (assumes port __3030__):
       -d '{"email":"test@beta.com","password":"foo","status":"OK"}' 
       http://localhost:3030/api/mytest
 
-Repeat that step a few times, changing the values to create a small set of record to experiment with.
+Repeat that step a few times.
+Change the values to create a small set of records to experiment with.
 
 #### GET
 
