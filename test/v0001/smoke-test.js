@@ -46,14 +46,14 @@ describe('smoke tests', function () {
         });
         micro.listen(port);
     });
-    
-    it( 'should be able to get name', function( done ) {
-        should.exist( controller.name );
+
+    it('should be able to get name', function (done) {
+        should.exist(controller.name);
         done();
     });
-    
-    it( 'should be able to get version', function( done ) {
-        should.exist( controller.version );
+
+    it('should be able to get version', function (done) {
+        should.exist(controller.version);
         done();
     });
 

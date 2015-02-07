@@ -13,22 +13,17 @@ var request = require('supertest'),
     micro = config.richmond,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
     modelName = "RichmondDbTest";    // Will translate to lowercase
 
 describe('model library', function () {
     before(function () {
-        var options = {},
-            testModel = null,
+        var testModel = null,
             dbConn = null;
-        micro.logFile("db-model-test.log");
-        options = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, options);
+        micro
+            .setup(service)
+            .logFile("db-model-test-" + config.logVersion + ".log")
+            .connect();
         testModel = micro.addModel(modelName, {
             email: { type: String, required: true },
             status: { type: String, required: true },

@@ -14,17 +14,16 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     modelName = "SmokeTest",    // Will translate to lowercase
     MochaTestDoc = null;
 
 describe('smoke tests', function () {
     before(function () {
         micro
-            .logFile("smoke-test.log")
+            .setup(service)
+            .logFile("smoke-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
@@ -33,27 +32,22 @@ describe('smoke tests', function () {
                     post:       [{ model: modelName, rights: "PUBLIC" }],
                     put:        [{ model: modelName, rights: "PUBLIC" }],
                 })
-            )
-            .prefix(prefix);    // API prefix, i.e. http://localhost/v1/testdoc
-        var options = {
-                user: dbConfig.user,
-                pass: dbConfig.pass
-            };
-        micro.connect(dbConfig.uri, options);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
-    
-    it( 'should be able to get name', function( done ) {
-        should.exist( controller.name );
+
+    it('should be able to get name', function (done) {
+        should.exist(controller.name);
         done();
     });
-    
-    it( 'should be able to get version', function( done ) {
-        should.exist( controller.version );
+
+    it('should be able to get version', function (done) {
+        should.exist(controller.version);
         done();
     });
 

@@ -16,10 +16,8 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     modelName = "DelTest",
     testSecret = 'supersecret',
     ownerEmail = "test@zap.com";
@@ -29,7 +27,6 @@ var MochaTestDoc = null;
 describe('delete', function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
-            options = {},
             beforeDelete = null,
             afterDelete = null;
         beforeDelete = function (prop, next) {
@@ -48,25 +45,21 @@ describe('delete', function () {
             next();
         };
         micro
-            .logFile("del-test.log")
+            .setup(service)
+            .logFile("del-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }],
                     post: [{ model: modelName, rights: "PUBLIC" }]
                 })
             )
-            .secret(testSecret)
-            .prefix(prefix);
-        options = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, options);
+            .secret(testSecret) // Override 
+            .connect();
         MochaTestDoc = micro.addModel(modelName, {
             email: { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('by the owner should succeed', function (done) {

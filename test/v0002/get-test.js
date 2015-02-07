@@ -8,24 +8,22 @@
 
 var request = require('supertest'),
     should = require('should'),
-    sleep = require('sleep'),
     TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     MochaTestDoc = null,
     modelName = "GetTest";
 
 describe('get', function () {
     before(function () {
         micro
-            .logFile("get-test.log")
+            .setup(service)
+            .logFile("get-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:      [ { model: modelName, rights: "PUBLIC" } ],
@@ -34,19 +32,14 @@ describe('get', function () {
                     post:     [ { model: modelName, rights: "PUBLIC" } ],
                     put:      [ { model: modelName, rights: "PUBLIC" } ],
                 })
-            )
-            .prefix(prefix);
-        var options = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, options);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:      { type: String, required: true },
             status:     { type: String, required: true },
             password:   { type: String, select: false },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should get a filtered document', function (done) {

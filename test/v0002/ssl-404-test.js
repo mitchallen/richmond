@@ -14,18 +14,17 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
-    sslHost = service.hostSsl,
+    testHost = config.host.url,
+    sslHost = config.host.ssl,
     modelName = "SslNotFoundTest",
     MochaTestDoc = null;
 
 describe('ssl not found', function () {
     before(function () {
         micro
-            .logFile("ssl-404-test.log")
+            .setup(service)
+            .logFile("ssl-404-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
@@ -35,18 +34,13 @@ describe('ssl not found', function () {
                     post:       [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
                     put:        [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
                 })
-            )
-            .prefix(prefix);// API prefix, i.e. http://localhost/v1/testdoc
-        var options = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, options);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should return not found when posting to non-ssl', function (done) {

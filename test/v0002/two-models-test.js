@@ -14,10 +14,8 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port     = service.port,
     prefix     = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     AlphaTestDoc = null,
     BetaTestDoc = null,
     modelName = ["AlphaTest", "BetaTest"];
@@ -25,7 +23,8 @@ var request = require('supertest'),
 describe('two models', function () {
     before(function () {
         micro
-            .logFile("two-models-test.log")
+            .setup(service)
+            .logFile("two-models-test" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [ { model: modelName[0], rights: "PUBLIC" },
@@ -39,13 +38,8 @@ describe('two models', function () {
                     put:        [ { model: modelName[0], rights: "PUBLIC" },
                                   { model: modelName[1], rights: "PUBLIC" } ]
                 })
-            )
-            .prefix(prefix);
-        var dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            );
+        micro.connect();
         // Model[0]
         AlphaTestDoc = micro.addModel(modelName[0], {
             email:  { type: String, required: true },
@@ -56,7 +50,7 @@ describe('two models', function () {
             user:   { type: String, required: true },
             level: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should be able to post to the first model', function (done) {

@@ -15,18 +15,15 @@ var request = require('supertest'),
     micro = config.richmond,
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
-    service       = config.service,
-    port     = service.port,
-    prefix     = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    service = config.service,
+    prefix = service.prefix,
+    testHost = config.host.url,
     modelName = "PostTest",
     MochaTestDoc = null;
 
 describe('post', function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
-            dbOptions = {},
             beforePost = null,
             afterPost = null;
         beforePost = function (prop, next) {
@@ -67,7 +64,8 @@ describe('post', function () {
             next(doc);
         };
         micro
-            .logFile("post-test.log")
+            .setup(service)
+            .logFile("post-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
@@ -76,19 +74,14 @@ describe('post', function () {
                     post:       [{ model: modelName, rights: "PUBLIC", before: beforePost, after: afterPost }],
                     put:        [{ model: modelName, rights: "PUBLIC" }],
                 })
-            )
-            .prefix(prefix);// API prefix, i.e. http://localhost/v1/testdoc
-        dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:     { type: String, required: true },
             password: { type: String, required: true, select: false },
             status: { type: String, required: true }
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('before method should encrypt password', function (done) {

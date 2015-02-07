@@ -15,13 +15,10 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service       = config.service,
-    port     = service.port,
     prefix     = service.prefix,
-    dbConfig = config.mongoose,
-    // testSecret = 'supersecret',
     testSecret = service.secret,
-    testHost = service.host,
-    sslHost  = service.hostSsl,
+    testHost = config.host.url,
+    sslHost  = config.host.ssl,
     modelName = "GetBeforeAfterTest",
     ownerEmail = "test@owner.com",
     afterTestEmail = "test" + getRandomInt(1000, 1000000) + "@after.com",
@@ -35,8 +32,7 @@ describe('get after error injection', function () {
             beforeMany = null,
             afterMany = null,
             beforeOne = null,
-            afterOne = null,
-            dbOptions = {};
+            afterOne = null;
         beforeMany = function (prop, next) {
             should.exists(prop.req);
             var req = prop.req,
@@ -87,7 +83,8 @@ describe('get after error injection', function () {
         };
         controller.clear();
         micro
-            .logFile("get-after-res-test.log")
+            .setup(service)
+            .logFile("get-after-res-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     getOne:   [{ model: modelName, rights: "PUBLIC", before: beforeOne, after: afterOne }],
@@ -95,19 +92,14 @@ describe('get after error injection', function () {
                     post:     [{ model: modelName, rights: "PUBLIC" }],
                 })
             )
-            .secret(testSecret)
-            .prefix(prefix);    // API prefix, i.e. http://localhost/v1/testdoc
-        dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            .secret(testSecret) // Override
+            .connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:     { type: String, required: true },
             status: { type: String, required: true },
             password: { type: String, select: false },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should return the injected error instead of a document', function (done) {

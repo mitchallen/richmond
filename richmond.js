@@ -22,13 +22,33 @@ function Richmond() {
     this.ctrl = null;
     this.prefix  = require('./lib/prefix');
     this.log = null;
+    this.database = {};
+    this.port = null;
     this.name    = require("./package").name;
     this.version = require("./package").version;
 }
 
 module.exports = Richmond; // For export
 
+Richmond.prototype.setup = function (options) {
+    if (options) {
+        if (options.logFile) {
+            this.logFile(options.logFile);
+        }
+        if (options.prefix) {
+            this.prefix(options.prefix);
+        }
+        this.database = options.database || this.database;
+        this.port = options.port;
+        this.m_secret = options.secret || this.m_secret;
+    }
+    return this;
+};
+
 Richmond.prototype.logFile = function (file) {
+    if (!file) {
+        throw new Error(".logFile parameter can not be undefined");
+    }
     this.log = new Log('debug', fs.createWriteStream(file));
     return this;
 };
@@ -72,7 +92,13 @@ Richmond.prototype.connect = function (uri, options) {
     var eMsg = "",
         cb = null;
     this.closeConnection();
-    if (!uri) {
+    // If uri is defined override with that, 
+    // otherwise use current database.uri
+    this.database.uri = uri || this.database.uri;
+    // If options is defined override with that, 
+    // otherwise use current database.options
+    this.database.options = options || this.database.options;
+    if (!this.database.uri) {
         eMsg = "connection string (uri) not defined.";
         if (this.log) {
             this.log.error(eMsg);
@@ -87,17 +113,10 @@ Richmond.prototype.connect = function (uri, options) {
             throw err;
         }
     };
-    if (!options.user) {
-        this.m_conn = this.mongoose.createConnection(uri, cb);
+    if (!this.database.options) {
+        this.m_conn = this.mongoose.createConnection(this.database.uri, cb);
     } else {
-        if (!options.pass) {
-            eMsg = "database password not defined.";
-            if (this.log) {
-                this.log.error(eMsg);
-            }
-            throw new Error(eMsg);
-        }
-        this.m_conn = this.mongoose.createConnection(uri, options, cb);
+        this.m_conn = this.mongoose.createConnection(this.database.uri, this.database.options, cb);
     }
     return this;
 };
@@ -118,6 +137,10 @@ Richmond.prototype.use = function (fn) {
 };
 
 Richmond.prototype.listen = function (port) {
+    var log = this.log, // Need to convert to local var to pass to error handler, else "this" refers to wrong object
+        emsg = "";
+    // If port parameter passed in, override this.port with that, else use existing this.port value.
+    this.port = port || this.port;
     this.app.use(bodyParser.json()); // for parsing application/json
     this.app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
     this.app.use(multer()); // for parsing multipart/form-data
@@ -131,7 +154,6 @@ Richmond.prototype.listen = function (port) {
             .install(this.app);
     }
     // ERROR handler - put last.
-    var log = this.log;
     /*jslint unparam: true*/
     this.app.use(function (err, req, res, next) {
         var errObject = {},
@@ -159,9 +181,14 @@ Richmond.prototype.listen = function (port) {
     });
     /*jslint unparam: false*/
     if (this.log) {
-        this.log.info("Listening on port:", port);
+        this.log.info("Listening on port:", this.port);
     }
-    this.server = this.app.listen(port);
+    if (!this.port) {
+        emsg = ".listen port not defined (define via .setup or .listen)";
+        this.log.error(emsg);
+        throw new Error(emsg);
+    }
+    this.server = this.app.listen(this.port);
     return this;
 };
 

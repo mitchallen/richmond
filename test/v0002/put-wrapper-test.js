@@ -15,10 +15,8 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service       = config.service,
-    port     = service.port,
     prefix     = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     modelName = "PutTest",    // Will translate to lowercase
     testSecret = 'supersecret',
     ownerEmail = "test@zap.com",
@@ -27,7 +25,6 @@ var request = require('supertest'),
 describe('put before after', function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
-            dbOptions = {},
             beforePut,
             afterPut;
         beforePut = function (prop, next) {
@@ -46,7 +43,8 @@ describe('put before after', function () {
         };
 
         micro
-            .logFile("put-wrapper-test.log")
+            .setup(service)
+            .logFile("put-wrapper-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
@@ -56,18 +54,13 @@ describe('put before after', function () {
                     put:        [{ model: modelName, rights: "PUBLIC", before: beforePut, after: afterPut }]
                 })
             )
-            .secret(testSecret)
-            .prefix(prefix);// API prefix, i.e. http://localhost/v1/testdoc
-        dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            .secret(testSecret) // Override
+            .connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('before should inject a message and after should confirm it', function (done) {

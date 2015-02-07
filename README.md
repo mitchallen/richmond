@@ -503,8 +503,8 @@ Review the __*rights*__ tests for more info.
     request(testHost)
         .post(testUrl)
         .send(testObject)
-        .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, appSecret))
-        .set('Content-Type', 'application/json')
+        .set(\'x-auth\', jwt.encode({ username: \"Mitch\", role: \"admin\" }, appSecret))
+        .set(\'Content-Type\', \'application/json\')
         .expect(201)
         .end(function (err, res) {
             should.not.exist(err);
@@ -544,6 +544,16 @@ Or
 Or if you feel like kickin' it old skool:
 
     make test
+
+To run test for just one version:
+
+To run the tests for version 0.2.x:
+
+    $ mocha --timeout 5000 --recursive test/v0002/*test.js
+    
+To run the tests for version 0.1.x (to verify backward compatibility):
+    
+    $ mocha --timeout 5000 --recursive test/v0001/*test.js
 
 The tests generate log files in the projects root folder.
 

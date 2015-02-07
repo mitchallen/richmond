@@ -15,10 +15,8 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service       = config.service,
-    port     = service.port,
     prefix     = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     modelName = "RightsUserTest",
     testSecret = service.secret,
     MochaTestDoc = null;
@@ -26,8 +24,9 @@ var request = require('supertest'),
 describe('user rights', function () {
     before(function () {
         micro
-            .logFile("rights-user-test.log")
-            .secret(testSecret)
+            .setup(service)
+            .logFile("rights-user-test-" + config.logVersion + ".log")
+            .secret(testSecret) // Override
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
@@ -36,18 +35,13 @@ describe('user rights', function () {
                     post:       [{ model: modelName, rights: "USER"   }],
                     put:        [{ model: modelName, rights: "PUBLIC" }]
                 })
-            )
-            .prefix(prefix);// API prefix, i.e. http://localhost/v1/testdoc
-        var options = {
-                user: dbConfig.user,
-                pass: dbConfig.pass
-            };
-        micro.connect(dbConfig.uri, options);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should be able to post as a user', function (done) {

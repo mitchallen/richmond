@@ -13,23 +13,18 @@ var request = require('supertest'),
     micro = config.richmond,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
     alphaModel = null,
     betaModel = null,
     modelName = ["AlphaRichmondTest", "BetaRichmondTest"];
 
 describe('mulitple collections', function () {
     before(function () {
-        micro.logFile("multiple-collections-test.log");
-        var options = {},
-            dbConn = null;
-        options = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, options);
+        micro.logFile("multiple-collections-test-" + config.logVersion + ".log");
+        var dbConn = null;
+        micro
+            .setup(service)
+            .connect();
         alphaModel = micro.addModel(modelName[0], {
             email:     { type: String, required: true },
             status: { type: String, required: true },
