@@ -161,37 +161,41 @@ Note that if a field was never set in the record, you will not see it listed in 
 
 ### PUT
 
-PUT is similar to POST where you have to pass in data, but since you are updating a record that already exists you 
-need to also append a record id to the URL.
+__PUT__ is similar to __POST__ where you have to pass in data.
+But since you are updating a record that already exists, you need to also append a record id to the URL.
 
     $ curl -i -X PUT -H "Content-Type: application/json" 
       -d '{"email":"test@put.com","password":"foo","status":"UPDATED"}' 
       http://localhost:3030/api/mytest/54ce6eca470103ca057b0097
 
-The general philosophy with PUT is that you should use it to replace the *entire* record, and you should use __PATCH__ to
-do *partial* updates. If you only pass in an incomplete set of fields the demo controller does a merge which technically
-isn't very RESTful. There is no guarantee that future controllers may be more struct If you want to be more strict,
-simply make sure to pass in all fields. 
+The general philosophy with __PUT__ is that you should use it to replace the *entire* record,
+and you should use __PATCH__ to do *partial* updates.
+If you only pass in an incomplete set of fields, the demo controller does a merge.
+Technically that isn't very RESTful. 
+There is no guarantee that future controllers may be more strict.
+If you want to be more strict, simply make sure to pass in all fields. 
 
-This is what the demo PUT controller currently does behind the scenes:
+This is what the demo __PUT__ controller currently does behind the scenes via __mongoose__:
 
     collection.update( { _id : req.params.id }, { $set : body }, ... )
     
 ### PATCH
 
-PATCH is simular to PUT, you need to include an ID of the record in the URL, but the data you pass in is not a set of fields
-but a set of *instructions* for how to patch the record.
+PATCH is simular to PUT.
+You still need to include the id*of the record in the URL.
+But the data you pass in is not a set of fields.
+Instead it's a set of *instructions* for how to patch the record.
 
     $ curl -i -X PATCH -H "Content-Type: application/json-patch" 
       -d '[{"op":"replace","path":"/status","value":"UPDATE PATCH"}]' 
       http://localhost:3030/api/mytest/54ce741e470103ca057b0098
       
 Behind the scenes the demo controller currently uses __fast-json-patch__.
-Search for that on NPM for more info how to apply patches.
+Search for that on __npm__ for more info how to apply patches.
 
 ### DELETE
 
-Deleting a record through curl is simular to getting a record - you simply append the id to the URL.
+Deleting a record through curl is similar to getting a record - you simply append the id to the URL.
 
     $ curl -i -X DELETE -H "Content-Type: application/json" 
       http://localhost:3021/api/mytest/54ce5b2109f8166e04258d31
