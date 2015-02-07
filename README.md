@@ -503,8 +503,8 @@ Review the __*rights*__ tests for more info.
     request(testHost)
         .post(testUrl)
         .send(testObject)
-        .set(\'x-auth\', jwt.encode({ username: \"Mitch\", role: \"admin\" }, appSecret))
-        .set(\'Content-Type\', \'application/json\')
+        .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, appSecret))
+        .set('Content-Type', 'application/json')
         .expect(201)
         .end(function (err, res) {
             should.not.exist(err);
