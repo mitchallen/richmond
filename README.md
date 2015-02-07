@@ -135,7 +135,7 @@ Change the values to create a small set of records to experiment with.
 
 #### GET
 
-Now get all the record s(by default non-selected fields, like __password__, will not be returned):
+Now get all the records (by default non-selected fields, like __password__, will not be returned):
 
     $ curl -X GET -H "Accept: applications/json" 
       http://localhost:3030/api/mytest 
