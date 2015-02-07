@@ -442,11 +442,11 @@ This is a wrapper for Mongoose.createConnection.  See their documentation for mo
 
 ### .closeConnecton()
 
-If there is an existing Mongoose connect this will close it. 
+If there is an existing Mongoose connection this will close it. 
 
 ### .controller(controller)
 
-Used to assign a controller to process requests.
+Used to assign a controller (like __richmond-web-controller__) to process HTTP requests.
 
 #### Usage
 
@@ -461,7 +461,7 @@ Used to assign a controller to process requests.
 
 ### .use(middleware)
 
-Wrapper for internal express.js app.
+Wrapper for internal __express.js__ app.
 
 #### Usage
 
@@ -491,10 +491,10 @@ __Do NOT hardcode the value__.  Always get it from the environment.
 
 Internally requests are intercepted by middleware and the headers are scanned for '__x-auth__'.
 If __x-auth__ is found it is decoded using __jwt-simple__'s decode method and the string set by __.secret()__.
-The result is assigned via the middleware to __req.token__ and carried on to the next method in the chain.  
+The result is assigned via the middleware to __req.token__ and carried on to the next method in the chain.
 Controllers then have the option to look for the decoded token and use it as they see fit.
 
-Review the __right*__ tests for more info.
+Review the __*rights*__ tests for more info.
 
 #### Usage
 
@@ -518,15 +518,18 @@ Review the __right*__ tests for more info.
 
 In order to run the tests, you need to add two more variables to your environment: __TEST_HOST__ and __TEST_SSL__
 
-For testing, I use the services of https://ngrok.com - for a small annual fee I secured a subdomain
+For testing, I use the services of __https://ngrok.com__ - for a small annual fee I secured a subdomain
 that I can tunnel back to a port on my localhost for testing.  It supports both SSL and Non-SSL.
 
     # Via ngrok
     export TEST_HOST=http://YOURSUBDOMAIN.ngrok.com
     export TEST_SSL=https://YOURSUBDOMAIN.ngrok.com
 
+Source the changes:
 
-Tests assume that mocha has been installed globally.  If not execute the following:
+    $ source ~/.bash_profile
+
+Tests assume that __mocha__ has been installed globally.  If not execute the following:
 
     $ npm install -g mocha
 
@@ -537,6 +540,10 @@ Run the tests in one of the following two ways:
 Or
 
     $ npm test
+    
+Or if you feel like kickin' it old skool:
+
+    make test
 
 The tests generate log files in the projects root folder.
 
