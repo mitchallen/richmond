@@ -5,7 +5,7 @@
 "use strict";
 
 var Controller = require('richmond-web-controller'),
-    Richmond = require('../richmond');
+    Richmond = require('../../richmond');
 
 function Config() {
     this.controller = new Controller();
