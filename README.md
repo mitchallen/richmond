@@ -130,9 +130,11 @@ Create a new record at the command line using __curl__ (assumes port __3030__):
       -d '{"email":"test@beta.com","password":"foo","status":"OK"}' 
       http://localhost:3030/api/mytest
 
+Repeat that step a few times, changing the values to create a small set of record to experiment with.
+
 #### GET
 
-Now get the record (by default non-selected fields, like __password__, will not be returned):
+Now get all the record s(by default non-selected fields, like __password__, will not be returned):
 
     $ curl -X GET -H "Accept: applications/json" 
       http://localhost:3030/api/mytest 
