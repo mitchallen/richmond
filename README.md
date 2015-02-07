@@ -533,7 +533,7 @@ Tests assume that __mocha__ has been installed globally.  If not execute the fol
 
     $ npm install -g mocha
 
-Run the tests *from the projects root folder* in one of the following two ways:
+Run the tests *from the projects root folder* in one of the following ways:
 
     $ mocha --recursive --timeout 20000
     
