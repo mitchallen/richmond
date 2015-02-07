@@ -545,7 +545,7 @@ Or if you feel like kickin' it old skool:
 
     make test
 
-To run test for just one version:
+### Testing by Version
 
 To run the tests for version 0.2.x:
 
@@ -567,6 +567,11 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 * * *
 
 ## Version History
+
+#### Version 0.2.0 release notes
+
+* Added .setup method
+* Broke tests out by version to support backward compatibility
 
 #### Version 0.1.3 release notes
 
