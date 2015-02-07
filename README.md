@@ -11,11 +11,19 @@ A node.js module for mapping Web calls to MongoDB
     $ npm install richmond --save
     $ npm install richmond-web-controller --save
 
+* * *
+
+## Terminology
+
+* __demo controller__ - refers to the __richmond-web-controller__ that you install separately.
+
+* * *
+
 ## Usage
 
 ### Step 1: Visit MongoLab
 
-Use your own local install of MongoDB or visit https://mongolab.com 
+Use your own local install of MongoDB or visit __https://mongolab.com__
 and create a free test database, writing down the credentials.
 
 ### Step 2: Edit ~/.bash_profile
@@ -87,6 +95,7 @@ When you are done with that, execute the following at the command line:
 		  		getMany:  	[{ model: modelName, rights: "PUBLIC" }],
 		  		post: 		[{ model: modelName, rights: "PUBLIC" }],
 		  		put: 		[{ model: modelName, rights: "PUBLIC" }],
+		  		patch:      [{ model: modelName, rights: "PUBLIC" }],
 		  	}))
 		.prefix( prefix );	
     var options = {
@@ -110,11 +119,15 @@ From your projects root folder, execute the following at the command line:
 
 ### Step 6: Test the app using curl commands
 
+#### POST
+
 Create a new record at the command line using __curl__ (assumes port __3030__):
 
     $ curl -i -X POST -H "Content-Type: application/json" 
       -d '{"email":"test@beta.com","password":"foo","status":"OK"}' 
       http://localhost:3030/api/mytest
+
+#### GET
 
 Now get the record (by default non-selected fields, like __password__, will not be returned):
 
@@ -140,6 +153,45 @@ You can also select what fields to show (__%20__ is a __space__), even non-selec
 
 Note that if a field was never set in the record, you will not see it listed in the returned record.
 
+### PUT
+
+PUT is similar to POST where you have to pass in data, but since you are updating a record that already exists you 
+need to also append a record id to the URL.
+
+    $ curl -i -X PUT -H "Content-Type: application/json" 
+      -d '{"email":"test@put.com","password":"foo","status":"UPDATED"}' 
+      http://localhost:3030/api/mytest/54ce6eca470103ca057b0097
+
+The general philosophy with PUT is that you should use it to replace the *entire* record, and you should use __PATCH__ to
+do *partial* updates. If you only pass in an incomplete set of fields the demo controller does a merge which technically
+isn't very RESTful. There is no guarantee that future controllers may be more struct If you want to be more strict,
+simply make sure to pass in all fields. 
+
+This is what the demo PUT controller currently does behind the scenes:
+
+    collection.update( { _id : req.params.id }, { $set : body }, ... )
+    
+### PATCH
+
+PATCH is simular to PUT, you need to include an ID of the record in the URL, but the data you pass in is not a set of fields
+but a set of *instructions* for how to patch the record.
+
+    $ curl -i -X PATCH -H "Content-Type: application/json-patch" 
+      -d '[{"op":"replace","path":"/status","value":"UPDATE PATCH"}]' 
+      http://localhost:3030/api/mytest/54ce741e470103ca057b0098
+      
+Behind the scenes the demo controller currently uses __fast-json-patch__.
+Search for that on NPM for more info how to apply patches.
+
+### DELETE
+
+Deleting a record through curl is simular to getting a record - you simply append the id to the URL.
+
+    $ curl -i -X DELETE -H "Content-Type: application/json" 
+      http://localhost:3021/api/mytest/54ce5b2109f8166e04258d31
+
+* * *
+
 ## Middleware
 
 Under the hood this module is using __express.js__ and wraps the __app.use__ call.
@@ -148,6 +200,8 @@ To inject middleware, like __CORS__, you can do the following (assumes you insta
 
     micro.use( cors() );
     micro.listen( port );
+
+* * * 
 
 ## SSL
 
@@ -164,9 +218,7 @@ status will be returned.
 
 A value of 302 (Moved) will result in the user being redirected to the SSL equivalent of the request.
 
-## PATCH
-
-Patch in the demo controller works, but consider it experimental and perform your own testing to confirm.
+* * * 
 
 ## Wrappers
 
@@ -212,6 +264,8 @@ The example also includes showing how to pass through extra data to the after me
             next( doc );
         };  
     
+* * *
+
 ## Multiple Models
 
 This module supports multiple models.  The setup could look something like this:
@@ -257,6 +311,8 @@ This module supports multiple models.  The setup could look something like this:
         });
 				
         micro.listen( port ); 
+
+* * *
 
 ## API
 
@@ -436,6 +492,7 @@ Review the __right*__ tests for more info.
             });
         });
 
+* * *
 
 ## Tests
 
@@ -463,10 +520,14 @@ Or
 
 The tests generate log files in the projects root folder.
 
+* * *
+
 ## Contributing
 
 In lieu of a formal style guide, take care to maintain the existing coding style.
 Add unit tests for any new or changed functionality. Lint and test your code.
+
+* * *
 
 ## Version History
 
