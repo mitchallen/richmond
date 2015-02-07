@@ -119,6 +119,9 @@ From your projects root folder, execute the following at the command line:
 
 ### Step 6: Test the app using curl commands
 
+Note that these command refer to how the *demo controller* works. 
+Future and third part controllers may operate differently.
+
 #### POST
 
 Create a new record at the command line using __curl__ (assumes port __3030__):
