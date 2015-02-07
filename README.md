@@ -75,6 +75,13 @@ When you are done with that, execute the following at the command line:
 
 ### Step 4: Create index.js in your projects root folder:
 
+__Important Note:__ if you omit a line in the controller setup for an HTTP method (POST, PUT, etc) trying
+to make an HTTP request using that method will result in a returned status of 404 (Not Found).
+
+That may actually be desired.
+For example you may want to build a Web service where people can only read (GET) records from your database.
+So you would only include the setup lines for *getOne* (get one record) and *getMany* (get collection) in the demo controller.
+
     var Richmond   = require('richmond'),
 	    micro      = new Richmond(),
 	    config     = require('./config'),
@@ -181,8 +188,8 @@ This is what the demo __PUT__ controller currently does behind the scenes via __
     
 ### PATCH
 
-PATCH is simular to PUT.
-You still need to include the id*of the record in the URL.
+__PATCH__ is simular to __PUT__.
+You still need to include the id of the record in the URL.
 But the data you pass in is not a set of fields.
 Instead it's a set of *instructions* for how to patch the record.
 
