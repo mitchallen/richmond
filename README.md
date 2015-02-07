@@ -118,6 +118,9 @@ So you would only include the setup lines for *getOne* (get one record) and *get
     micro.listen( port );
     console.log( "Listening on port:", port );
 
+Also note that the lines above in the *controller.setup* code only apply to the demo controller.
+Future and third party controllers may implement their own strategy and options for defining how the controller works.
+
 ### Step 5: Install and run the app
 
 From your projects root folder, execute the following at the command line:
