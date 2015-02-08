@@ -434,6 +434,7 @@ Or via __setup__:
 
 #### Usage:
 
+    micro.connect();
     MyTests = micro.addModel("mytest", {
         email:      { type: String, required: true },
         status:     { type: String, required: true },
@@ -482,7 +483,7 @@ Called internally by __addModel__ and __model__ to make sure that internal keys 
 
 The __uri__ would be in a form like this: mongodb://HOST:PORT/DATABASE
 
-This is a wrapper for Mongoose.createConnection.  See their documentation for more option parameters.
+This is a wrapper for __Mongoose.createConnection__.  See their documentation for more option parameters.
 
 #### Usage
 
