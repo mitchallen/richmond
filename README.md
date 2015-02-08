@@ -194,6 +194,8 @@ This is what the demo __PUT__ controller currently does behind the scenes via __
     
 ### PATCH
 
+__Important Note:__ __PATCH__ has some issues and should be considered experimental.
+
 __PATCH__ is simular to __PUT__.
 You still need to include the id of the record in the URL.
 But the data you pass in is not a set of fields.
