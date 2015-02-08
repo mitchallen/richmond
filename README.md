@@ -89,7 +89,7 @@ That may actually be desired.
 For example you may want to build a Web service where people can only read (GET) records from your database.
 So you would only include the setup lines for *getOne* (get one record) and *getMany* (get collection) in the demo controller.
 
-As of 0.3.0 you now have the optons of passing all of he service options to the constructor instead of __setup__
+As of 0.3.0 you now have the optons of passing all of he service options to the constructor instead of __setup__.
 
     var Richmond   = require('richmond'),
         config     = require('./config'),
@@ -261,28 +261,28 @@ The example also includes showing how to pass through extra data to the after me
             var extras = { message: testExtraMessage };
 		    var body = prop.req.body;
             if (body.password) {
-		        bcrypt.hash( body.password, 10, function( err, hash ) {
-                    if( err ) {
+		        bcrypt.hash(body.password, 10, function (err, hash) {
+                    if (err) {
                         throw err;
                     }
                     body.password = hash;
-                    next( body, extras );
+                    next(body, extras);
                  });
             } else {
-                next( body, extras );
+                next(body, extras);
             }
         };
   
     var afterPost = 
         function (prop, next) {
-            var doc = JSON.parse(JSON.stringify( prop.result ));
+            var doc = JSON.parse(JSON.stringify(prop.result));
             thepatch = [ { "op": "remove", "path": "/password" } ];
             jsonpatch.apply( doc, thepatch );
             var extras = prop.extras;
-            if( extras.message != testExtraMessage ) {
-                throw new Error( "Test extra message not what expected.");
+            if (extras.message != testExtraMessage) {
+                throw new Error("Test extra message not what expected.");
             }
-            next( doc );
+            next(doc);
         };  
     
 * * *
@@ -310,12 +310,12 @@ This module supports multiple models.  The setup could look something like this:
              }))
         micro.connect();
         // Model[0]
-        AlphaTestDoc = micro.addModel( modelName[0], {
+        AlphaTestDoc = micro.addModel(modelName[0], {
             email: 	{ type: String, required: true },
             status: { type: String, required: true },   
         });
         // Model[1]
-        BetaTestDoc = micro.addModel( modelName[1], {
+        BetaTestDoc = micro.addModel(modelName[1], {
             user: { type: String, required: true },
             level: { type: String, required: true },   
         });	
@@ -331,7 +331,8 @@ You can still call the constructor with no arguments.
 As of 0.3.0 can also call the constructor passing in the options for __setup__.  
 
 The constructor will still initialize internal values, but then call __setup__ with the options as a final step.
-If you pass in the options, there would no need to call __setup__ later, saving a step and simplifying your code. 
+If you pass in the options, there would no need to call __setup__ later.
+That will save you a step and simplify your code. 
 
     Richmond = require('richmond');
     micro = new Richmond(options);
@@ -341,6 +342,8 @@ Or
     Richmond = require('richmond');
     micro = new Richmond();
     micro.setup(options)
+
+See the __setup__ method for more info on what options are available.
 
 ### .setup(options)
 
@@ -594,8 +597,7 @@ Wrapper for internal __express.js__ app.
 
     micro.use( cors() );
 
-### .listen()
-### .listen(port)
+### .listen()<br />.listen(port)
 
 When everything is good to go, make this call last to start listening for requests on a particular port.
 
@@ -603,7 +605,8 @@ When everything is good to go, make this call last to start listening for reques
 
     micro.listen(port);
   
-Alternatively you can define the port via the __setup__ method than call __listen__ with no parameters.
+Alternatively you can define the port via the __setup__ method or the constructor.
+Then call __listen__ with no parameters.
     
     var options = {
         port: process.env.TEST_PORT || null,
