@@ -89,7 +89,7 @@ That may actually be desired.
 For example you may want to build a Web service where people can only read (GET) records from your database.
 So you would only include the setup lines for *getOne* (get one record) and *getMany* (get collection) in the demo controller.
 
-As of 0.3.0 you now have the optons of passing all of he service options to the constructor instead of __setup__.
+As of 0.3.0 you now have the optons of passing all of the service options to the constructor instead of __setup__.
 
     var Richmond   = require('richmond'),
         config     = require('./config'),
@@ -328,7 +328,7 @@ This module supports multiple models.  The setup could look something like this:
 ## Constructor
 
 You can still call the constructor with no arguments.
-As of 0.3.0 can also call the constructor passing in the options for __setup__.  
+As of 0.3.0 you can also call the constructor passing in the options for __setup__.  
 
 The constructor will still initialize internal values, but then call __setup__ with the options as a final step.
 If you pass in the options, there would no need to call __setup__ later.
@@ -450,7 +450,7 @@ Prefix validation rules:
 * prefix must begin with a slash
 * prefix must not end with a slash
 * prefix must not contain whitepace
-* You can also skip this call by setting the value through __setup__.
+* You can also skip this call by setting the value through __setup__ or the constructor.
 
 #### Usage
 
