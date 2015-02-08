@@ -12,7 +12,7 @@ A node.js module for mapping Web calls to MongoDB
     $ npm install richmond-web-controller --save
     
 __Important Note:__ be sure to be using the latest __richmond-web-controller__.
-There was to a database id validation bug in earlier versions (fixed in 0.1.3).
+There was a database id validation bug in earlier versions (fixed in 0.1.3).
 
 * * *
 
