@@ -1,6 +1,6 @@
 {
-  "name": "richmond",
-  "version": "0.1.3",
+  "name": "@minja/richmond",
+  "version": "0.2.0",
   "description": "richmond.js core module",
   "main": "richmond.js",
   "scripts": {
@@ -9,6 +9,9 @@
     "test-nodemon": "nodemon /usr/local/bin/mocha  --recursive --timeout 20000",
     "test-debug": "nodemon /usr/local/bin/mocha -g '@DEBUG' --recursive --timeout 20000",
     "test-jenkins": "mocha --recursive --timeout 20000 -R xunit test/ > test-reports.xml"
+  },
+  "publishConfig": {
+	    "registry": "http://registry.mitchallen.com/"
   },
   "repository": {
     "type": "git",
@@ -25,7 +28,7 @@
     "multer": "0.1.7"
   },
   "devDependencies": {
-    "richmond-web-controller": "0.1.2",
+    "richmond-web-controller": "0.1.3",
     "bcrypt": "0.8.1",
     "fast-json-patch": "0.5.0",
     "should": "4.6.0",
