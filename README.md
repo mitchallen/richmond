@@ -89,16 +89,17 @@ That may actually be desired.
 For example you may want to build a Web service where people can only read (GET) records from your database.
 So you would only include the setup lines for *getOne* (get one record) and *getMany* (get collection) in the demo controller.
 
+As of 0.3.0 you now have the optons of passing all of he service options to the constructor instead of __setup__
+
     var Richmond   = require('richmond'),
-        micro      = new Richmond(),
         config     = require('./config'),
         controller = config.controller,
         service    = config.service,
+        micro      = new Richmond(service),
         MyTestDoc  = null,
         modelName  = "MyTest";  
 
     micro
-        .setup(service)
         .logFile("my-test.log")
         .controller( 
             controller.setup({ 
@@ -110,13 +111,13 @@ So you would only include the setup lines for *getOne* (get one record) and *get
                 patch:      [{ model: modelName, rights: "PUBLIC" }],
             }))
     micro.connect();
-    MyTestDoc = micro.addModel( modelName, {
+    MyTestDoc = micro.addModel(modelName, {
         email:  { type: String, required: true },
         status: { type: String, required: true },
         password: { type: String, select: false }, 
     });
     micro.listen();
-    console.log( "Listening on port:", service.port );
+    console.log("Listening on port:", service.port);
 
 Also note that the lines above in the *controller.setup* code only apply to the demo controller.
 Future and third party controllers may implement their own strategy and options for defining how the controller works.
@@ -219,7 +220,7 @@ Under the hood this module is using __express.js__ and wraps the __app.use__ cal
 To inject middleware, like __CORS__, you can do the following (assumes you installed __cors__ and required it):
 
     micro.use( cors() );
-    micro.listen( port );
+    micro.listen();
 
 * * * 
 
@@ -256,10 +257,10 @@ The example also includes showing how to pass through extra data to the after me
     var testExtraMessage = 'Testing 123';
 
     var beforePost = 
-	    function( prop, next ) {
+	    function (prop, next) {
             var extras = { message: testExtraMessage };
 		    var body = prop.req.body;
-            if( body.password != undefined ) {
+            if (body.password) {
 		        bcrypt.hash( body.password, 10, function( err, hash ) {
                     if( err ) {
                         throw err;
@@ -273,7 +274,7 @@ The example also includes showing how to pass through extra data to the after me
         };
   
     var afterPost = 
-        function( prop, next ) {
+        function (prop, next) {
             var doc = JSON.parse(JSON.stringify( prop.result ));
             thepatch = [ { "op": "remove", "path": "/password" } ];
             jsonpatch.apply( doc, thepatch );
@@ -307,34 +308,39 @@ This module supports multiple models.  The setup could look something like this:
                  put:     [ { model: modelName[0], rights: "PUBLIC" },
                             { model: modelName[1], rights: "PUBLIC" } ]
              }))
-             .prefix( prefix );
-		 
-        var options = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-		
-        micro.connect( dbConfig.uri, options );
-		
+        micro.connect();
         // Model[0]
-		
         AlphaTestDoc = micro.addModel( modelName[0], {
             email: 	{ type: String, required: true },
             status: { type: String, required: true },   
         });
-			
         // Model[1]
-		
         BetaTestDoc = micro.addModel( modelName[1], {
             user: { type: String, required: true },
             level: { type: String, required: true },   
-        });
-				
-        micro.listen( port ); 
+        });	
+        micro.listen(); 
 
 * * *
 
 ## API
+
+## Constructor
+
+You can still call the constructor with no arguments.
+As of 0.3.0 can also call the constructor passing in the options for __setup__.  
+
+The constructor will still initialize internal values, but then call __setup__ with the options as a final step.
+If you pass in the options, there would no need to call __setup__ later, saving a step and simplifying your code. 
+
+    Richmond = require('richmond');
+    micro = new Richmond(options);
+    
+Or 
+
+    Richmond = require('richmond');
+    micro = new Richmond();
+    micro.setup(options)
 
 ### .setup(options)
 
@@ -346,7 +352,11 @@ You do not need to include every option in the usage example below.
 You can still change a value (example: *prefix*) after calling __setup__.
 Just call the related method afterwards (i.e.: micro.prefix("/v1")); 
 
+As of 0.3.0 an alternative is to pass the options to the constructor which will call __setup__ internally.
+
 #### Usage
+
+    micro = new Richmond();
 
     var options = {
         logFile: "my-test.log",
@@ -363,13 +373,31 @@ Just call the related method afterwards (i.e.: micro.prefix("/v1"));
     };
 
     micro.setup(options);
+    
+Or:
+
+    var options = {
+        logFile: "my-test.log",
+        port: process.env.TEST_PORT || null,
+        secret: process.env.APP_SECRET || null,
+        prefix: "/API",
+        database: {
+            uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
+            options: {
+                user: process.env.TEST_MONGO_USER || null,
+                pass: process.env.TEST_MONGO_PASS || null
+            }
+        }
+    };
+
+    micro = new Richmond(options);
 
 ### .logFile(filename)
 
 * If no path is specified, will just write to the apps current directory.
 * If writing to a folder, the folder must already exist.
 * If this is not called all log output will go through the console.
-* You can also skip this call by setting the value through __setup__.
+* You can also skip this call by setting the value through __setup__ or the constructor.
 
 #### Usage
 
@@ -382,6 +410,14 @@ Or via __setup__:
     };
     
     micro.setup(options);
+    
+Or via the constructor:
+
+    var options = {
+        logFile: "my-test.log"
+    };
+
+    micro = new Richmond(options);
 
 ### .prefix()
 
@@ -424,6 +460,14 @@ Or via __setup__:
     };
     
     micro.setup(options);
+
+Or via the constructor:
+
+    var options = {
+        prefix: "/v1"
+    };
+   
+    micro = new Richmond(options);
 
 ### .addModel(name,model)
 
@@ -507,6 +551,21 @@ Alternatively you can set the parameters via __setup__ and then call __connect__
     
     micro.setup(options);
     micro.connect();
+    
+Or via the constructor:
+
+    var options = {
+        database: {
+            uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
+            options: {
+                user: process.env.TEST_MONGO_USER || null,
+                pass: process.env.TEST_MONGO_PASS || null
+            }
+        }
+    };
+    
+    micro = new Richmond(options);
+    micro.connect();
 
 ### .closeConnecton()
 
@@ -554,6 +613,15 @@ Alternatively you can define the port via the __setup__ method than call __liste
     ...
     micro.listen();
     
+Or via the constructor:
+    
+    var options = {
+        port: process.env.TEST_PORT || null,
+    };
+    
+    micro = new Richmond(options);
+    ...
+    micro.listen();
 
 ### .closeService()
 
@@ -599,7 +667,15 @@ Alterntively you can set the *secret* through the __setup__ method.
     };
     
     micro.setup(options);
+
+Or via the constructor:
+
+    var options = {
+        secret: process.env.APP_SECRET || null
+    };
     
+    micro = new Richmond(options);
+
 Then there is no need to call the __.secret__ method directly 
 But you can if you want to override the value set through __setup__
 
@@ -638,12 +714,10 @@ Or if you feel like kickin' it old skool:
 
 ### Testing by Version
 
-To run the tests for version 0.2.x:
+To run the tests for each version:
 
+    $ mocha --timeout 5000 --recursive test/v0003/*test.js
     $ mocha --timeout 5000 --recursive test/v0002/*test.js
-    
-To run the tests for version 0.1.x (to verify backward compatibility):
-    
     $ mocha --timeout 5000 --recursive test/v0001/*test.js
 
 The tests generate log files in the projects root folder.
@@ -661,9 +735,9 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 #### Version 0.3.0 release notes
 
-* You can now pass options to constructor which will call .setup for you.
+* You can now pass options to the constructor which will call __.setup__ for you.
 * Cloned tests to a new version 0.3.x suite and updated for new functionality.
-* Added version info to all test suite output and test log names.
+* Added version info to all test suite output and test log file names.
 
 #### Version 0.2.0 release notes
 
