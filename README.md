@@ -194,15 +194,13 @@ This is what the demo __PUT__ controller currently does behind the scenes via __
     
 ### PATCH
 
-__Important Note:__ __PATCH__ has some issues and should be considered experimental.
-
 __PATCH__ is simular to __PUT__.
 You still need to include the id of the record in the URL.
 But the data you pass in is not a set of fields.
 Instead it's a set of *instructions* for how to patch the record.
 
-    $ curl -i -X PATCH -H "Content-Type: application/json-patch" 
-      -d '[{"op":"replace","path":"/status","value":"UPDATE PATCH"}]' 
+    $ curl -i -X PATCH -H "Content-Type: application/json" 
+      -d '[{"op":"replace","path":"/status","value":"PATCH THE STATUS"}]' 
       http://localhost:3030/api/mytest/54ce741e470103ca057b0098
       
 Behind the scenes the demo controller currently uses __fast-json-patch__.
