@@ -89,7 +89,7 @@ That may actually be desired.
 For example you may want to build a Web service where people can only read (GET) records from your database.
 So you would only include the setup lines for *getOne* (get one record) and *getMany* (get collection) in the demo controller.
 
-As of 0.3.0 you now have the optons of passing all of the service options to the constructor instead of __setup__.
+As of 0.3.0 you can pass all of the service options to the constructor instead of __setup__.
 
     var Richmond   = require('richmond'),
         config     = require('./config'),
@@ -248,7 +248,7 @@ You can add __before__ and __after__ wrappers to the demo controller like this:
     post:  [{ model: modelName, rights: "PUBLIC", 
               before: beforePost, after: afterPost }],
     
-This example use a __before__ method to hash a password before saving it.
+This example uses a __before__ method to hash a password before saving it.
 
 The __after__ method demonstrates how to remove the hashed password before the doc is returned.
 
