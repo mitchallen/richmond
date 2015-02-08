@@ -110,7 +110,7 @@ As of 0.3.0 you can pass all of the service options to the constructor instead o
         password: { type: String, select: false },
     });
     micro.listen();
-    console.log("Listening on port:", service.port);;
+    console.log("Listening on port:", service.port);
 
 Also note that the lines above in the *controller.setup* code only apply to the demo controller.
 Future and third party controllers may implement their own strategy and options for defining how the controller works.
