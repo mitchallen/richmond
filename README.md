@@ -55,17 +55,12 @@ When you are done with that, execute the following at the command line:
 
 Note that this has changed since version 0.1.x.
 
-    /**
-     * config.js
-     */
-
     var Controller = require('richmond-web-controller');
 
     module.exports = {
-        
         controller: new Controller(),
-        
         service: {
+            logFile: "my-test.log",
             port: process.env.TEST_PORT || null,
             secret: process.env.APP_SECRET || null,
             prefix: "/API",
@@ -96,28 +91,26 @@ As of 0.3.0 you can pass all of the service options to the constructor instead o
         controller = config.controller,
         service    = config.service,
         micro      = new Richmond(service),
-        MyTestDoc  = null,
-        modelName  = "MyTest";  
+        modelName  = "MyTest";
 
-    micro
-        .logFile("my-test.log")
-        .controller( 
-            controller.setup({ 
-                del:        [{ model: modelName, rights: "PUBLIC" }],
-                getOne:     [{ model: modelName, rights: "PUBLIC" }], 
-                getMany:    [{ model: modelName, rights: "PUBLIC" }],
-                post:       [{ model: modelName, rights: "PUBLIC" }],
-                put:        [{ model: modelName, rights: "PUBLIC" }],
-                patch:      [{ model: modelName, rights: "PUBLIC" }],
-            }))
+    micro.controller(
+        controller.setup({
+            del:        [{ model: modelName, rights: "PUBLIC" }],
+            getOne:     [{ model: modelName, rights: "PUBLIC" }],
+            getMany:    [{ model: modelName, rights: "PUBLIC" }],
+            post:       [{ model: modelName, rights: "PUBLIC" }],
+            put:        [{ model: modelName, rights: "PUBLIC" }],
+            patch:      [{ model: modelName, rights: "PUBLIC" }],
+        })
+    );
     micro.connect();
-    MyTestDoc = micro.addModel(modelName, {
-        email:  { type: String, required: true },
-        status: { type: String, required: true },
-        password: { type: String, select: false }, 
+    micro.addModel(modelName, {
+        email:    { type: String, required: true },
+        status:   { type: String, required: true },
+        password: { type: String, select: false },
     });
     micro.listen();
-    console.log("Listening on port:", service.port);
+    console.log("Listening on port:", service.port);;
 
 Also note that the lines above in the *controller.setup* code only apply to the demo controller.
 Future and third party controllers may implement their own strategy and options for defining how the controller works.
