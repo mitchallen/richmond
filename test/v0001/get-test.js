@@ -22,10 +22,10 @@ var request = require('supertest'),
     MochaTestDoc = null,
     modelName = "GetTest";
 
-describe('get', function () {
+describe('get' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("get-test.log")
+            .logFile("get-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:      [ { model: modelName, rights: "PUBLIC" } ],

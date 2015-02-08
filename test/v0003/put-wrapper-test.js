@@ -1,5 +1,5 @@
 /**
- * put-after-res-test.js
+ * put-wrapper-test.js
  */
 
 "use strict";
@@ -14,19 +14,19 @@ var request = require('supertest'),
     micro = config.richmond,
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
-    service = config.service,
-    prefix = service.prefix,
+    service       = config.service,
+    prefix     = service.prefix,
     testHost = config.host.url,
-    modelName = "PutTest",
+    modelName = "PutTest",    // Will translate to lowercase
     testSecret = 'supersecret',
     ownerEmail = "test@zap.com",
     MochaTestDoc = null;
 
-describe('put after error' + config.versionLabel, function () {
+describe('put before after' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
-            beforePut = null,
-            afterPut = null;
+            beforePut,
+            afterPut;
         beforePut = function (prop, next) {
             should.exist(prop.req);
             should.exist(prop.req.token);
@@ -35,17 +35,15 @@ describe('put after error' + config.versionLabel, function () {
             next(prop.req.body, options, extras);
         };
         afterPut = function (prop, next) {
-            should.exist(next);
             should.exist(prop.req);
-            should.exist(prop.res);
-            var res = prop.res;
-            // Testing Response
-            res.status(402).json({ error: "Payment required." });
-            // next();// Don't call next when returning a response
+            should.exist(prop.req);
+            should.exist(prop.numAffected);
+            prop.numAffected.should.eql(1);
+            next();
         };
+
         micro
-            .setup(service)
-            .logFile("put-after-err-test-" + config.logVersion + ".log")
+            .logFile("put-wrapper-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
@@ -59,12 +57,12 @@ describe('put after error' + config.versionLabel, function () {
             .connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
-            status: { type: String, required: true }
+            status: { type: String, required: true },
         });
         micro.listen();
     });
 
-    it('should return the injected error', function (done) {
+    it('before should inject a message and after should confirm it', function (done) {
         /*jslint nomen: true*/
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = {};
@@ -87,7 +85,7 @@ describe('put after error' + config.versionLabel, function () {
                     .send({ status: "UPDATED" })
                     .set('x-auth', jwt.encode({ email: ownerEmail, role: "user" }, testSecret))
                     .set('Content-Type', 'application/json')
-                    .expect(402)
+                    .expect(204)    // No content
                     .end(function (err, res) {
                         should.not.exist(err);
                         should.exist(res);

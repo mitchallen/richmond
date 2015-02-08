@@ -24,7 +24,7 @@ var request = require('supertest'),
 
 var MochaTestDoc = null;
 
-describe('delete after error', function () {
+describe('delete after error' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             beforeDelete = null,

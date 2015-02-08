@@ -22,7 +22,6 @@ var request = require('supertest'),
 describe('smoke tests' + config.versionLabel, function () {
     before(function () {
         micro
-            .setup(service)
             .logFile("smoke-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({

@@ -44,7 +44,6 @@ describe('put after error' + config.versionLabel, function () {
             // next();// Don't call next when returning a response
         };
         micro
-            .setup(service)
             .logFile("put-after-err-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({

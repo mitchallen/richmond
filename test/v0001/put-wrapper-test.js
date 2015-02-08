@@ -24,7 +24,7 @@ var request = require('supertest'),
     ownerEmail = "test@zap.com",
     MochaTestDoc = null;
 
-describe('put before after', function () {
+describe('put before after' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             dbOptions = {},
@@ -46,7 +46,7 @@ describe('put before after', function () {
         };
 
         micro
-            .logFile("put-wrapper-test.log")
+            .logFile("put-wrapper-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

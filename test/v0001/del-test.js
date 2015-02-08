@@ -26,7 +26,7 @@ var request = require('supertest'),
 
 var MochaTestDoc = null;
 
-describe('delete', function () {
+describe('delete' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             options = {},
@@ -48,7 +48,7 @@ describe('delete', function () {
             next();
         };
         micro
-            .logFile("del-test.log")
+            .logFile("del-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }],

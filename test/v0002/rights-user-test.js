@@ -21,7 +21,7 @@ var request = require('supertest'),
     testSecret = service.secret,
     MochaTestDoc = null;
 
-describe('user rights', function () {
+describe('user rights' + config.versionLabel, function () {
     before(function () {
         micro
             .setup(service)

@@ -22,7 +22,6 @@ var request = require('supertest'),
 describe('get' + config.versionLabel, function () {
     before(function () {
         micro
-            .setup(service)
             .logFile("get-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({

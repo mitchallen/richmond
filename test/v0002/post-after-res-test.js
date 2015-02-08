@@ -21,7 +21,7 @@ var request = require('supertest'),
 
 var MochaTestDoc = null;
 
-describe('post after error', function () {
+describe('post after error' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             beforePost = null,

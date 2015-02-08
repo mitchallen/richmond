@@ -9,7 +9,6 @@ var Controller = require('richmond-web-controller'),
 
 function Config() {
     this.controller = new Controller();
-    this.richmond = new Richmond();
     this.service = {
         secret: process.env.APP_SECRET || null,
         prefix: "/API",
@@ -22,11 +21,12 @@ function Config() {
         },
         port: process.env.TEST_PORT || null,
     };
+    this.richmond = new Richmond(this.service);
     this.host = {
         url: process.env.TEST_HOST || null,
         ssl: process.env.TEST_SSL || null
     };
-    this.logVersion = "00-02";  // Used in log name.
+    this.logVersion = "00-03";  // Used in log name.
     this.versionLabel = " [" + this.logVersion + "]"; // Used in test labels.
 }
 

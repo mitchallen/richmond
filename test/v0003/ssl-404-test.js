@@ -1,5 +1,5 @@
 /**
- * smoke-test.js
+ * ssl-404-test.js
  */
 
 "use strict";
@@ -16,21 +16,22 @@ var request = require('supertest'),
     service = config.service,
     prefix = service.prefix,
     testHost = config.host.url,
-    modelName = "SmokeTest",    // Will translate to lowercase
+    sslHost = config.host.ssl,
+    modelName = "SslNotFoundTest",
     MochaTestDoc = null;
 
-describe('smoke tests' + config.versionLabel, function () {
+describe('ssl not found' + config.versionLabel, function () {
     before(function () {
         micro
-            .setup(service)
-            .logFile("smoke-test-" + config.logVersion + ".log")
+            .logFile("ssl-404-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
-                    del:        [{ model: modelName, rights: "PUBLIC" }],
-                    getOne:     [{ model: modelName, rights: "PUBLIC" }],
-                    getMany:    [{ model: modelName, rights: "PUBLIC" }],
-                    post:       [{ model: modelName, rights: "PUBLIC" }],
-                    put:        [{ model: modelName, rights: "PUBLIC" }],
+                    del:        [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
+                    getOne:     [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
+                    getMany:    [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
+                    patch:      [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
+                    post:       [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
+                    put:        [{ model: modelName, rights: "PUBLIC", ssl: 404 }],
                 })
             );
         micro.connect();
@@ -41,17 +42,7 @@ describe('smoke tests' + config.versionLabel, function () {
         micro.listen();
     });
 
-    it('should be able to get name', function (done) {
-        should.exist(controller.name);
-        done();
-    });
-
-    it('should be able to get version', function (done) {
-        should.exist(controller.version);
-        done();
-    });
-
-    it('should confirm that post works', function (done) {
+    it('should return not found when posting to non-ssl', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = {};
         testObject = {
@@ -62,11 +53,10 @@ describe('smoke tests' + config.versionLabel, function () {
             .post(testUrl)
             .send(testObject)
             .set('Content-Type', 'application/json')
-            .expect(201)
+            .expect(404)    // Not found
             .end(function (err, res) {
                 should.not.exist(err);
-                res.body.email.should.eql(testObject.email);
-                res.body.status.should.eql(testObject.status);
+                should.exist(res);
                 // PURGE all records 
                 MochaTestDoc.remove({"email": /@/ }, function (err) {
                     if (err) {
@@ -77,37 +67,21 @@ describe('smoke tests' + config.versionLabel, function () {
             });
     });
 
-    it('should confirm that get collection works', function (done) {
-        var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            testObject = {};
-        testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@get.com",
-            status: "TEST GET COLLECTION"
-        };
-        // SETUP - need to post at least one record
+    it('should return not found when getting a collection via non-ssl', function (done) {
+        var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase();
+        // GET
         request(testHost)
-            .post(testUrl)
-            .send(testObject)
-            .set('Content-Type', 'application/json')
-            .expect(201)
+            .get(testUrl)
+            // .expect('Content-Type', /json/)
+            .expect(404)
             .end(function (err, res) {
                 should.not.exist(err);
                 should.exist(res);
-                // GET
-                request(testHost)
-                    .get(testUrl)
-                    // .expect('Content-Type', /json/)
-                    .expect(200)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        should.exist(res.body[0].email);
-                        should.exist(res.body[0].status);
-                        done();
-                    });
+                done();
             });
     });
 
-    it('should confirm that get document works', function (done) {
+    it('should return not found when getting a document via non-ssl', function (done) {
         /*jslint nomen: true*/
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testId = null,
@@ -117,7 +91,8 @@ describe('smoke tests' + config.versionLabel, function () {
             status: "TEST GET DOCUMENT"
         };
         // SETUP - need to post at least one record
-        request(testHost)
+        // Need to use SSL for post
+        request(sslHost)
             .post(testUrl)
             .send(testObject)
             .set('Content-Type', 'application/json')
@@ -128,46 +103,8 @@ describe('smoke tests' + config.versionLabel, function () {
                 // GET by ID
                 request(testHost)
                     .get(testUrl + "/" + testId)
-                    .expect('Content-Type', /json/)
-                    .expect(200)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        should.exist(res.body._id);
-                        should.exist(res.body.email);
-                        should.exist(res.body.status);
-                        res.body._id.should.eql(testId);
-                        res.body.email.should.eql(testObject.email);
-                        res.body.status.should.eql(testObject.status);
-                        done();
-                    });
-            });
-        /*jslint nomen: false*/
-    });
-
-    it('should confirm that delete works', function (done) {
-        /*jslint nomen: true*/
-        var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            testId = "",
-            zapUrl = "",
-            testObject = null;
-        testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@zap.com",
-            status: "TEST DELETE"
-        };
-        // SETUP - need to post at least one record
-        request(testHost)
-            .post(testUrl)
-            .send(testObject)
-            .set('Content-Type', 'application/json')
-            .expect(201)
-            .end(function (err, res) {
-                should.not.exist(err);
-                testId = res.body._id;
-                // DELETE
-                zapUrl = testUrl + "/" + testId;
-                request(testHost)
-                    .del(zapUrl)
-                    .expect(200)
+                     // .expect('Content-Type', /json/)
+                    .expect(404)
                     .end(function (err, res) {
                         should.not.exist(err);
                         should.exist(res);
@@ -177,17 +114,54 @@ describe('smoke tests' + config.versionLabel, function () {
         /*jslint nomen: false*/
     });
 
-    it('should confirm that put works', function (done) {
+    it('should return not found when deleting via non-ssl', function (done) {
         /*jslint nomen: true*/
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            putUrl = "",
+            testId = "",
+            zapUrl = null,
+            testObject = {};
+        testObject = {
+            email: "test" + getRandomInt(1000, 1000000) + "@zap.com",
+            status: "TEST DELETE"
+        };
+        // SETUP - need to post at least one record
+        // For POST need to use SSL or will fail.
+        request(sslHost)
+            .post(testUrl)
+            .send(testObject)
+            .set('Content-Type', 'application/json')
+            .expect(201)
+            .end(function (err, res) {
+                should.not.exist(err);
+                testId = res.body._id;
+                // DELETE
+                zapUrl = testUrl + "/" + testId;
+                // console.log(zapUrl);
+                request(testHost)
+                    .del(zapUrl)
+                    .expect(404)
+                    .end(function (err, res) {
+                        should.not.exist(err);
+                        should.exist(res);
+                        done();
+                    });
+            });
+        /*jslint nomen: false*/
+    });
+
+    it('should return not found when putting via non-ssl', function (done) {
+        /*jslint nomen: true*/
+        var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
+            testId = null,
+            putUrl = null,
             testObject = {};
         testObject = {
             email: "test" + getRandomInt(1000, 1000000) + "@put.com",
             status: "TEST PUT"
         };
         // SETUP - need to post at least one record
-        request(testHost)
+        // For POST need to use SSL or test will fail
+        request(sslHost)
             .post(testUrl)
             .send(testObject)
             .set('Content-Type', 'application/json')
@@ -195,12 +169,53 @@ describe('smoke tests' + config.versionLabel, function () {
             .end(function (err, res) {
                 should.not.exist(err);
                 // PUT
-                putUrl = testUrl + "/" + res.body._id;
+                testId = res.body._id;
+                putUrl = testUrl + "/" + testId;
                 request(testHost)
                     .put(putUrl)
                     .send({ status: "UPDATED" })
+                    // .set('Content-Type', 'application/json')
+                    .expect(404)
+                    .end(function (err, res) {
+                        should.not.exist(err);
+                        should.exist(res);
+                        done();
+                    });
+            });
+        /*jslint nomen: false*/
+    });
+
+    it('should return not found when patching via non-ssl', function (done) {
+        /*jslint nomen: true*/
+        var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
+            newStatus = "UPDATED PATCH",
+            testId = null,
+            testObject = null;
+        testObject = {
+            email: "test" + getRandomInt(1000, 1000000) + "@patch.com",
+            status: "TEST PATCH"
+        };
+        // POST a new doc
+        request(sslHost)
+            .post(testUrl)
+            .send(testObject)
+            .set('Content-Type', 'application/json')
+            .expect(201)
+            .end(function (err, res) {
+                should.not.exist(err);
+                // PATCH
+                testId = res.body._id;
+                request(testHost)
+                    .patch(testUrl + "/" + testId)
+                    .send(
+                        [
+                            { "op": "replace", "path": "/status", "value": newStatus }
+                        ]
+                    )
+                    // Uncaught TypeError: Argument must be a string 
+                    // .set('Content-Type', 'application/json-patch')
                     .set('Content-Type', 'application/json')
-                    .expect(204)    // No content
+                    .expect(404)
                     .end(function (err, res) {
                         should.not.exist(err);
                         should.exist(res);

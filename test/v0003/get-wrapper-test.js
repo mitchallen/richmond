@@ -15,12 +15,10 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
     testSecret = 'supersecret',
-    testHost = service.host,
-    sslHost  = service.hostSsl,
+    testHost = config.host.url,
+    sslHost  = config.host.ssl,
     modelName = "GetBeforeAfterTest",
     ownerEmail = "test@owner.com",
     afterTestEmail = "test" + getRandomInt(1000, 1000000) + "@after.com",
@@ -36,8 +34,7 @@ describe('get before and after' + config.versionLabel, function () {
             beforeOne = null,
             afterOne = null,
             f2 = null,
-            testExtras = { message: testExtraMessage },
-            dbOptions = {};
+            testExtras = { message: testExtraMessage };
         beforeMany = function (prop, next) {
             should.exist(prop.req);
             var req = prop.req,
@@ -89,19 +86,14 @@ describe('get before and after' + config.versionLabel, function () {
                     post:       [{ model: modelName, rights: "PUBLIC" }]
                 })
             )
-            .secret(testSecret)
-            .prefix(prefix);
-        dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            .secret(testSecret) // Override
+            .connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:     { type: String, required: true },
             status: { type: String, required: true },
             password: { type: String, select: false },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('get filter should respond with proper document', function (done) {

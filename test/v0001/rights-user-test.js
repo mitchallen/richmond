@@ -23,10 +23,10 @@ var request = require('supertest'),
     testSecret = service.secret,
     MochaTestDoc = null;
 
-describe('user rights', function () {
+describe('user rights' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("rights-user-test.log")
+            .logFile("rights-user-test-" + config.logVersion + ".log")
             .secret(testSecret)
             .controller(
                 controller.setup({

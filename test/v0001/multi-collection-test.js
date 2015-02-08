@@ -20,9 +20,9 @@ var request = require('supertest'),
     betaModel = null,
     modelName = ["AlphaRichmondTest", "BetaRichmondTest"];
 
-describe('mulitple collections', function () {
+describe('mulitple collections' + config.versionLabel, function () {
     before(function () {
-        micro.logFile("multiple-collections-test.log");
+        micro.logFile("multiple-collections-test-" + config.logVersion + ".log");
         var options = {},
             dbConn = null;
         options = {

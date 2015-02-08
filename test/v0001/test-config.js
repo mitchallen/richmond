@@ -22,6 +22,8 @@ function Config() {
         host: process.env.TEST_HOST || null,
         hostSsl:  process.env.TEST_SSL || null
     };
+    this.logVersion = "00-01";  // Used in log name.
+    this.versionLabel = " [" + this.logVersion + "]"; // Used in test labels.
 }
 
 module.exports = Config;

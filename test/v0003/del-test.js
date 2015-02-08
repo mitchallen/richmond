@@ -1,5 +1,5 @@
 /**
- * del-after-res-test.js
+ * del-test.js
  */
 
 "use strict";
@@ -16,70 +16,56 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
-    modelName = "DelTest",    // Will translate to lowercase
+    testHost = config.host.url,
+    modelName = "DelTest",
     testSecret = 'supersecret',
     ownerEmail = "test@zap.com";
 
 var MochaTestDoc = null;
 
-describe('delete after error' + config.versionLabel, function () {
+describe('delete' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
-            options = {},
             beforeDelete = null,
             afterDelete = null;
-        beforeDelete =
-            function (prop, next) {
-                var req = prop.req,
-                    extras = { message: testExtraMessage };
-                should.exist(prop.req);
-                should.exist(req.token);
-                next(extras);
-            };
-        afterDelete =
-            function (prop, next) {
-                should.exist(next);
-                var req = prop.req,
-                    res = prop.res,
-                    extras = prop.extras;
-                should.exist(prop.req);
-                should.exist(prop.res);
-                should.exist(req.token);
-                extras.message.should.eql(testExtraMessage);
-                // Testing Response
-                res.status(402).json({ error: "Payment required." });
-                // next();    // Don't call next() after intercepting response
-            };
+        beforeDelete = function (prop, next) {
+            var req = prop.req,
+                extras = { message: testExtraMessage };
+            should.exist(prop.req);
+            should.exist(req.token);
+            next(extras);
+        };
+        afterDelete = function (prop, next) {
+            var req = prop.req,
+                extras = prop.extras;
+            should.exist(prop.req);
+            should.exist(req.token);
+            extras.message.should.eql(testExtraMessage);
+            next();
+        };
         micro
-            .logFile("del-after-err-test-" + config.logVersion + ".log")
+            .logFile("del-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }],
                     post: [{ model: modelName, rights: "PUBLIC" }]
                 })
             )
-            .secret(testSecret)
-            .prefix(prefix);
-        options = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, options);
+            .secret(testSecret) // Override 
+            .connect();
         MochaTestDoc = micro.addModel(modelName, {
             email: { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
-    it('should return the injected error', function (done) {
+    it('by the owner should succeed', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            testObject = {},
-            testId = "";
+            testId = "",
+            zapUrl = "",
+            testObject = {};
         testObject = {
             email: "test" + getRandomInt(1000, 1000000) + "@zap.com",
             status: "TEST DELETE"
@@ -96,15 +82,17 @@ describe('delete after error' + config.versionLabel, function () {
                 testId = res.body._id;
                 /*jslint nomen: false*/
                 // DELETE
-                var zapUrl = testUrl + "/" + testId;
+                zapUrl = testUrl + "/" + testId;
                 request(testHost)
                     .del(zapUrl)
-                    .set('x-auth', jwt.encode({ email: ownerEmail, role: "user" }, testSecret))
-                    .expect(402)
-                    .end(function (err) {
+                    .set('x-auth', jwt.encode({email: ownerEmail, role: "user"}, testSecret))
+                    .expect(200)
+                    .end(function (err, res) {
                         should.not.exist(err);
-                        // PURGE all test records 
-                        MochaTestDoc.remove({"email": /@/ }, function (err) {
+                        should.exist(res.body.status);
+                        res.body.status.should.eql("OK");
+                        // PURGE all records 
+                        MochaTestDoc.remove({"email": /@/}, function (err) {
                             if (err) {
                                 console.error(err);
                             }

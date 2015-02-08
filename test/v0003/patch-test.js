@@ -26,7 +26,6 @@ describe('patch' + config.versionLabel, function () {
         var testExtraMessage = 'Testing 123',
             dbOptions = {};
         micro
-            .setup(service)
             .logFile("patch-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({

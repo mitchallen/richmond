@@ -22,10 +22,10 @@ var request = require('supertest'),
     modelName = "SslNotFoundTest",
     MochaTestDoc = null;
 
-describe('ssl not found', function () {
+describe('ssl not found' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("ssl-404-test.log")
+            .logFile("ssl-404-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC", ssl: 404 }],

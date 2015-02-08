@@ -20,7 +20,7 @@ var request = require('supertest'),
     modelName = "SslNotFoundTest",
     MochaTestDoc = null;
 
-describe('ssl not found', function () {
+describe('ssl not found' + config.versionLabel, function () {
     before(function () {
         micro
             .setup(service)

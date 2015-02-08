@@ -23,7 +23,6 @@ describe('mulitple collections' + config.versionLabel, function () {
         micro.logFile("multiple-collections-test-" + config.logVersion + ".log");
         var dbConn = null;
         micro
-            .setup(service)
             .connect();
         alphaModel = micro.addModel(modelName[0], {
             email:     { type: String, required: true },

@@ -15,10 +15,8 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service       = config.service,
-    port     = service.port,
     prefix     = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     modelName = "PostTest";    // Will translate to lowercase
 
 var MochaTestDoc = null;
@@ -26,7 +24,6 @@ var MochaTestDoc = null;
 describe('post after error' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
-            dbOptions = {},
             beforePost = null,
             afterPost = null;
         beforePost = function (prop, next) {
@@ -71,19 +68,14 @@ describe('post after error' + config.versionLabel, function () {
                     post:     [{ model: modelName, rights: "PUBLIC", before: beforePost, after: afterPost }],
                     put:      [{ model: modelName, rights: "PUBLIC" }],
                 })
-            )
-            .prefix(prefix);    // API prefix, i.e. http://localhost/v1/testdoc
-        dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:      { type: String, required: true },
             password:   { type: String, required: true, select: false },
             status:     { type: String, required: true }
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should return the injected error', function (done) {

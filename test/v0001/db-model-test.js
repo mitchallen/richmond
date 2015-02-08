@@ -18,12 +18,12 @@ var request = require('supertest'),
     dbConfig = config.mongoose,
     modelName = "RichmondDbTest";    // Will translate to lowercase
 
-describe('model library', function () {
+describe('model library' + config.versionLabel, function () {
     before(function () {
         var options = {},
             testModel = null,
             dbConn = null;
-        micro.logFile("db-model-test.log");
+        micro.logFile("db-model-test-" + config.logVersion + ".log");
         options = {
             user: dbConfig.user,
             pass: dbConfig.pass

@@ -21,7 +21,6 @@ describe('model library' + config.versionLabel, function () {
         var testModel = null,
             dbConn = null;
         micro
-            .setup(service)
             .logFile("db-model-test-" + config.logVersion + ".log")
             .connect();
         testModel = micro.addModel(modelName, {

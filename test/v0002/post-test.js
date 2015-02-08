@@ -21,7 +21,7 @@ var request = require('supertest'),
     modelName = "PostTest",
     MochaTestDoc = null;
 
-describe('post', function () {
+describe('post' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             beforePost = null,

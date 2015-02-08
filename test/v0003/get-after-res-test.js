@@ -83,7 +83,6 @@ describe('get after error injection' + config.versionLabel, function () {
         };
         controller.clear();
         micro
-            .setup(service)
             .logFile("get-after-res-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({

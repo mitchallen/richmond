@@ -22,10 +22,10 @@ var request = require('supertest'),
     BetaTestDoc = null,
     modelName = ["AlphaTest", "BetaTest"];
 
-describe('two models', function () {
+describe('two models' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("two-models-test.log")
+            .logFile("two-models-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [ { model: modelName[0], rights: "PUBLIC" },

@@ -53,4 +53,17 @@ describe('database' + config.versionLabel, function () {
         done();
     });
 
+    it('should accept a valid connection parameters via constructor', function (done) {
+        var micro = new Richmond(service),
+            dbConn = null;
+        micro
+            .logFile("db-test-" + config.logVersion + "-B.log")
+            .connect();
+        dbConn = micro.connection();
+        should.exist(dbConn);
+        micro.closeConnection();
+        micro.close();
+        done();
+    });
+
 });

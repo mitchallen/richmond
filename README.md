@@ -659,6 +659,12 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.3.0 release notes
+
+* You can now pass options to constructor which will call .setup for you.
+* Cloned tests to a new version 0.3.x suite and updated for new functionality.
+* Added version info to all test suite output and test log names.
+
 #### Version 0.2.0 release notes
 
 * Updated test cases to use richmond-web-controller 1.3.0 due to id validation issue

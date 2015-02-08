@@ -29,7 +29,7 @@ var request = require('supertest'),
 
 var MochaTestDoc = null;
 
-describe('get after error injection', function () {
+describe('get after error injection' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             beforeMany = null,
@@ -87,7 +87,7 @@ describe('get after error injection', function () {
         };
         controller.clear();
         micro
-            .logFile("get-after-res-test.log")
+            .logFile("get-after-res-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     getOne:   [{ model: modelName, rights: "PUBLIC", before: beforeOne, after: afterOne }],

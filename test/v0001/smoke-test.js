@@ -21,10 +21,10 @@ var request = require('supertest'),
     modelName = "SmokeTest",    // Will translate to lowercase
     MochaTestDoc = null;
 
-describe('smoke tests', function () {
+describe('smoke tests' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("smoke-test.log")
+            .logFile("smoke-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

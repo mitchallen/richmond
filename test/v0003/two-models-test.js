@@ -23,7 +23,6 @@ var request = require('supertest'),
 describe('two models' + config.versionLabel, function () {
     before(function () {
         micro
-            .setup(service)
             .logFile("two-models-test" + config.logVersion + ".log")
             .controller(
                 controller.setup({

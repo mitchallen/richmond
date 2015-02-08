@@ -24,7 +24,7 @@ var request = require('supertest'),
     ownerEmail = "test@zap.com",
     MochaTestDoc = null;
 
-describe('put after error', function () {
+describe('put after error' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             dbOptions = {},
@@ -47,7 +47,7 @@ describe('put after error', function () {
             // next();// Don't call next when returning a response
         };
         micro
-            .logFile("put-after-err-test.log")
+            .logFile("put-after-err-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

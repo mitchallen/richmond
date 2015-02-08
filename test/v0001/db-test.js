@@ -20,9 +20,9 @@ var request = require('supertest'),
     dbPass = dbConfig.pass,
     modelName = "RichmondDbTest";    // Will translate to lowercase
 
-describe('database', function () {
+describe('database' + config.versionLabel, function () {
     before(function () {
-        micro.logFile("db-test.log");
+        micro.logFile("db-test-" + config.logVersion + ".log");
     });
 
     it('should accept a valid connection', function (done) {

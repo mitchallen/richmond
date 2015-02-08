@@ -26,7 +26,7 @@ var request = require('supertest'),
 
 var MochaTestDoc = null;
 
-describe('get before and after', function () {
+describe('get before and after' + config.versionLabel, function () {
     before(function () {
         var testExtraMessage = 'Testing 123',
             beforeMany = null,

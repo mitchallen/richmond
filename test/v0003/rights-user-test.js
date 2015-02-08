@@ -1,5 +1,5 @@
 /**
- * rights-admin-test.js
+ * rights-user-test.js
  */
 
 "use strict";
@@ -14,53 +14,46 @@ var request = require('supertest'),
     micro = config.richmond,
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
-    service = config.service,
-    port = service.port,
-    prefix = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
-    modelName = "RightsAdminTest",
-    testSecret = 'supersecret',
+    service       = config.service,
+    prefix     = service.prefix,
+    testHost = config.host.url,
+    modelName = "RightsUserTest",
+    testSecret = service.secret,
     MochaTestDoc = null;
 
-describe('admin rights' + config.versionLabel, function () {
+describe('user rights' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("rights-admin-test-" + config.logVersion + ".log")
+            .logFile("rights-user-test-" + config.logVersion + ".log")
+            .secret(testSecret) // Override
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
                     getOne:     [{ model: modelName, rights: "PUBLIC" }],
-                    getMany:    [{ model: modelName, rights: "USER"   }],
-                    post:       [{ model: modelName, rights: "ADMIN"  }],
+                    getMany:    [{ model: modelName, rights: "ADMIN"  }],
+                    post:       [{ model: modelName, rights: "USER"   }],
                     put:        [{ model: modelName, rights: "PUBLIC" }]
                 })
-            )
-            .secret(testSecret)
-            .prefix(prefix);// API prefix, i.e. http://localhost/v1/testdoc
-        var dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
-    it('should be able to post as admin', function (done) {
+    it('should be able to post as a user', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            testObject = {};
+            testObject = null;
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@admin.com",
-            status: "TEST ADMIN POST"
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
+            status: "TEST USER POST"
         };
         request(testHost)
             .post(testUrl)
             .send(testObject)
-            .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, testSecret))
+            .set('x-auth', jwt.encode({ username: "Mitch", role: "user" }, testSecret))
             .set('Content-Type', 'application/json')
             .expect(201)
             .end(function (err, res) {
@@ -77,12 +70,12 @@ describe('admin rights' + config.versionLabel, function () {
             });
     });
 
-    it('should return an error for a missing token', function (done) {
+    it('should return an error if token is missing', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            testObject = {};
+            testObject = null;
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@admin.com",
-            status: "TEST ADMIN POST"
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
+            status: "TEST USER POST"
         };
         request(testHost)
             .post(testUrl)
@@ -101,8 +94,8 @@ describe('admin rights' + config.versionLabel, function () {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = null;
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@admin.com",
-            status: "TEST ADMIN POST"
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
+            status: "TEST USER POST"
         };
         request(testHost)
             .post(testUrl)
@@ -114,6 +107,7 @@ describe('admin rights' + config.versionLabel, function () {
                 should.not.exist(err);
                 should.exist(res.body.error);
                 // Should return: Error: Not enough or too many segments
+                // console.error("BAD TOKEN SEGMENTS: " + res.body.error);
                 done();
             });
     });
@@ -122,8 +116,8 @@ describe('admin rights' + config.versionLabel, function () {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = null;
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@admin.com",
-            status: "TEST ADMIN POST"
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
+            status: "TEST USER POST"
         };
         request(testHost)
             .post(testUrl)
@@ -136,6 +130,7 @@ describe('admin rights' + config.versionLabel, function () {
                 should.not.exist(err);
                 should.exist(res.body.error);
                 // SyntaxError: Unexpected token
+                // console.error("INVALID TOKEN: " + res.body.error);
                 done();
             });
     });
@@ -144,13 +139,12 @@ describe('admin rights' + config.versionLabel, function () {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = null;
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@admin.com",
-            status: "TEST ADMIN POST"
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
+            status: "TEST USER POST"
         };
         request(testHost)
             .post(testUrl)
             .send(testObject)
-            .set('x-auth', jwt.encode({ username: "Mitch", role: "reader" }, testSecret))
             .set('Content-Type', 'application/json')
             .expect(401)
             .end(function (err, res) {
@@ -164,8 +158,8 @@ describe('admin rights' + config.versionLabel, function () {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = null;
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@admin.com",
-            status: "TEST ADMIN POST"
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
+            status: "TEST USER POST"
         };
         request(testHost)
             .post(testUrl)
@@ -182,15 +176,15 @@ describe('admin rights' + config.versionLabel, function () {
 
     it('should return an error for an invalid secret key', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            testObject = null;
+            testObject = {};
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@admin.com",
-            status: "TEST ADMIN POST"
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
+            status: "TEST USER POST"
         };
         request(testHost)
             .post(testUrl)
             .send(testObject)
-            .set('x-auth', jwt.encode({ username: "Mitch", role: "reader" }, 'BadSecretKey'))
+            .set('x-auth', jwt.encode({ username: "Mitch", role: "public" }, 'BadSecretKey'))
             .set('Content-Type', 'application/json')
             .expect(500)
             .end(function (err, res) {
@@ -202,18 +196,18 @@ describe('admin rights' + config.versionLabel, function () {
             });
     });
 
-    it('should be able to get a collection when a user role is required', function (done) {
+    it('should be able to get a collection when a public role is required', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
-            testObject = null;
+            testObject = {};
         testObject = {
-            email: "test" + getRandomInt(1000, 1000000) + "@get.com",
+            email: "test" + getRandomInt(1000, 1000000) + "@user.com",
             status: "TEST GET COLLECTION"
         };
         // SETUP - need to post at least one record
         request(testHost)
             .post(testUrl)
             .send(testObject)
-            .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, testSecret))
+            .set('x-auth', jwt.encode({ username: "Mitch", role: "user" }, testSecret))
             .set('Content-Type', 'application/json')
             .expect(201)
             .end(function (err, res) {
@@ -222,13 +216,13 @@ describe('admin rights' + config.versionLabel, function () {
                 // GET
                 request(testHost)
                     .get(testUrl)
-                    .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, testSecret))
+                     // Should require admin access
+                    .set('x-auth', jwt.encode({ username: "Mitch", role: "user" }, testSecret))
                     .expect('Content-Type', /json/)
-                    .expect(200)
+                    .expect(401)
                     .end(function (err, res) {
                         should.not.exist(err);
-                        should.exist(res.body[0].email);
-                        should.exist(res.body[0].status);
+                        should.exist(res);
                         done();
                     });
             });
@@ -247,7 +241,7 @@ describe('admin rights' + config.versionLabel, function () {
         request(testHost)
             .post(testUrl)
             .send(testObject)
-            .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, testSecret))
+            .set('x-auth', jwt.encode({ username: "Mitch", role: "user" }, testSecret))
             .set('Content-Type', 'application/json')
             .expect(201)
             .end(function (err, res) {
@@ -256,7 +250,7 @@ describe('admin rights' + config.versionLabel, function () {
                 // GET by ID
                 request(testHost)
                     .get(testUrl + "/" + testId)
-                    .set('x-auth', jwt.encode({ username: "Mitch", role: "admin" }, testSecret))
+                    .set('x-auth', jwt.encode({ username: "Mitch", role: "user" }, testSecret))
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
@@ -270,7 +264,7 @@ describe('admin rights' + config.versionLabel, function () {
                         done();
                     });
             });
-        /*jslint nomen: false*/
+        /*jslint nomen: true*/
     });
 
     after(function () {

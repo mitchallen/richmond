@@ -13,12 +13,10 @@ var request = require('supertest'),
     micro = config.richmond,
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
-    service       = config.service,
-    port     = service.port,
-    prefix     = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
-    sslHost  = service.hostSsl,
+    service = config.service,
+    prefix = service.prefix,
+    testHost = config.host.url,
+    sslHost  = config.host.ssl,
     modelName = "SslMoveTest",
     testSecret = service.secret,
     MochaTestDoc = null;
@@ -37,18 +35,13 @@ describe('ssl moved' + config.versionLabel, function () {
                     post:       [{ model: modelName, rights: "PUBLIC", ssl: 302 }],
                     put:        [{ model: modelName, rights: "PUBLIC", ssl: 302 }],
                 })
-            )
-            .prefix(prefix);// API prefix, i.e. http://localhost/v1/testdoc
-        var options = {
-                user: dbConfig.user,
-                pass: dbConfig.pass
-            };
-        micro.connect(dbConfig.uri, options);
+            );
+        micro.connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should return moved when posting to non-ssl', function (done) {

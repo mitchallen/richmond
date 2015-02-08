@@ -15,10 +15,8 @@ var request = require('supertest'),
     controller = config.controller,
     getRandomInt = require('./test-lib').getRandomInt,
     service = config.service,
-    port = service.port,
     prefix = service.prefix,
-    dbConfig = config.mongoose,
-    testHost = service.host,
+    testHost = config.host.url,
     modelName = "RightsAdminTest",
     testSecret = 'supersecret',
     MochaTestDoc = null;
@@ -36,18 +34,13 @@ describe('admin rights' + config.versionLabel, function () {
                     put:        [{ model: modelName, rights: "PUBLIC" }]
                 })
             )
-            .secret(testSecret)
-            .prefix(prefix);// API prefix, i.e. http://localhost/v1/testdoc
-        var dbOptions = {
-            user: dbConfig.user,
-            pass: dbConfig.pass
-        };
-        micro.connect(dbConfig.uri, dbOptions);
+            .secret(testSecret) // Override
+            .connect();
         MochaTestDoc = micro.addModel(modelName, {
             email:  { type: String, required: true },
             status: { type: String, required: true },
         });
-        micro.listen(port);
+        micro.listen();
     });
 
     it('should be able to post as admin', function (done) {

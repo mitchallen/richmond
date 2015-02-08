@@ -9,7 +9,7 @@ var Log = require('log'),
     multer = require('multer'),
     fs = require('fs');
 
-function Richmond() {
+function Richmond(options) {
     this.m_secret = 'secret';
     this.app = require('express')();
     this.mongoose = require('mongoose');
@@ -26,6 +26,9 @@ function Richmond() {
     this.port = null;
     this.name    = require("./package").name;
     this.version = require("./package").version;
+    if (options) {
+        this.setup(options);
+    }
 }
 
 module.exports = Richmond; // For export

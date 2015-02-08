@@ -21,7 +21,7 @@ var request = require('supertest'),
     testSecret = service.secret,
     MochaTestDoc = null;
 
-describe('ssl moved', function () {
+describe('ssl moved' + config.versionLabel, function () {
     before(function () {
         controller.clear();
         micro
