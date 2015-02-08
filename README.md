@@ -597,7 +597,8 @@ Wrapper for internal __express.js__ app.
 
     micro.use( cors() );
 
-### .listen()<br />.listen(port)
+### .listen()
+### .listen(port)
 
 When everything is good to go, make this call last to start listening for requests on a particular port.
 
