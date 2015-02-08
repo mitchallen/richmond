@@ -53,6 +53,8 @@ When you are done with that, execute the following at the command line:
 
 ### Step 3: Create a config.js file in your projects root folder:
 
+Note that this has changed since version 0.1.x.
+
     /**
      * config.js
      */
@@ -60,21 +62,23 @@ When you are done with that, execute the following at the command line:
     var Controller = require('richmond-web-controller');
 
     module.exports = {
-		
-	    controller: new Controller(),
-		
-	    mongoose: {
-		    uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
-		    user: process.env.TEST_MONGO_USER || null,
-		    pass: process.env.TEST_MONGO_PASS || null	
-	    },
-		
-	    service: {
-		    secret: process.env.APP_SECRET || null,
-		    prefix: "/API",
-		    port: process.env.TEST_PORT || null
-	    }
+        
+        controller: new Controller(),
+        
+        service: {
+            port: process.env.TEST_PORT || null,
+            secret: process.env.APP_SECRET || null,
+            prefix: "/API",
+            database: {
+                uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
+                options: {
+                    user: process.env.TEST_MONGO_USER || null,
+                    pass: process.env.TEST_MONGO_PASS || null
+                }
+            }
+        }
     };
+
 
 ### Step 4: Create index.js in your projects root folder:
 
@@ -86,40 +90,33 @@ For example you may want to build a Web service where people can only read (GET)
 So you would only include the setup lines for *getOne* (get one record) and *getMany* (get collection) in the demo controller.
 
     var Richmond   = require('richmond'),
-	    micro      = new Richmond(),
-	    config     = require('./config'),
-	    controller = config.controller,
-	    service    = config.service,
-	    port 	   = service.port,
-	    prefix 	   = service.prefix,
-	    dbConfig   = config.mongoose,
-	    MyTestDoc  = null,
-	    modelName  = "MyTest";	
+        micro      = new Richmond(),
+        config     = require('./config'),
+        controller = config.controller,
+        service    = config.service,
+        MyTestDoc  = null,
+        modelName  = "MyTest";  
 
     micro
-		.logFile("my-test.log")
-		.controller( 
-		  	controller.setup({ 
-		  		del: 		[{ model: modelName, rights: "PUBLIC" }],
-		  		getOne:  	[{ model: modelName, rights: "PUBLIC" }], 
-		  		getMany:  	[{ model: modelName, rights: "PUBLIC" }],
-		  		post: 		[{ model: modelName, rights: "PUBLIC" }],
-		  		put: 		[{ model: modelName, rights: "PUBLIC" }],
-		  		patch:      [{ model: modelName, rights: "PUBLIC" }],
-		  	}))
-		.prefix( prefix );	
-    var options = {
-        user: dbConfig.user,
-        pass: dbConfig.pass
-    };
-    micro.connect( dbConfig.uri, options );
+        .setup(service)
+        .logFile("my-test.log")
+        .controller( 
+            controller.setup({ 
+                del:        [{ model: modelName, rights: "PUBLIC" }],
+                getOne:     [{ model: modelName, rights: "PUBLIC" }], 
+                getMany:    [{ model: modelName, rights: "PUBLIC" }],
+                post:       [{ model: modelName, rights: "PUBLIC" }],
+                put:        [{ model: modelName, rights: "PUBLIC" }],
+                patch:      [{ model: modelName, rights: "PUBLIC" }],
+            }))
+    micro.connect();
     MyTestDoc = micro.addModel( modelName, {
-        email: 	{ type: String, required: true },
+        email:  { type: String, required: true },
         status: { type: String, required: true },
         password: { type: String, select: false }, 
     });
-    micro.listen( port );
-    console.log( "Listening on port:", port );
+    micro.listen();
+    console.log( "Listening on port:", service.port );
 
 Also note that the lines above in the *controller.setup* code only apply to the demo controller.
 Future and third party controllers may implement their own strategy and options for defining how the controller works.
@@ -339,15 +336,52 @@ This module supports multiple models.  The setup could look something like this:
 
 ## API
 
+### .setup(options)
+
+A method introduced in 0.2.0 that lets you setup several parameters simultaneously.
+This allows you to move some functionality to a config file, etc.
+
+You do not need to include every option in the usage example below.
+
+You can still change a value (example: *prefix*) after calling __setup__.
+Just call the related method afterwards (i.e.: micro.prefix("/v1")); 
+
+#### Usage
+
+    var options = {
+        logFile: "my-test.log",
+        port: process.env.TEST_PORT || null,
+        secret: process.env.APP_SECRET || null,
+        prefix: "/API",
+        database: {
+            uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
+            options: {
+                user: process.env.TEST_MONGO_USER || null,
+                pass: process.env.TEST_MONGO_PASS || null
+            }
+        }
+    };
+
+    micro.setup(options);
+
 ### .logFile(filename)
 
 * If no path is specified, will just write to the apps current directory.
 * If writing to a folder, the folder must already exist.
 * If this is not called all log output will go through the console.
+* You can also skip this call by setting the value through __setup__.
 
 #### Usage
 
     micro.logFile("my-test.log");
+
+Or via __setup__:
+    
+    var options = {
+        logFile: "my-test.log"
+    };
+    
+    micro.setup(options);
 
 ### .prefix()
 
@@ -377,9 +411,23 @@ Prefix validation rules:
 * prefix must begin with a slash
 * prefix must not end with a slash
 * prefix must not contain whitepace
+* You can also skip this call by setting the value through __setup__.
+
+#### Usage
+
+    micro.prefix("/v1");
+
+Or via __setup__:
+    
+    var options = {
+        prefix: "/v1"
+    };
+    
+    micro.setup(options);
 
 ### .addModel(name,model)
 
+* Must call __.connect__ *before* calling __.addModel__ or you will get an error.
 * Assigns a name to a Mongoose model and saves it.  
 * The model name will be used in routes, like this:  http://localhost:3030/api/mytest
 * The name will be validated internally with a call to __normalizeModelName__.
@@ -429,6 +477,7 @@ Called internally by __addModel__ and __model__ to make sure that internal keys 
 
     var modelName = micro.normalizeModelName(name);
 
+### connect()
 ### connect(uri,options)
 
 The __uri__ would be in a form like this: mongodb://HOST:PORT/DATABASE
@@ -442,6 +491,21 @@ This is a wrapper for Mongoose.createConnection.  See their documentation for mo
         pass: dbConfig.pass
     };
     micro.connect(dbConfig.uri, options);
+    
+Alternatively you can set the parameters via __setup__ and then call __connect__ with no parameters:
+
+    var options = {
+        database: {
+            uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
+            options: {
+                user: process.env.TEST_MONGO_USER || null,
+                pass: process.env.TEST_MONGO_PASS || null
+            }
+        }
+    };
+    
+    micro.setup(options);
+    micro.connect();
 
 ### .closeConnecton()
 
@@ -470,6 +534,7 @@ Wrapper for internal __express.js__ app.
 
     micro.use( cors() );
 
+### .listen()
 ### .listen(port)
 
 When everything is good to go, make this call last to start listening for requests on a particular port.
@@ -477,6 +542,17 @@ When everything is good to go, make this call last to start listening for reques
 #### Usage
 
     micro.listen(port);
+  
+Alternatively you can define the port via the __setup__ method than call __listen__ with no parameters.
+    
+    var options = {
+        port: process.env.TEST_PORT || null,
+    };
+    
+    micro.setup(options);
+    ...
+    micro.listen();
+    
 
 ### .closeService()
 
@@ -514,6 +590,17 @@ Review the __*rights*__ tests for more info.
                 done();
             });
         });
+    
+Alterntively you can set the *secret* through the __setup__ method.    
+        
+    var options = {
+        secret: process.env.APP_SECRET || null
+    };
+    
+    micro.setup(options);
+    
+Then there is no need to call the __.secret__ method directly 
+But you can if you want to override the value set through __setup__
 
 * * *
 
@@ -575,7 +662,8 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 * Updated test cases to use richmond-web-controller 1.3.0 due to id validation issue
 * Added .setup method
-* Broke tests out by version to support backward compatibility
+* Refactored tests by version to support backward compatibility
+* Added a PATCH test
 
 #### Version 0.1.3 release notes
 

@@ -1,5 +1,5 @@
 {
-  "name": "@minja/richmond",
+  "name": "richmond",
   "version": "0.2.0",
   "description": "richmond.js core module",
   "main": "richmond.js",
@@ -9,9 +9,6 @@
     "test-nodemon": "nodemon /usr/local/bin/mocha  --recursive --timeout 20000",
     "test-debug": "nodemon /usr/local/bin/mocha -g '@DEBUG' --recursive --timeout 20000",
     "test-jenkins": "mocha --recursive --timeout 20000 -R xunit test/ > test-reports.xml"
-  },
-  "publishConfig": {
-	    "registry": "http://registry.mitchallen.com/"
   },
   "repository": {
     "type": "git",
