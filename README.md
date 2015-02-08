@@ -129,7 +129,7 @@ From your projects root folder, execute the following at the command line:
 
 ### Step 6: Test the app using curl commands
 
-Note that these command refer to how the *demo controller* works. 
+Note that these commands refer to how the *demo controller* works. 
 Future and third party controllers may operate differently.
 
 #### POST
