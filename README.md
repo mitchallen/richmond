@@ -303,12 +303,12 @@ This module supports multiple models.  The setup could look something like this:
              }))
         micro.connect();
         // Model[0]
-        AlphaTestDoc = micro.addModel(modelName[0], {
+        micro.addModel(modelName[0], {
             email: 	{ type: String, required: true },
             status: { type: String, required: true },   
         });
         // Model[1]
-        BetaTestDoc = micro.addModel(modelName[1], {
+        micro.addModel(modelName[1], {
             user: { type: String, required: true },
             level: { type: String, required: true },   
         });	
@@ -729,6 +729,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 * * *
 
 ## Version History
+
+#### Version 0.3.1 release notes
+
+* Refined some of the README examples.
 
 #### Version 0.3.0 release notes
 
