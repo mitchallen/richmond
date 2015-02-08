@@ -178,8 +178,8 @@ But since you are updating a record that already exists, you need to also append
       -d '{"email":"test@put.com","password":"foo","status":"UPDATED"}' 
       http://localhost:3030/api/mytest/54ce6eca470103ca057b0097
 
-The general philosophy with __PUT__ is that you should use it to replace the *entire* record,
-and you should use __PATCH__ to do *partial* updates.
+The general philosophy with __PUT__ is that you should use it to replace the entire record,
+and you should use __PATCH__ to do partial updates.
 If you only pass in an incomplete set of fields, the demo controller does a merge.
 Technically that isn't very RESTful. 
 There is no guarantee that future controllers may be more strict.
