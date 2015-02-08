@@ -23,8 +23,6 @@ var request = require('supertest'),
 
 describe('patch' + config.versionLabel, function () {
     before(function () {
-        var testExtraMessage = 'Testing 123',
-            dbOptions = {};
         micro
             .logFile("patch-test-" + config.logVersion + ".log")
             .controller(
@@ -54,7 +52,7 @@ describe('patch' + config.versionLabel, function () {
             patchStatus = "UPDATED PATCH STATUS",
             testPatch = [
                 // { "op": "remove", "path": "/password" }
-                {"op":"replace", "path":"/status", "value": patchStatus}
+                {"op": "replace", "path": "/status", "value": patchStatus}
             ];
         testObject = {
             email: "test" + getRandomInt(1000, 1000000) + "@afterpost.com",
@@ -81,6 +79,7 @@ describe('patch' + config.versionLabel, function () {
                     .expect(200)
                     .end(function (err, res) {
                         should.not.exist(err);
+                        should.exist(res);
                         // GET by ID
                         request(testHost)
                             .get(testUrl + "/" + testId)
@@ -106,7 +105,7 @@ describe('patch' + config.versionLabel, function () {
                                     }
                                     done();
                                 });
-                        });
+                            });
                     });
             });
         /*jslint nomen: false*/
