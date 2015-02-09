@@ -54,6 +54,8 @@ When you are done with that, execute the following at the command line:
 
 ### Step 3: Create a config.js file in your projects root folder:
 
+This file can also be found in the online source under __examples/demo__
+
 Note that this has changed since version 0.1.x.
 
     var Controller = require('richmond-web-controller');
@@ -78,6 +80,8 @@ Note that this has changed since version 0.1.x.
 
 ### Step 4: Create index.js in your projects root folder:
 
+This file can also be found in the online source under __examples/demo__
+
 __Important Note:__ if you omit a line in the controller setup for an HTTP method (POST, PUT, etc) trying
 to make an HTTP request using that method will result in a returned status of 404 (Not Found).
 
@@ -85,7 +89,10 @@ That may actually be desired.
 For example you may want to build a Web service where people can only read (GET) records from your database.
 So you would only include the setup lines for *getOne* (get one record) and *getMany* (get collection) in the demo controller.
 
-As of 0.3.0 you can pass all of the service options to the constructor instead of __setup__.
+As of 0.3.0 you can pass all of the service options to the constructor instead of __.setup__.
+
+As of 0.4.0 it is no longer necessary to call __.connect__ if the database configs were already setup.
+__.addModel__ will call __.connect__ directly if no connection can be found.
 
     var Richmond   = require('richmond'),
         config     = require('./config'),
