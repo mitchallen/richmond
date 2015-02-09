@@ -11,7 +11,8 @@ A node.js module for mapping Web calls to MongoDB
     $ npm install richmond --save
     $ npm install richmond-web-controller --save
     
-__Important Note:__ be sure to be using the latest __richmond-web-controller__.
+__Important Note:__ be sure to be using the latest
+[__richmond-web-controller__](https://www.npmjs.com/package/richmond-web-controller). 
 There was a database id validation bug in earlier versions (fixed in 0.1.3).
 
 * * *
@@ -26,7 +27,7 @@ There was a database id validation bug in earlier versions (fixed in 0.1.3).
 
 ### Step 1: Visit MongoLab
 
-Use your own local install of MongoDB or visit __https://mongolab.com__
+Use your own local install of MongoDB or visit [__https://mongolab.com__](https://mongolab.com)
 and create a free test database, writing down the credentials.
 
 ### Step 2: Edit ~/.bash_profile
@@ -103,7 +104,6 @@ As of 0.3.0 you can pass all of the service options to the constructor instead o
             patch:      [{ model: modelName, rights: "PUBLIC" }],
         })
     );
-    micro.connect();
     micro.addModel(modelName, {
         email:    { type: String, required: true },
         status:   { type: String, required: true },
@@ -300,8 +300,7 @@ This module supports multiple models.  The setup could look something like this:
                             { model: modelName[1], rights: "PUBLIC" } ],
                  put:     [ { model: modelName[0], rights: "PUBLIC" },
                             { model: modelName[1], rights: "PUBLIC" } ]
-             }))
-        micro.connect();
+             }));
         // Model[0]
         micro.addModel(modelName[0], {
             email: 	{ type: String, required: true },
@@ -467,7 +466,8 @@ Or via the constructor:
 
 ### .addModel(name,model)
 
-* Must call __.connect__ *before* calling __.addModel__ or you will get an error.
+* If __.connect__ was not called __.addModel__ will call it with no parameters.
+It assumes that all database connection info was set via __setup__ or the constructor.
 * Assigns a name to a Mongoose model and saves it.  
 * The model name will be used in routes, like this:  http://localhost:3030/api/mytest
 * The name will be validated internally with a call to __normalizeModelName__.
@@ -682,7 +682,7 @@ But you can if you want to override the value set through __setup__
 
 In order to run the tests, you need to add two more variables to your environment: __TEST_HOST__ and __TEST_SSL__
 
-For testing, I use the services of __https://ngrok.com__ - for a small annual fee I secured a subdomain
+For testing, I use the services of [__https://ngrok.com__](https://ngrok.com) - for a small annual fee I secured a subdomain
 that I can tunnel back to a port on my localhost for testing.  It supports both SSL and Non-SSL.
 
     # Via ngrok
@@ -729,6 +729,11 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 * * *
 
 ## Version History
+
+#### Version 0.4.0 release notes
+
+* __.addModel__ will now automatically call __.connect__ (with no arguments) if no connection has been made.
+* __.addModel__ assumes all connection parameters have been set via setup or the constructor.
 
 #### Version 0.3.1 release notes
 

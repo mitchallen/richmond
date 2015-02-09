@@ -66,7 +66,7 @@ Richmond.prototype.normalizeModelName = function (name) {
 
 Richmond.prototype.addModel = function (modelName, model) {
     if (!this.m_conn) {
-        throw new Error("Must connect to database first.");
+        this.connect();
     }
     return this.m_model.addModel(
         modelName,
@@ -93,6 +93,7 @@ Richmond.prototype.connection = function () {
 
 Richmond.prototype.connect = function (uri, options) {
     var eMsg = "",
+        eLog = this.log,
         cb = null;
     this.closeConnection();
     // If uri is defined override with that, 
@@ -102,16 +103,16 @@ Richmond.prototype.connect = function (uri, options) {
     // otherwise use current database.options
     this.database.options = options || this.database.options;
     if (!this.database.uri) {
-        eMsg = "connection string (uri) not defined.";
-        if (this.log) {
-            this.log.error(eMsg);
+        eMsg = ".connect connection string (uri) not defined.";
+        if (eLog) {
+            eLog.error(eMsg);
         }
         throw new Error(eMsg);
     }
     cb = function (err) {
         if (err) {
-            if (this.log) {
-                this.log.error(err);
+            if (eLog) {
+                eLog.error(err);
             }
             throw err;
         }
