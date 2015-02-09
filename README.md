@@ -733,7 +733,7 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 #### Version 0.4.0 release notes
 
 * __.addModel__ will now automatically call __.connect__ (with no arguments) if no connection has been made.
-* __.addModel__ assumes all connection parameters have been set via setup or the constructor.
+* __.addModel__ assumes all connection parameters have been set via __.setup__ or the constructor.
 
 #### Version 0.3.1 release notes
 
