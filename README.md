@@ -737,6 +737,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.4.1 release notes
+
+* Created an examples folder and updated the README.
+
 #### Version 0.4.0 release notes
 
 * __.addModel__ will now automatically call __.connect__ (with no arguments) if no connection has been made.
