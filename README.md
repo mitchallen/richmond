@@ -23,13 +23,6 @@ There was a database id validation bug in earlier versions (fixed in 0.1.3).
 
 * * *
 
-## Repos
-
-* [bitbucket](https://bitbucket.org/mitchallen/richmond.git)
-* [github](https://github.com/mitchallen/richmond.git)
-
-* * *
-
 ## Usage
 
 ### Step 1: Visit MongoLab
@@ -736,6 +729,13 @@ The tests generate log files in the projects root folder.
 
 * * *
 
+## Repos
+
+* [bitbucket.org/mitchallen/richmond.git](https://bitbucket.org/mitchallen/richmond.git)
+* [github.com/mitchallen/richmond.git](https://github.com/mitchallen/richmond.git)
+
+* * *
+
 ## Contributing
 
 In lieu of a formal style guide, take care to maintain the existing coding style.
@@ -744,6 +744,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 * * *
 
 ## Version History
+
+#### Version 0.4.2 release notes
+
+* Added new github repo to package.json
 
 #### Version 0.4.1 release notes
 
