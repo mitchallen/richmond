@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "demo file",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mitch Allen <npm@mitchallen.com> (http://mitchallen.com)",
   "license": "ISC",
   "dependencies": {
-    "richmond": "^0.4.0",
-    "richmond-web-controller": "^0.1.5"
+    "richmond": "^0.4.2",
+    "richmond-web-controller": "^0.1.6"
   }
 }
