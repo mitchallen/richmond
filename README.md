@@ -23,6 +23,13 @@ There was a database id validation bug in earlier versions (fixed in 0.1.3).
 
 * * *
 
+## Repos
+
+* [bitbucket](https://bitbucket.org/mitchallen/richmond.git)
+* [github](https://github.com/mitchallen/richmond.git)
+
+* * *
+
 ## Usage
 
 ### Step 1: Visit MongoLab
