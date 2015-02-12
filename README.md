@@ -720,6 +720,7 @@ Or if you feel like kickin' it old skool:
 
 To run the tests for each version:
 
+    $ mocha --timeout 5000 --recursive test/v0004/*test.js
     $ mocha --timeout 5000 --recursive test/v0003/*test.js
     $ mocha --timeout 5000 --recursive test/v0002/*test.js
     $ mocha --timeout 5000 --recursive test/v0001/*test.js
