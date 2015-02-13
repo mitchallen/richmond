@@ -54,7 +54,7 @@ describe('delete after error' + config.versionLabel, function () {
         micro
             .setup(service)
             .secret(testSecret) // Override setup
-            .logFile("del-after-err-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "del-after-err-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }],

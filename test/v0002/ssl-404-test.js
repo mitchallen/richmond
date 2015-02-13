@@ -24,7 +24,7 @@ describe('ssl not found' + config.versionLabel, function () {
     before(function () {
         micro
             .setup(service)
-            .logFile("ssl-404-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "ssl-404-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC", ssl: 404 }],

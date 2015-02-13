@@ -26,7 +26,7 @@ var request = require('supertest'),
 describe('user rights' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("rights-user-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "rights-user-test-" + config.logVersion + ".log")
             .secret(testSecret)
             .controller(
                 controller.setup({

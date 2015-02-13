@@ -11,6 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "richmond": "^0.4.2",
-    "richmond-web-controller": "^0.1.6"
+    "richmond-web-controller": "^0.1.7"
   }
 }

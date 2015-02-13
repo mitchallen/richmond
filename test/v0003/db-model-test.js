@@ -21,7 +21,7 @@ describe('model library' + config.versionLabel, function () {
         var testModel = null,
             dbConn = null;
         micro
-            .logFile("db-model-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "db-model-test-" + config.logVersion + ".log")
             .connect();
         testModel = micro.addModel(modelName, {
             email: { type: String, required: true },

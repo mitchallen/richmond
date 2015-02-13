@@ -55,7 +55,7 @@ describe('delete after error' + config.versionLabel, function () {
                 // next();    // Don't call next() after intercepting response
             };
         micro
-            .logFile("del-after-err-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "del-after-err-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }],

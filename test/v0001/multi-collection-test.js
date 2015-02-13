@@ -22,7 +22,7 @@ var request = require('supertest'),
 
 describe('mulitple collections' + config.versionLabel, function () {
     before(function () {
-        micro.logFile("multiple-collections-test-" + config.logVersion + ".log");
+        micro.logFile(config.logFolder + "multiple-collections-test-" + config.logVersion + ".log");
         var options = {},
             dbConn = null;
         options = {

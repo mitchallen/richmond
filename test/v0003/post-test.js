@@ -64,7 +64,7 @@ describe('post' + config.versionLabel, function () {
             next(doc);
         };
         micro
-            .logFile("post-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "post-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

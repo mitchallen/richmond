@@ -87,7 +87,7 @@ describe('get after error injection' + config.versionLabel, function () {
         };
         controller.clear();
         micro
-            .logFile("get-after-res-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "get-after-res-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     getOne:   [{ model: modelName, rights: "PUBLIC", before: beforeOne, after: afterOne }],

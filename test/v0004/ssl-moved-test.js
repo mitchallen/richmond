@@ -25,7 +25,7 @@ describe('ssl moved' + config.versionLabel, function () {
     before(function () {
         controller.clear();
         micro
-            .logFile("ssl-moved-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "ssl-moved-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC", ssl: 302 }],

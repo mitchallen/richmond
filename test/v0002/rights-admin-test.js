@@ -25,7 +25,7 @@ describe('admin rights' + config.versionLabel, function () {
     before(function () {
         micro
             .setup(service)
-            .logFile("rights-admin-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "rights-admin-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

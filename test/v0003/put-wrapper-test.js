@@ -43,7 +43,7 @@ describe('put before after' + config.versionLabel, function () {
         };
 
         micro
-            .logFile("put-wrapper-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "put-wrapper-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

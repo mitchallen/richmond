@@ -10,6 +10,7 @@ var Controller = require('richmond-web-controller'),
 function Config() {
     this.controller = new Controller();
     this.richmond = new Richmond();
+    this.logFolder = process.env.TEST_LOG_FOLDER || 'logs/';
     this.mongoose = {
         uri:  process.env.TEST_MONGO_DB || 'mongodb://localhost/mytest',
         user: process.env.TEST_MONGO_USER || null,

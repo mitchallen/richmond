@@ -22,7 +22,7 @@ var request = require('supertest'),
 
 describe('database' + config.versionLabel, function () {
     before(function () {
-        micro.logFile("db-test-" + config.logVersion + ".log");
+        micro.logFile(config.logFolder + "db-test-" + config.logVersion + ".log");
     });
 
     it('should accept a valid connection', function (done) {

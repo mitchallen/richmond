@@ -24,7 +24,7 @@ var request = require('supertest'),
 describe('smoke tests' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("smoke-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "smoke-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

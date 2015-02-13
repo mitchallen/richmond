@@ -25,7 +25,7 @@ describe('patch' + config.versionLabel, function () {
     before(function () {
         micro
             .setup(service)
-            .logFile("patch-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "patch-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

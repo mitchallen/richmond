@@ -26,7 +26,7 @@ describe('database' + config.versionLabel, function () {
         var micro = new Richmond(),
             options = {},
             dbConn = null;
-        micro.logFile("db-test-" + config.logVersion + "-A.log");
+        micro.logFile(config.logFolder + "db-test-" + config.logVersion + "-A.log");
         options = {
             user: dbUser,
             pass: dbPass
@@ -44,7 +44,7 @@ describe('database' + config.versionLabel, function () {
             dbConn = null;
         micro
             .setup(service)
-            .logFile("db-test-" + config.logVersion + "-B.log")
+            .logFile(config.logFolder + "db-test-" + config.logVersion + "-B.log")
             .connect();
         dbConn = micro.connection();
         should.exist(dbConn);

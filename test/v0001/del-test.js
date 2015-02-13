@@ -48,7 +48,7 @@ describe('delete' + config.versionLabel, function () {
             next();
         };
         micro
-            .logFile("del-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "del-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:  [{ model: modelName, rights: "PUBLIC", before: beforeDelete, after: afterDelete }],

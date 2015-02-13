@@ -24,7 +24,7 @@ describe('two models' + config.versionLabel, function () {
     before(function () {
         micro
             .setup(service)
-            .logFile("two-models-test" + config.logVersion + ".log")
+            .logFile(config.logFolder + "two-models-test" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [ { model: modelName[0], rights: "PUBLIC" },

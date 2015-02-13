@@ -9,6 +9,7 @@ var Controller = require('richmond-web-controller'),
 
 function Config() {
     this.controller = new Controller();
+    this.logFolder = process.env.TEST_LOG_FOLDER || 'logs/';
     this.service = {
         secret: process.env.APP_SECRET || null,
         prefix: "/API",

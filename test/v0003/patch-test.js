@@ -24,7 +24,7 @@ var request = require('supertest'),
 describe('patch' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile("patch-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "patch-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

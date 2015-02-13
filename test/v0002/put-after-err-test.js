@@ -45,7 +45,7 @@ describe('put after error' + config.versionLabel, function () {
         };
         micro
             .setup(service)
-            .logFile("put-after-err-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "put-after-err-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],

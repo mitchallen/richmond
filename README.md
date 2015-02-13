@@ -725,7 +725,7 @@ To run the tests for each version:
     $ mocha --timeout 5000 --recursive test/v0002/*test.js
     $ mocha --timeout 5000 --recursive test/v0001/*test.js
 
-The tests generate log files in the projects root folder.
+The tests generate log files in a logs/ folder under the projects root folder.
 
 * * *
 
@@ -744,6 +744,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 * * *
 
 ## Version History
+
+#### Version 0.4.3 release notes
+
+* Updated test cases use logs/ folder
 
 #### Version 0.4.2 release notes
 

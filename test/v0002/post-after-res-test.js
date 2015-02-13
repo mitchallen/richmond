@@ -60,7 +60,7 @@ describe('post after error' + config.versionLabel, function () {
             };
         micro
             .setup(service)
-            .logFile("post-after-res-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "post-after-res-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:      [{ model: modelName, rights: "PUBLIC" }],

@@ -59,7 +59,7 @@ describe('post after error' + config.versionLabel, function () {
                 // next(doc);    // Don't call when intercepting
             };
         micro
-            .logFile("post-after-res-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "post-after-res-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:      [{ model: modelName, rights: "PUBLIC" }],

@@ -1,6 +1,6 @@
 {
   "name": "richmond",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "richmond.js core module",
   "main": "richmond.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "multer": "0.1.7"
   },
   "devDependencies": {
-    "richmond-web-controller": "0.1.5",
+    "richmond-web-controller": "0.1.7",
     "bcrypt": "0.8.1",
     "fast-json-patch": "0.5.0",
     "should": "4.6.0",
