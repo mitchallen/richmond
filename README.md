@@ -5,6 +5,16 @@ richmond.js
 A node.js module for mapping Web calls to MongoDB
 -------------------------------------------------
 
+<a href="https://npmjs.org/package/richmond">
+    <img src="http://img.shields.io/npm/dt/richmond.svg?style=flat-square" alt="Downloads">
+</a>
+<a href="https://npmjs.org/package/richmond">
+    <img src="http://img.shields.io/npm/v/richmond.svg?style=flat-square" alt="Version">
+</a>
+<a href="https://npmjs.com/package/richmond">
+    <img src="https://img.shields.io/npm/l/richmond.svg?style=flat-square" alt="License"></a>
+</a>
+
 ## Installation
 
     $ npm init
@@ -27,7 +37,7 @@ There was a database id validation bug in earlier versions (fixed in 0.1.3).
 
 ### Step 1: Visit MongoLab
 
-Use your own local install of MongoDB or visit [__https://mongolab.com__](https://mongolab.com)
+Use your own local install of MongoDB or visit [__https://mlab.com__](https://mlab.com)
 and create a free test database, writing down the credentials.
 
 ### Step 2: Edit ~/.bash_profile
@@ -689,7 +699,7 @@ But you can if you want to override the value set through __setup__
 
 In order to run the tests, you need to add two more variables to your environment: __TEST_HOST__ and __TEST_SSL__
 
-For testing, I use the services of [__https://ngrok.com__](https://ngrok.com) - for a small annual fee I secured a subdomain
+For testing, I use the services of [__https://ngrok.com__](https://ngrok.com) - for a small fee I secured a subdomain
 that I can tunnel back to a port on my localhost for testing.  It supports both SSL and Non-SSL.
 
     # Via ngrok
