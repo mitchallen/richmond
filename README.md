@@ -5,6 +5,12 @@ richmond.js
 A node.js module for mapping Web calls to MongoDB
 -------------------------------------------------
 
+<a href="https://travis-ci.org/mitchallen/richmond">
+    <img src="https://img.shields.io/travis/mitchallen/richmond.svg?style=flat-square" alt="CI">
+</a>
+<a href="https://codecov.io/gh/mitchallen/richmond">
+<img src="https://codecov.io/gh/mitchallen/richmond/branch/master/graph/badge.svg" alt="Coverage Status">
+ </a>
 <a href="https://npmjs.org/package/richmond">
     <img src="http://img.shields.io/npm/dt/richmond.svg?style=flat-square" alt="Downloads">
 </a>

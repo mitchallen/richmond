@@ -20,7 +20,7 @@ function Config() {
                 pass: process.env.TEST_MONGO_PASS || null
             }
         },
-        port: process.env.TEST_PORT || null,
+        port: process.env.TEST_PORT || 8010,
     };
     this.richmond = new Richmond(this.service);
     this.host = {

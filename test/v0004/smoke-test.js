@@ -49,13 +49,16 @@ describe('smoke tests' + config.versionLabel, function () {
         done();
     });
 
-    it('should confirm that post works', function (done) {
+    it('should confirm that post works @DEBUG', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = {};
         testObject = {
             email: "test" + getRandomInt(1000, 1000000) + "@post.com",
             status: "TEST POST"
         };
+        console.log("HOST: ", testHost);
+        console.log("URL: ", testUrl);
+        console.log("OBJECT: ", testObject);
         request(testHost)
             .post(testUrl)
             .send(testObject)

@@ -6,17 +6,14 @@
   "scripts": {
     "test": "mocha --recursive --timeout 20000",
     "//": "To use: npm run test-nodemon (assumes global location of mocha)",
+    "test-coverage": "./node_modules/.bin/istanbul cover _mocha --recursive  --timeout 20000 test/v0004/",
     "test-nodemon": "nodemon /usr/local/bin/mocha  --recursive --timeout 20000",
     "test-debug": "nodemon /usr/local/bin/mocha -g '@DEBUG' --recursive --timeout 20000",
     "test-jenkins": "mocha --recursive --timeout 20000 -R xunit test/ > test-reports.xml"
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/mitchallen/richmond.git"
-  },
-  "repository": {
-	    "type": "git",
-	    "url": "https://github.com/mitchallen/richmond.git"
+    "url": "https://github.com/mitchallen/richmond.git"
   },
   "author": "Mitch Allen <npm@mitchallen.com> (http://mitchallen.com)",
   "license": "ISC",
@@ -25,13 +22,15 @@
     "express": "4.11.1",
     "jwt-simple": "0.2.0",
     "log": "1.4.0",
-    "mongoose": "3.8.21",
+    "mongoose": "~4.4",
     "multer": "0.1.7"
   },
   "devDependencies": {
-    "richmond-web-controller": "0.1.7",
-    "bcrypt": "0.8.1",
+    "bcrypt": "^1.0.2",
     "fast-json-patch": "0.5.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0",
+    "richmond-web-controller": "0.1.7",
     "should": "4.6.0",
     "sleep": "1.2.0",
     "supertest": "0.15.0"
