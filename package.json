@@ -22,6 +22,7 @@
     "express": "4.11.1",
     "jwt-simple": "0.2.0",
     "log": "1.4.0",
+    "mongodb": "^2.2.19",
     "mongoose": "~4.4",
     "multer": "0.1.7"
   },
