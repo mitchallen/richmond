@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "1.10.2",
-    "express": "4.11.1",
+    "express": "4.14.0",
     "jwt-simple": "0.2.0",
     "log": "1.4.0",
     "mongoose": "^4.7.7",
@@ -33,6 +33,6 @@
     "richmond-web-controller": "0.1.7",
     "should": "4.6.0",
     "sleep": "1.2.0",
-    "supertest": "0.15.0"
+    "supertest": "^2.0.1"
   }
 }

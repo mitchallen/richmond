@@ -103,8 +103,8 @@ describe('get' + config.versionLabel, function () {
                 request(testHost)
                     .get(testUrl)
                     // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
-                    .query('filter={"email":"' + testEmail + '"}')
-                    .query('fields=email status')
+                    .query( { filter: '{"email": "' + testEmail + '"}' } )
+                    .query( { fields: 'email status'} )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
@@ -138,8 +138,10 @@ describe('get' + config.versionLabel, function () {
                 request(testHost)
                     .get(testUrl)
                     // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
-                    .query('filter={"email": "' + testEmail + '"}')
-                    .query('fields=email')
+                    // .query('filter={"email": "' + testEmail + '"}')
+                    // .query('fields=email')
+                    .query( { filter: '{"email": "' + testEmail + '"}' } )
+                    .query( { fields: 'email'} )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
@@ -216,7 +218,7 @@ describe('get' + config.versionLabel, function () {
                 // GET by ID
                 request(testHost)
                     .get(testUrl + "/" + testId)
-                    .query('fields=email status password')
+                    .query( { fields: 'email status password' } )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
@@ -258,7 +260,7 @@ describe('get' + config.versionLabel, function () {
                 // GET by ID
                 request(testHost)
                     .get(testUrl + "/" + testId)
-                    .query('fields=email status')
+                    .query( { fields: 'email status' } )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
@@ -298,7 +300,7 @@ describe('get' + config.versionLabel, function () {
                 // GET by ID
                 request(testHost)
                     .get(testUrl + "/" + testId)
-                    .query('fields=email')
+                    .query( { fields: 'email' } )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
@@ -400,7 +402,7 @@ describe('get' + config.versionLabel, function () {
                 // GET
                 request(testHost)
                     .get(testUrl)
-                    .query('options={"sort": {"email":1},"limit":1 }')
+                    .query( { options: '{"sort": {"email":1},"limit":1 }' } )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
@@ -412,7 +414,7 @@ describe('get' + config.versionLabel, function () {
                         // GET
                         request(testHost)
                             .get(testUrl)
-                            .query('options={"sort": {"email":1},"limit":1,"skip":1}')
+                            .query( { options: '{"sort": {"email":1},"limit":1,"skip":1}' } )
                             .expect('Content-Type', /json/)
                             .expect(200)
                             .end(function (err, res) {
@@ -449,7 +451,7 @@ describe('get' + config.versionLabel, function () {
                 request(testHost)
                     .get(testUrl)
                     // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
-                    .query('options={"sort":{"email":1} }')
+                    .query( { options: '{"sort":{"email":1} }' } )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {
