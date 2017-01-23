@@ -5,6 +5,14 @@ before_script:
   - "export TEST_PORT=1025"
   - "export TEST_HOST=http://localhost:8081"
   - "export APP_SECRET=fubar"
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 script:
   - npm run test-coverage
 after_success:
