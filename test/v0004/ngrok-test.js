@@ -48,7 +48,6 @@ describe('ngrok' + config.versionLabel, function () {
         ngrok.disconnect();
     });
 
-
     it('should confirm that post works @DEBUG', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = {};

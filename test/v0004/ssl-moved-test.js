@@ -8,6 +8,7 @@
 
 var request = require('supertest'),
     should = require('should'),
+    ngrok = require('ngrok'),
     TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
@@ -22,6 +23,7 @@ var request = require('supertest'),
     MochaTestDoc = null;
 
 describe('ssl moved' + config.versionLabel, function () {
+
     before(function () {
         controller.clear();
         micro
@@ -41,6 +43,10 @@ describe('ssl moved' + config.versionLabel, function () {
             status: { type: String, required: true },
         });
         micro.listen();
+    });
+
+    afterEach(function () {
+        ngrok.disconnect();
     });
 
     it('should return moved when posting to non-ssl', function (done) {
@@ -97,30 +103,38 @@ describe('ssl moved' + config.versionLabel, function () {
         };
         // SETUP - need to post at least one record
         // Need to use SSL for post
-        request(sslHost)
-            .post(testUrl)
-            .send(testObject)
-            .set('Content-Type', 'application/json')
-            .expect(201)
-            .end(function (err, res) {
-                should.not.exist(err);
-                testId = res.body._id;
-                // GET by ID
-                request(testHost)
-                    .get(testUrl + "/" + testId)
-                    // .expect('Content-Type', /json/)
-                    .expect(302)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        res.header.location.should.eql(
-                            sslHost
-                                + prefix.toLowerCase()
-                                + "/" + modelName.toLowerCase()
-                                + "/" + testId
-                        );
-                        done();
-                    });
-            });
+        var options = {
+            proto: 'http',
+            addr: service.port
+        }
+        ngrok.connect( options, function( err, grokHostSSL ) {
+            if(err) done(err);
+            // request(sslHost)
+            request(grokHostSSL)
+                .post(testUrl)
+                .send(testObject)
+                .set('Content-Type', 'application/json')
+                .expect(201)
+                .end(function (err, res) {
+                    should.not.exist(err);
+                    testId = res.body._id;
+                    // GET by ID
+                    request(testHost)
+                        .get(testUrl + "/" + testId)
+                        // .expect('Content-Type', /json/)
+                        .expect(302)
+                        .end(function (err, res) {
+                            should.not.exist(err);
+                            res.header.location.should.eql(
+                                sslHost
+                                    + prefix.toLowerCase()
+                                    + "/" + modelName.toLowerCase()
+                                    + "/" + testId
+                            );
+                            done();
+                        });
+                });
+        });
         /*jslint nomen: false*/
     });
 
@@ -136,31 +150,39 @@ describe('ssl moved' + config.versionLabel, function () {
         };
         // SETUP - need to post at least one record
         // For POST need to use SSL or will fail.
-        request(sslHost)
-            .post(testUrl)
-            .send(testObject)
-            .set('Content-Type', 'application/json')
-            .expect(201)
-            .end(function (err, res) {
-                should.not.exist(err);
-                testId = res.body._id;
-                    // DELETE
-                zapUrl = testUrl + "/" + testId;
-                request(testHost)
-                    .del(zapUrl)
-                    // .expect(200)
-                    .expect(302)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        res.header.location.should.eql(
-                            sslHost
-                                + prefix.toLowerCase()
-                                + "/" + modelName.toLowerCase()
-                                + "/" + testId
-                        );
-                        done();
-                    });
-            });
+        var options = {
+            proto: 'http',
+            addr: service.port
+        };
+        ngrok.connect( options, function( err, grokHostSSL ) {
+            if(err) done(err);
+            // request(sslHost)
+            request(grokHostSSL)
+                .post(testUrl)
+                .send(testObject)
+                .set('Content-Type', 'application/json')
+                .expect(201)
+                .end(function (err, res) {
+                    should.not.exist(err);
+                    testId = res.body._id;
+                        // DELETE
+                    zapUrl = testUrl + "/" + testId;
+                    request(testHost)
+                        .del(zapUrl)
+                        // .expect(200)
+                        .expect(302)
+                        .end(function (err, res) {
+                            should.not.exist(err);
+                            res.header.location.should.eql(
+                                sslHost
+                                    + prefix.toLowerCase()
+                                    + "/" + modelName.toLowerCase()
+                                    + "/" + testId
+                            );
+                            done();
+                        });
+                });
+        });
         /*jslint nomen: false*/
     });
 
@@ -176,31 +198,39 @@ describe('ssl moved' + config.versionLabel, function () {
         };
         // SETUP - need to post at least one record
         // For POST need to use SSL or test will fail
-        request(sslHost)
-            .post(testUrl)
-            .send(testObject)
-            .set('Content-Type', 'application/json')
-            .expect(201)
-            .end(function (err, res) {
-                should.not.exist(err);
-                // PUT
-                testId = res.body._id;
-                putUrl = testUrl + "/" + testId;
-                request(testHost)
-                    .put(putUrl)
-                    .send({ status: "UPDATED" })
-                    .expect(302)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        res.header.location.should.eql(
-                            sslHost
-                                + prefix.toLowerCase()
-                                + "/" + modelName.toLowerCase()
-                                + "/" + testId
-                        );
-                        done();
-                    });
-            });
+        var options = {
+            proto: 'http',
+            addr: service.port
+        };
+        ngrok.connect( options, function( err, grokHostSSL ) {
+            if(err) done(err);
+            // request(sslHost)
+            request(grokHostSSL)
+                .post(testUrl)
+                .send(testObject)
+                .set('Content-Type', 'application/json')
+                .expect(201)
+                .end(function (err, res) {
+                    should.not.exist(err);
+                    // PUT
+                    testId = res.body._id;
+                    putUrl = testUrl + "/" + testId;
+                    request(testHost)
+                        .put(putUrl)
+                        .send({ status: "UPDATED" })
+                        .expect(302)
+                        .end(function (err, res) {
+                            should.not.exist(err);
+                            res.header.location.should.eql(
+                                sslHost
+                                    + prefix.toLowerCase()
+                                    + "/" + modelName.toLowerCase()
+                                    + "/" + testId
+                            );
+                            done();
+                        });
+                });
+        });
         /*jslint nomen: false*/
     });
 
@@ -215,38 +245,46 @@ describe('ssl moved' + config.versionLabel, function () {
             status: "TEST PATCH"
         };
         // POST a new doc
-        request(sslHost)
-            .post(testUrl)
-            .send(testObject)
-            .set('Content-Type', 'application/json')
-            .expect(201)
-            .end(function (err, res) {
-                should.not.exist(err);
-                // PATCH
-                newStatus = "UPDATED PATCH";
-                testId = res.body._id;
-                request(testHost)
-                    .patch(testUrl + "/" + testId)
-                    .send(
-                        [
-                            { "op": "replace", "path": "/status", "value": newStatus }
-                        ]
-                    )
-                    // Uncaught TypeError: Argument must be a string 
-                    // .set('Content-Type', 'application/json-patch')
-                    .set('Content-Type', 'application/json')
-                    .expect(302)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        res.header.location.should.eql(
-                            sslHost
-                                + prefix.toLowerCase()
-                                + "/" + modelName.toLowerCase()
-                                + "/" + testId
-                        );
-                        done();
-                    });
-            });
+        var options = {
+            proto: 'http',
+            addr: service.port
+        };
+        ngrok.connect( options, function( err, grokHostSSL ) {
+            if(err) done(err);
+            // request(sslHost)
+            request(grokHostSSL)
+                .post(testUrl)
+                .send(testObject)
+                .set('Content-Type', 'application/json')
+                .expect(201)
+                .end(function (err, res) {
+                    should.not.exist(err);
+                    // PATCH
+                    newStatus = "UPDATED PATCH";
+                    testId = res.body._id;
+                    request(testHost)
+                        .patch(testUrl + "/" + testId)
+                        .send(
+                            [
+                                { "op": "replace", "path": "/status", "value": newStatus }
+                            ]
+                        )
+                        // Uncaught TypeError: Argument must be a string 
+                        // .set('Content-Type', 'application/json-patch')
+                        .set('Content-Type', 'application/json')
+                        .expect(302)
+                        .end(function (err, res) {
+                            should.not.exist(err);
+                            res.header.location.should.eql(
+                                sslHost
+                                    + prefix.toLowerCase()
+                                    + "/" + modelName.toLowerCase()
+                                    + "/" + testId
+                            );
+                            done();
+                        });
+                });
+        });
         /*jslint nomen: false*/
     });
 
