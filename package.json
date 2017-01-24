@@ -31,6 +31,7 @@
     "fast-json-patch": "0.5.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
+    "ngrok": "^2.2.5",
     "richmond-web-controller": "0.1.7",
     "should": "4.6.0",
     "sleep": "1.2.0",
