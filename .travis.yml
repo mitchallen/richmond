@@ -2,7 +2,12 @@ language: node_js
 node_js:
   - "stable"
 env:
-  - CXX=g++-4.8 TEST_PORT=3030 TEST_HOST=http://localhost:3030 TEST_SSL=https://localhost:3030 APP_SECRET=fubar
+  global:
+  - CXX=g++-4.8 
+  - TEST_PORT=3030 
+  - TEST_HOST=http://localhost:3030 
+  - TEST_SSL=https://localhost:3030 
+  - APP_SECRET=fubar
 addons:
   apt:
     sources:
