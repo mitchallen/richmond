@@ -758,6 +758,15 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.4.4 release notes
+
+* integrated travis-ci and codecov.io support
+* integrated ngrok module into SSL testing
+* updated dependencies
+* added grunt build support
+* brought test cases up to date
+* removed test cases for old, outdated versions
+
 #### Version 0.4.3 release notes
 
 * Updated test cases use logs/ folder
