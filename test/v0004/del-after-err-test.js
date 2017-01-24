@@ -93,7 +93,10 @@ describe('delete after error' + config.versionLabel, function () {
                     .set('x-auth', jwt.encode({ email: ownerEmail, role: "user" }, testSecret))
                     .expect(402)
                     .end(function (err) {
-                        should.not.exist(err);
+
+                        // should.not.exist(err);
+                        if(err) done(err);
+
                         // PURGE all test records 
                         MochaTestDoc.remove({"email": /@/ }, function (err) {
                             if (err) {
