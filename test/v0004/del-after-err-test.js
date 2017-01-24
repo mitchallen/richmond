@@ -82,7 +82,10 @@ describe('delete after error' + config.versionLabel, function () {
             .set('Content-Type', 'application/json')
             .expect(201)
             .end(function (err, res) {
-                should.not.exist(err);
+
+                // should.not.exist(err);
+                if(err) done(err);
+
                 /*jslint nomen: true*/
                 testId = res.body._id;
                 /*jslint nomen: false*/
