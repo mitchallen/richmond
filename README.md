@@ -734,12 +734,9 @@ Or if you feel like kickin' it old skool:
 
 ### Testing by Version
 
-To run the tests for each version:
+To run the tests for recent versions:
 
     $ mocha --timeout 5000 --recursive test/v0004/*test.js
-    $ mocha --timeout 5000 --recursive test/v0003/*test.js
-    $ mocha --timeout 5000 --recursive test/v0002/*test.js
-    $ mocha --timeout 5000 --recursive test/v0001/*test.js
 
 The tests generate log files in a logs/ folder under the projects root folder.
 
