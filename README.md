@@ -705,12 +705,12 @@ But you can if you want to override the value set through __setup__
 
 In order to run the tests, you need to add two more variables to your environment: __TEST_HOST__ and __TEST_SSL__
 
-For testing, I use the services of [__https://ngrok.com__](https://ngrok.com) - for a small fee I secured a subdomain
-that I can tunnel back to a port on my localhost for testing.  It supports both SSL and Non-SSL.
+    export TEST_HOST=http://localhost:8081
+    export TEST_SSL=https://localhost:8081
+    
+The SSL version must be the https equivelant of the host value.
 
-    # Via ngrok
-    export TEST_HOST=http://YOURSUBDOMAIN.ngrok.com
-    export TEST_SSL=https://YOURSUBDOMAIN.ngrok.com
+Internally the test cases use __ngrok__ for SSL testing.
 
 Source the changes:
 
