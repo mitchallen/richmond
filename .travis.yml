@@ -2,8 +2,8 @@ language: node_js
 node_js:
   - "stable"
 before_script:
-  - "export TEST_PORT=1025"
-  - "export TEST_HOST=http://localhost:8081"
+  - "export TEST_PORT=3030"
+  - "export TEST_HOST=http://localhost:3030"
   - "export APP_SECRET=fubar"
 env:
   - CXX=g++-4.8
