@@ -4,6 +4,7 @@ node_js:
 before_script:
   - "export TEST_PORT=3030"
   - "export TEST_HOST=http://localhost:3030"
+  - "export TEST_SSL=http://localhost:3031"
   - "export APP_SECRET=fubar"
 env:
   - CXX=g++-4.8
