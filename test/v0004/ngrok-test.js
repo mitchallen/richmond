@@ -57,15 +57,14 @@ describe('ngrok' + config.versionLabel, function () {
             status: "TEST POST"
         };
 
-        console.log("SERVICE PORT:", service.port);
+        // console.log("SERVICE PORT:", service.port);
         var options = {
             proto: 'http',
             addr: service.port
         }
         ngrok.connect( options, function( err, grokHost ) {
             if(err) done(err);
-            console.log("NGROK HOST: ", grokHost );
-
+            // console.log("NGROK HOST: ", grokHost );
             // console.log("HOST: ", testHost);
             // console.log("URL: ", testUrl);
             // console.log("OBJECT: ", testObject);
