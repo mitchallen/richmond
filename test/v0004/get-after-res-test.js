@@ -159,9 +159,10 @@ describe('get after error injection' + config.versionLabel, function () {
                 should.exist(res);
                 // GET
                 request(sslHost)
+                // request(testHost)
                     .get(testUrl)
                     .set('x-auth', jwt.encode({ email: testEmail, role: "user" }, testSecret))
-                    .query('filter={"email":"' + testEmail + '"}')
+                    .query( { filter: '{"email":"' + testEmail + '"}' } )
                     // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
                     // .expect('Content-Type', /json/)    // Sometimes returns 302 / HTML (nginx)
                     .expect(402)

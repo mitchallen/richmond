@@ -5,6 +5,7 @@
   "main": "richmond.js",
   "scripts": {
     "test": "mocha --recursive --timeout 20000",
+    "test-04": "mocha --recursive --timeout 20000 test/v0004/",
     "//": "To use: npm run test-nodemon (assumes global location of mocha)",
     "test-coverage": "./node_modules/.bin/istanbul cover _mocha --recursive  --timeout 20000 test/v0004/",
     "test-nodemon": "nodemon /usr/local/bin/mocha  --recursive --timeout 20000",

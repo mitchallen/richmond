@@ -108,7 +108,7 @@ describe('post' + config.versionLabel, function () {
                 request(testHost)
                     .get(testUrl + "/" + testId)
                     // Have to request password since it's defined as select: false
-                    .query('fields=email status password')
+                    .query({ fields: 'email status password' } )
                     .expect('Content-Type', /json/)
                     .expect(200)
                     .end(function (err, res) {

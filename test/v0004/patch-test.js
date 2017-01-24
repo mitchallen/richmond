@@ -64,7 +64,10 @@ describe('patch' + config.versionLabel, function () {
             .set('Content-Type', 'application/json')
             .expect(201)
             .end(function (err, res) {
-                should.not.exist(err);
+
+                // should.not.exist(err);
+                if(err) done(err);
+
                 res.body.email.should.eql(testObject.email);
                 // Should not return password
                 // should.not.exist(res.body.password);
@@ -77,17 +80,23 @@ describe('patch' + config.versionLabel, function () {
                     .set('Content-Type', 'application/json')
                     .expect(200)
                     .end(function (err, res) {
-                        should.not.exist(err);
+
+                        // should.not.exist(err);
+                        if(err) done(err);
+
                         should.exist(res);
                         // GET by ID
                         request(testHost)
                             .get(testUrl + "/" + testId)
                             // Have to request password since it's defined as select: false
-                            .query('fields=email status password')
+                            .query( { fields: 'email status password' } )
                             .expect('Content-Type', /json/)
                             .expect(200)
                             .end(function (err, res) {
-                                should.not.exist(err);
+
+                                // should.not.exist(err);
+                                if(err) done(err);
+
                                 should.exist(res.body);
                                 should.exist(res.body._id);
                                 should.exist(res.body.email);
@@ -101,6 +110,7 @@ describe('patch' + config.versionLabel, function () {
                                 MochaTestDoc.remove({"email": /@/ }, function (err) {
                                     if (err) {
                                         console.error(err);
+                                        done(err);
                                     }
                                     done();
                                 });
