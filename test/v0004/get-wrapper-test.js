@@ -8,6 +8,7 @@
 
 var request = require('supertest'),
     should = require('should'),
+    ngrok = require('ngrok'),
     jwt = require('jwt-simple'),
     TestConfig = require('./test-config'),
     config = new TestConfig(),
@@ -95,6 +96,10 @@ describe('get before and after' + config.versionLabel, function () {
         micro.listen();
     });
 
+    afterEach(function () {
+        ngrok.disconnect();
+    });
+
     it('get filter should respond with proper document', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testEmail = afterTestEmail,
@@ -114,31 +119,39 @@ describe('get before and after' + config.versionLabel, function () {
                 should.not.exist(err);
                 should.exist(res);
                 // GET
-                request(sslHost)
-                    .get(testUrl)
-                    .set('x-auth', jwt.encode({ email: testEmail, role: "user" }, testSecret))
-                    .query( { filter: '{"email":"' + testEmail + '"}' } )
-                    // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
-                    // .expect('Content-Type', /json/)    // Sometimes returns 302 / HTML (nginx)
-                    .expect(200)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        should.exist(res.body);
-                        should.exist(res.body.length);
-                        // Should be 2 because afterGet added something
-                        res.body.length.should.eql(2);
-                        // console.log(JSON.stringify(res.body));
-                        should.exist(res.body[0].email);
-                        should.exist(res.body[0].status);
-                        res.body[0].email.should.eql(testEmail);
-                        // PURGE all records 
-                        MochaTestDoc.remove({"email": /@/ }, function (err) {
-                            if (err) {
-                                console.error(err);
-                            }
-                            done();
+                var options = {
+                    proto: 'http',
+                    addr: service.port
+                }
+                ngrok.connect( options, function( err, grokHostSSL ) {
+                    if(err) done(err);
+                    // request(sslHost)
+                    request(grokHostSSL)
+                        .get(testUrl)
+                        .set('x-auth', jwt.encode({ email: testEmail, role: "user" }, testSecret))
+                        .query( { filter: '{"email":"' + testEmail + '"}' } )
+                        // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
+                        // .expect('Content-Type', /json/)    // Sometimes returns 302 / HTML (nginx)
+                        .expect(200)
+                        .end(function (err, res) {
+                            should.not.exist(err);
+                            should.exist(res.body);
+                            should.exist(res.body.length);
+                            // Should be 2 because afterGet added something
+                            res.body.length.should.eql(2);
+                            // console.log(JSON.stringify(res.body));
+                            should.exist(res.body[0].email);
+                            should.exist(res.body[0].status);
+                            res.body[0].email.should.eql(testEmail);
+                            // PURGE all records 
+                            MochaTestDoc.remove({"email": /@/ }, function (err) {
+                                if (err) {
+                                    console.error(err);
+                                }
+                                done();
+                            });
                         });
-                    });
+                });
             });
     });
 

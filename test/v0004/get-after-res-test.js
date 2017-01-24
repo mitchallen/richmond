@@ -8,6 +8,7 @@
 
 var request = require('supertest'),
     should = require('should'),
+    ngrok = require('ngrok'),
     jwt = require('jwt-simple'),
     TestConfig = require('./test-config'),
     config = new TestConfig(),
@@ -100,6 +101,10 @@ describe('get after error injection' + config.versionLabel, function () {
         micro.listen();
     });
 
+    afterEach(function () {
+        ngrok.disconnect();
+    });
+
     it('should return the injected error instead of a document', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testId = null,
@@ -158,18 +163,25 @@ describe('get after error injection' + config.versionLabel, function () {
                 should.not.exist(err);
                 should.exist(res);
                 // GET
-                request(sslHost)
-                // request(testHost)
-                    .get(testUrl)
-                    .set('x-auth', jwt.encode({ email: testEmail, role: "user" }, testSecret))
-                    .query( { filter: '{"email":"' + testEmail + '"}' } )
-                    // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
-                    // .expect('Content-Type', /json/)    // Sometimes returns 302 / HTML (nginx)
-                    .expect(402)
-                    .end(function (err, res) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        done();
+                var options = {
+                    proto: 'http',
+                    addr: service.port
+                }
+                ngrok.connect( options, function( err, grokHostSSL ) {
+                    if(err) done(err);
+                    // request(sslHost)
+                    request(grokHostSSL)
+                        .get(testUrl)
+                        .set('x-auth', jwt.encode({ email: testEmail, role: "user" }, testSecret))
+                        .query( { filter: '{"email":"' + testEmail + '"}' } )
+                        // MUST USE DOUBLE QUOTES - or JSON.parse bombs in GET.
+                        // .expect('Content-Type', /json/)    // Sometimes returns 302 / HTML (nginx)
+                        .expect(402)
+                        .end(function (err, res) {
+                            should.not.exist(err);
+                            should.exist(res);
+                            done();
+                        });
                     });
             });
     });

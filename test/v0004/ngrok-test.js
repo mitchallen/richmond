@@ -62,14 +62,14 @@ describe('ngrok' + config.versionLabel, function () {
             proto: 'http',
             addr: service.port
         }
-        ngrok.connect( options, function( err, grokHost ) {
+        ngrok.connect( options, function( err, grokHostSSL ) {
             if(err) done(err);
-            // console.log("NGROK HOST: ", grokHost );
+            // console.log("NGROK HOST: ", grokHostSSL );
             // console.log("HOST: ", testHost);
             // console.log("URL: ", testUrl);
             // console.log("OBJECT: ", testObject);
             // request(testHost)
-            request(grokHost)
+            request(grokHostSSL)
                 .post(testUrl)
                 .send(testObject)
                 .set('Content-Type', 'application/json')

@@ -56,9 +56,6 @@ describe('smoke tests' + config.versionLabel, function () {
             email: "test" + getRandomInt(1000, 1000000) + "@post.com",
             status: "TEST POST"
         };
-        console.log("HOST: ", testHost);
-        console.log("URL: ", testUrl);
-        console.log("OBJECT: ", testObject);
         request(testHost)
             .post(testUrl)
             .send(testObject)
