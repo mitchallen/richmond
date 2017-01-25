@@ -1,12 +1,18 @@
 language: node_js
 node_js:
   - "stable"
+services: 
+  - mongodb
 env:
   global:
     - CXX=g++-4.8 
     - TEST_PORT=3030 
     - TEST_HOST=http://localhost:3030 
-    - TEST_SSL=https://localhost:3030 
+    - TEST_SSL=https://localhost:3030
+    - TEST_MONGO_URI='mongodb://localhost/dbnode01'
+    - TEST_MONGO_DB='localhost/dbnode01'
+    - TEST_MONGO_USER='travis'
+    - TEST_MONGO_PASS='test' 
     - APP_SECRET=fubar
 addons:
   apt:
@@ -14,6 +20,9 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+before_script:
+  - sleep 15
+  - mongo mydb_test --eval 'db.addUser("travis", "test");'
 script:
   - npm run test-coverage
 after_success:
