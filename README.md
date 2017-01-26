@@ -758,6 +758,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.4.7 release notes
+
+* brought code coverage up to 100%
+
 #### Version 0.4.6 release notes
 
 * changed description

@@ -11,6 +11,7 @@ var request = require('supertest'),
     should = require('should'),
     Richmond = require('../../richmond'),
     model = require('../../lib/model'),
+    httpErrorHandler = require('../../lib/http-error-handler'),
     libPrefix = require('../../lib/prefix'),
     libToken = require('../../lib/token'),
     TestConfig = require('./test-config'),
@@ -213,6 +214,47 @@ describe('negative tests' + config.versionLabel, function () {
         (function(){
             f();
         }).should.throw();
+        done();
+    });
+
+    it('httpErrorHandler child function should log exception', function (done) {
+        var mockLog = {
+            error: function( eMsg ) {
+                console.error( eMsg );
+            }
+        }
+        var f = httpErrorHandler( { log: mockLog } );
+        should.exist(f);
+        var mockRes = {
+            status: function() {
+                throw new Error("TEST MOCK EXCEPTION");
+            }
+        };
+        f( null, {}, mockRes, {} );
+        done();
+    });
+
+    it('httpErrorHandler child function with no log should echo exception', function (done) {
+        var f = httpErrorHandler( {} );
+        should.exist(f);
+        var mockRes = {
+            status: function() {
+                throw new Error("TEST MOCK EXCEPTION");
+            }
+        };
+        f( null, {}, mockRes, {} );
+        done();
+    });
+
+    it('httpErrorHandler child function with no setup arguments should echo exception', function (done) {
+        var f = httpErrorHandler();
+        should.exist(f);
+        var mockRes = {
+            status: function() {
+                throw new Error("TEST MOCK EXCEPTION");
+            }
+        };
+        f( null, {}, mockRes, {} );
         done();
     });
 

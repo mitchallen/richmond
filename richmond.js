@@ -2,11 +2,12 @@
  * richmond.js
  */
 
-"use strict";
+// "use strict";
 
 var Log = require('log'),
     bodyParser = require('body-parser'),
     multer = require('multer'),
+    httpErrorHandler = require('./lib/http-error-handler'),
     fs = require('fs');
 
 function Richmond(options) {
@@ -26,6 +27,7 @@ function Richmond(options) {
     this.port = null;
     this.name    = require("./package").name;
     this.version = require("./package").version;
+    this.m_errorHandler = httpErrorHandler( {} );
     if (options) {
         this.setup(options);
     }
@@ -44,6 +46,7 @@ Richmond.prototype.setup = function (options) {
     this.database = options.database || this.database;
     this.port = options.port || this.port;
     this.m_secret = options.secret || this.m_secret;
+    this.m_errorHandler = options.errorHandler || httpErrorHandler( { log: this.log } );
     return this;
 };
 
@@ -52,6 +55,11 @@ Richmond.prototype.logFile = function (file) {
         throw new Error(".logFile parameter can not be undefined");
     }
     this.log = new Log('debug', fs.createWriteStream(file));
+    return this;
+};
+
+Richmond.prototype.defaultErrorHandler = function() {
+    this.m_errorHandler = httpErrorHandler( { log: this.log } );
     return this;
 };
 
@@ -157,30 +165,9 @@ Richmond.prototype.listen = function (port) {
     }
     // ERROR handler - put last.
     /*jslint unparam: true*/
-    this.app.use(function (err, req, res, next) {
-        var errObject = {},
-            errJson = null;
-        errObject = {
-            message: err.message,
-            error: err
-        };
-        errJson = "ERROR HANDLER: " + JSON.stringify(errObject);
-        if (log) {
-            log.error(errJson);
-        } else {
-            console.error(errJson);
-        }
-        try {
-            res.status(err.status || 500);
-            res.send(errObject);
-        } catch (ex) {
-            if (log) {
-                log.error("### DEBUG - resend error");
-                log.error(ex);
-            }
-        }
-        return; // Stop propagation
-    });
+    if( this.m_errorHandler ) {
+        this.app.use( this.m_errorHandler );
+    }
     /*jslint unparam: false*/
     if (this.log) {
         this.log.info("Listening on port:", this.port);
