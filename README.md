@@ -758,6 +758,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.4.5 release notes
+
+* brought code statement coverage up to 97%
+
 #### Version 0.4.4 release notes
 
 * integrated travis-ci and codecov.io support
