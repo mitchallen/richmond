@@ -2,7 +2,7 @@
 richmond.js
 ================
 
-A node.js module for mapping Web calls to MongoDB
+Map REST calls to MongoDB
 -------------------------------------------------
 
 <a href="https://travis-ci.org/mitchallen/richmond">
@@ -757,6 +757,11 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 * * *
 
 ## Version History
+
+#### Version 0.4.6 release notes
+
+* changed description
+* added keyworks to package.json
 
 #### Version 0.4.5 release notes
 

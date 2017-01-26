@@ -1,7 +1,7 @@
 {
   "name": "richmond",
   "version": "0.4.5",
-  "description": "richmond.js core module",
+  "description": "Map REST calls to MongoDB",
   "main": "richmond.js",
   "scripts": {
     "test": "mocha --recursive --timeout 20000",
@@ -50,5 +50,14 @@
     "should": "4.6.0",
     "sleep": "1.2.0",
     "supertest": "^2.0.1"
-  }
+  },
+  "keywords": [
+    "mongo",
+    "mongodb",
+    "nosql",
+    "REST",
+    "http",
+    "https",
+    "ssl"
+  ]
 }
