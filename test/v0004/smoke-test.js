@@ -8,6 +8,8 @@
 
 var request = require('supertest'),
     should = require('should'),
+    Richmond = require('../../richmond'),
+    cors = require('cors'),
     TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
@@ -39,6 +41,11 @@ describe('smoke tests' + config.versionLabel, function () {
         micro.listen();
     });
 
+
+    after(function () {
+        micro.closeService();
+    });
+
     it('should be able to get name', function (done) {
         should.exist(controller.name);
         done();
@@ -49,7 +56,20 @@ describe('smoke tests' + config.versionLabel, function () {
         done();
     });
 
-    it('should confirm that post works @DEBUG', function (done) {
+    it('.setup should be able to set logfile', function (done) {
+        var result = micro.setup( { logFile: "test.log" } );
+        should.exist(result);
+        done();
+    });
+
+    it('.use with valid argument should return object', function (done) {
+        var richmond = new Richmond(),
+            result = richmond.use(cors());
+        should.exist(result);
+        done();
+    });
+
+    it('should confirm that post works', function (done) {
         var testUrl = prefix.toLowerCase() + "/" + modelName.toLowerCase(),
             testObject = {};
         testObject = {
@@ -208,7 +228,4 @@ describe('smoke tests' + config.versionLabel, function () {
         /*jslint nomen: false*/
     });
 
-    after(function () {
-        micro.closeService();
-    });
 });

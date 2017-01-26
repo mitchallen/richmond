@@ -34,17 +34,16 @@ function Richmond(options) {
 module.exports = Richmond; // For export
 
 Richmond.prototype.setup = function (options) {
-    if (options) {
-        if (options.logFile) {
-            this.logFile(options.logFile);
-        }
-        if (options.prefix) {
-            this.prefix(options.prefix);
-        }
-        this.database = options.database || this.database;
-        this.port = options.port;
-        this.m_secret = options.secret || this.m_secret;
+    options = options || {};
+    if (options.logFile) {
+        this.logFile(options.logFile);
     }
+    if (options.prefix) {
+        this.prefix(options.prefix);
+    }
+    this.database = options.database || this.database;
+    this.port = options.port || this.port;
+    this.m_secret = options.secret || this.m_secret;
     return this;
 };
 
@@ -114,7 +113,6 @@ Richmond.prototype.connect = function (uri, options) {
             if (eLog) {
                 eLog.error(err);
             }
-            throw err;
         }
     };
     if (!this.database.options) {
