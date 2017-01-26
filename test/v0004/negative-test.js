@@ -1,5 +1,5 @@
 /**
- * smoke-test.js
+ *negative-test.js
  */
 
 "use strict";
@@ -9,6 +9,9 @@
 var request = require('supertest'),
     should = require('should'),
     Richmond = require('../../richmond'),
+    model = require('../../lib/model'),
+    libPrefix = require('../../lib/prefix'),
+    libToken = require('../../lib/token'),
     TestConfig = require('./test-config'),
     config = new TestConfig(),
     micro = config.richmond,
@@ -109,6 +112,105 @@ describe('negative tests' + config.versionLabel, function () {
         richmond.logFile('test/output/test.log');
         (function(){
             result = richmond.listen();
+        }).should.throw();
+        done();
+    });
+
+    it('model.addModel with no arguments should throw error', function (done) {
+        (function(){
+            model.addModel();
+        }).should.throw();
+        done();
+    });
+
+    it('model.addModel with no schema should throw error', function (done) {
+        (function(){
+            model.addModel( "foo", null, {} );
+        }).should.throw();
+        done();
+    });
+
+    it('prefix module with null argument should log error to console', function (done) {
+        libPrefix(null);
+        done();
+    });
+
+    it('prefix module with no starting slash should log error to console', function (done) {
+        libPrefix("v1");
+        done();
+    });
+
+    it('prefix module with ending slash should log error to console', function (done) {
+        libPrefix("/v1/");
+        done();
+    });
+
+    it('prefix module with white space should log error to console', function (done) {
+        libPrefix("/v 1");
+        done();
+    });
+
+    it('token function with no arguments should return function', function (done) {
+        var f = libToken();
+        should.exist(f);
+        (typeof f).should.eql('function');
+        done();
+    });
+
+    it('token function with secret and no log should return function', function (done) {
+        var f = libToken("fubar");
+        should.exist(f);
+        (typeof f).should.eql('function');
+        done();
+    });
+
+    it('token child function with no secret and no arguments should throw error', function (done) {
+        var f = libToken();
+        should.exist(f);
+        (function(){
+            f();
+        }).should.throw();
+        done();
+    });
+
+    it('token child function with no secret and no arguments should throw error', function (done) {
+        var f = libToken( null, "test/output/test.log");
+        should.exist(f);
+        (function(){
+            f();
+        }).should.throw();
+        done();
+    });
+
+    it('token child function with no secret should throw error', function (done) {
+        var f = libToken();
+        should.exist(f);
+        var req = { headers: { "x-auth": "foo" } },
+            res = {},
+            next = {};
+        (function(){
+            f( req, res, next );
+        }).should.throw();
+        done();
+    });
+
+    it('token child function with no secret should log errr', function (done) {
+        var f = libToken( null, "test/output.log" );
+        should.exist(f);
+        var req = { headers: { "x-auth": "foo" } },
+            res = {},
+            next = {};
+        (function(){
+            f( req, res, next );
+        }).should.throw();
+        done();
+    });
+
+    it('token child function with no arguments should throw error', function (done) {
+        var f = libToken("fubar");
+        should.exist(f);
+        (function(){
+            f();
         }).should.throw();
         done();
     });
