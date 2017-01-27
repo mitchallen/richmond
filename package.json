@@ -1,6 +1,6 @@
 {
   "name": "richmond",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Map REST calls to MongoDB",
   "main": "richmond.js",
   "scripts": {
