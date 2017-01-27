@@ -14,6 +14,7 @@ function Richmond(options) {
     this.m_secret = 'secret';
     this.app = require('express')();
     this.mongoose = require('mongoose');
+    this.mongoose.Promise = global.Promise;
     this.Schema = this.mongoose.Schema;
     this.ObjectId = this.Schema.ObjectId;
     this.router = require('express').Router();
