@@ -758,6 +758,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.4.9 release notes
+
+* refactored some test cases
+
 #### Version 0.4.8 release notes
 
 * removed obsolete Makefile

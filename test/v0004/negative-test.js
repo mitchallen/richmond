@@ -28,7 +28,7 @@ var request = require('supertest'),
 describe('negative tests' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile(config.logFolder + "smoke-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "negative-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
@@ -218,19 +218,23 @@ describe('negative tests' + config.versionLabel, function () {
     });
 
     it('httpErrorHandler child function should log exception', function (done) {
+        var spyError = null;
         var mockLog = {
-            error: function( eMsg ) {
-                console.error( eMsg );
+            error: function( err ) {
+                spyError = err;
+                // console.error( eMsg );
             }
         }
         var f = httpErrorHandler( { log: mockLog } );
         should.exist(f);
+        var exTitle = "TEST MOCK EXCEPTION";
         var mockRes = {
             status: function() {
-                throw new Error("TEST MOCK EXCEPTION");
+                // throw new Error(exTitle);
             }
         };
-        f( null, {}, mockRes, {} );
+        f( new Error(exTitle), {}, mockRes, {} );
+        spyError.should.match( new Error( exTitle ) );
         done();
     });
 
@@ -239,10 +243,10 @@ describe('negative tests' + config.versionLabel, function () {
         should.exist(f);
         var mockRes = {
             status: function() {
-                throw new Error("TEST MOCK EXCEPTION");
+                // ... throw new Error("TEST MOCK EXCEPTION");
             }
         };
-        f( null, {}, mockRes, {} );
+        f( new Error("TEST MOCK EXCEPTION"), {}, mockRes, {} );
         done();
     });
 
@@ -251,10 +255,10 @@ describe('negative tests' + config.versionLabel, function () {
         should.exist(f);
         var mockRes = {
             status: function() {
-                throw new Error("TEST MOCK EXCEPTION");
+                // throw new Error("TEST MOCK EXCEPTION");
             }
         };
-        f( null, {}, mockRes, {} );
+        f( new Error("TEST MOCK EXCEPTION"), {}, mockRes, {} );
         done();
     });
 

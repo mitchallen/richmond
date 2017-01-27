@@ -23,7 +23,7 @@ var request = require('supertest'),
 describe('ngrok' + config.versionLabel, function () {
     before(function () {
         micro
-            .logFile(config.logFolder + "smoke-test-" + config.logVersion + ".log")
+            .logFile(config.logFolder + "ngrok-test-" + config.logVersion + ".log")
             .controller(
                 controller.setup({
                     del:        [{ model: modelName, rights: "PUBLIC" }],
