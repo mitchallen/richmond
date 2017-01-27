@@ -758,6 +758,10 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 
 ## Version History
 
+#### Version 0.4.11 release notes
+
+* upgraded test dependency to richmond-web-controller 0.1.8
+
 #### Version 0.4.10 release notes
 
 * mongoose now uses global.Promise
